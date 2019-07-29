@@ -11,10 +11,15 @@ class CTexture
         CTexture();
         ~CTexture();
 
+        CTexture(const CTexture& a) = delete;
+        CTexture& operator=(const CTexture& ) = delete;
+
+        CTexture(CTexture&& o);
+
         bool loadFromFile(SDL_Renderer* renderer, std::string path);
 
-        void free();
-        void render(SDL_Renderer* renderer, int x, int y);
+        SDL_Texture* getTexture();
+        void free();        
 
         int getWidth();
         int getHeight();        

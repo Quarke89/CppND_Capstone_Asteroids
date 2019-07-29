@@ -1,7 +1,6 @@
 #include "CTexture.h"
 
-CTexture::CTexture()
-{}
+CTexture::CTexture(){}
 
 CTexture::~CTexture()
 {
@@ -33,10 +32,20 @@ bool CTexture::loadFromFile(SDL_Renderer* renderer, std::string path)
 
 }
 
-void CTexture::render(SDL_Renderer* renderer, int x, int y)
+CTexture::CTexture(CTexture&& o)
 {
-    SDL_Rect renderQuad = {x, y, _width, _height};
-    SDL_RenderCopy(renderer, _texture, NULL, &renderQuad);
+    _texture = o._texture;
+    _width = o._width;
+    _height = o._height;
+
+    o._texture = nullptr;
+    o._width = 0;
+    o._height = 0;
+}
+
+SDL_Texture* CTexture::getTexture()
+{
+    return _texture;
 }
 
 void CTexture::free()

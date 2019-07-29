@@ -1,16 +1,34 @@
 #pragma once
 
-#include "utility.hpp"
+#include "utility.h"
+#include <memory>
+#include "CTexture.h"
+#include "AsteroidObject.h"
+
+
+
+enum class ObjectType
+{
+    BACKGROUND_IMG,
+    ASTEROID,
+    SHIP
+};
 
 class GameObject{
 
-public:
+    public:
 
-private:
+        GameObject(){}
+        
+        static GameObject* Create(ObjectType type);
 
-    Position _pos;
-    Speed _speed;
 
+
+
+    private:
+
+        Position _pos;
+        std::shared_ptr<CTexture> _pTex;
 
 
 };

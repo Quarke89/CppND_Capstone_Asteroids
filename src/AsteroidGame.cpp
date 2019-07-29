@@ -1,10 +1,12 @@
 #include "AsteroidGame.h"
+#include "constants.h"
 
 void AsteroidGame::run()
 {
     bool quit = false;
     SDL_Event e;
     int frames = 0;
+    double fps;
     while(!quit){
 
         while(SDL_PollEvent(&e) != 0){
@@ -13,41 +15,59 @@ void AsteroidGame::run()
             }
         }
 
-        std::cout << frames << "\n";
+        Uint32 ticks = SDL_GetTicks();
+        fps = static_cast<double>(frames)/ticks * 1000;
+
+        std::cout << fps << std::endl;
 
         
         //Clear screen
-        SDL_SetRenderDrawColor( _renderer, 0xFF, 0xFF, 0xFF, 0xFF );
-        SDL_RenderClear( _renderer );
-
-        //Render background texture to screen
-        _texBackground.render( _renderer, 0, 0 );
+        SDL_SetRenderDrawColor( _prenderer, 0x00, 0x00, 0x00, 0xFF );
+        SDL_RenderClear( _prenderer );
 
 
         //Update screen
-        SDL_RenderPresent( _renderer );
-
+        SDL_RenderPresent( _prenderer );
         ++frames;
     }
 
 }
 
-bool AsteroidGame::loadMedia()
+bool AsteroidGame::loadTextures()
 {
     bool success = true;
 
-    if(!_texBackground.loadFromFile(_renderer, "img/background.png")){
-        std::cout << "Failed to load background.png!\n";
-        success = false;
+    for(int i = 0; i < static_cast<unsigned int>(TextureType::TEX_TOTAL); i++){
+        CTexture tmp;
+        success &= tmp.loadFromFile(_prenderer, getTexturePath(static_cast<TextureType>(i)));
+        mainTextures.push_back(std::move(tmp));
     }
-
     return success;
+}
+
+std::string AsteroidGame::getTexturePath(TextureType type)
+{
+    switch(type){
+        case TextureType::TEX_BACKGROUND: return "img/background.png";
+        case TextureType::TEX_ASTEROID_BIG_1: return "img/asteroid_big1.png";
+        case TextureType::TEX_ASTEROID_BIG_2: return "img/asteroid_big2.png";
+        case TextureType::TEX_ASTEROID_BIG_3: return "img/asteroid_big3.png";
+        case TextureType::TEX_ASTEROID_MED_1: return "img/asteroid_med1.png";
+        case TextureType::TEX_ASTEROID_MED_2: return "img/asteroid_med2.png";
+        case TextureType::TEX_ASTEROID_MED_3: return "img/asteroid_med3.png";
+        case TextureType::TEX_ASTEROID_SMALL_1: return "img/asteroid_small1.png";
+        case TextureType::TEX_ASTEROID_SMALL_2: return "img/asteroid_small2.png";
+        case TextureType::TEX_ASTEROID_SMALL_3: return "img/asteroid_small3.png";
+    }
+    return "";
 }
 
 AsteroidGame::AsteroidGame()
 {
-    init();
-    loadMedia();
+    if(!init())
+        exit(0);
+    if(!loadTextures())
+        exit(0);
 }
 
 AsteroidGame::~AsteroidGame()
@@ -69,15 +89,15 @@ bool AsteroidGame::init()
 	}
 
     // Create window
-    _window = SDL_CreateWindow("Asteroids", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, _SCREEN_WIDTH, _SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
-    if(_window == nullptr){
+    _pwindow = SDL_CreateWindow("Asteroids", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, AsteroidConstants::SCREEN_WIDTH, AsteroidConstants::SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+    if(_pwindow == nullptr){
         std::cout << "Window could not be created! SDL_Error: " << SDL_GetError() << "\n";
         return false;
     }
 
     // Create renderer for window
-    _renderer = SDL_CreateRenderer(_window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-    if(_renderer == nullptr){
+    _prenderer = SDL_CreateRenderer(_pwindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+    if(_prenderer == nullptr){
         std::cout << "Renderer could not be created! SDL Error: " << SDL_GetError() << "\n";
         return false;
     }
@@ -95,12 +115,14 @@ bool AsteroidGame::init()
 void AsteroidGame::cleanup()
 {
 
-    _texBackground.free();
+    for(auto& tex: mainTextures){
+        tex.free();
+    }
 
-    SDL_DestroyRenderer(_renderer);
-    SDL_DestroyWindow(_window);
-    _renderer = nullptr;
-    _window = nullptr;
+    SDL_DestroyRenderer(_prenderer);
+    SDL_DestroyWindow(_pwindow);
+    _prenderer = nullptr;
+    _pwindow = nullptr;
 
     IMG_Quit();
     SDL_Quit();
