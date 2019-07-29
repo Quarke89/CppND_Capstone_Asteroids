@@ -1,6 +1,6 @@
 #include <iostream>
 #include "SDL.h"
-#include "AsteroidGame.hpp"
+#include "AsteroidGame.h"
 
 int main(int argc, char* args[])
 {

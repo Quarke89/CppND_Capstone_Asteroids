@@ -1,11 +1,13 @@
 #pragma once
 
-class Position{
+class Position
+{
     int x;
     int y;
 };
 
-class Speed{
+class Speed
+{
     double velocity;
     double acceleration;
-}
+};
