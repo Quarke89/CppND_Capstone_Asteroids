@@ -1,11 +1,12 @@
 #pragma once
 
-#include <SDL.h>
-#include <SDL_image.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 #include <iostream>
 #include "CTexture.h"
 #include <memory>
 #include <vector>
+#include "GameObject.h"
 
 enum class TextureType
 {
@@ -34,15 +35,20 @@ class AsteroidGame{
 
         bool loadTextures();
         std::string getTexturePath(TextureType type);
-                
 
-    private:
-
+        void initLevel();
+        void renderObjects();
+        void updateObjects();
         
+    private:
 
         SDL_Window* _pwindow{nullptr};
         SDL_Renderer* _prenderer{nullptr};
-        std::vector<CTexture> mainTextures;
+        std::vector<CTexture> _mainTextures;
+
+        int _currentLevel;
+
+        std::vector<GameObject*> _gameObjects;
         
 
 };

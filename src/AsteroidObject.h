@@ -2,11 +2,15 @@
 
 #include "GameObject.h"
 
+class GameObject;
+
 class AsteroidObject : public GameObject
 {
 
     public:
-        AsteroidObject(){}
+        AsteroidObject(CTexture* tex);
+
+        virtual void update(Uint32 updateTime);
 
     private:
 

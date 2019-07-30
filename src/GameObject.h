@@ -3,8 +3,6 @@
 #include "utility.h"
 #include <memory>
 #include "CTexture.h"
-#include "AsteroidObject.h"
-
 
 
 enum class ObjectType
@@ -18,17 +16,24 @@ class GameObject{
 
     public:
 
-        GameObject(){}
+        GameObject();
+
+        void render(SDL_Renderer* renderer);
+        virtual void update(Uint32 updateTime){};
         
-        static GameObject* Create(ObjectType type);
+        static GameObject* Create(ObjectType type, CTexture* tex);
+
+    
 
 
+    protected:
 
-
-    private:
-
-        Position _pos;
-        std::shared_ptr<CTexture> _pTex;
+        Point _pos{0,0};
+        double _velocity{0};
+        double _acceleration{0};
+        Uint32 _lastUpdated{0};
+        CTexture* _pTex;
 
 
 };
+

@@ -20,10 +20,12 @@ void AsteroidGame::run()
 
         std::cout << fps << std::endl;
 
-        
         //Clear screen
         SDL_SetRenderDrawColor( _prenderer, 0x00, 0x00, 0x00, 0xFF );
         SDL_RenderClear( _prenderer );
+
+        updateObjects();
+        renderObjects();
 
 
         //Update screen
@@ -33,6 +35,26 @@ void AsteroidGame::run()
 
 }
 
+void AsteroidGame::initLevel()
+{
+    _gameObjects.push_back(GameObject::Create(ObjectType::ASTEROID, &_mainTextures[static_cast<int>(TextureType::TEX_ASTEROID_SMALL_1)] ) );
+}
+
+void AsteroidGame::updateObjects()
+{
+    Uint32 time = SDL_GetTicks();
+    for(auto& obj: _gameObjects){
+        obj->update(time);
+    }
+}
+
+void AsteroidGame::renderObjects()
+{
+    for(auto const& obj: _gameObjects){
+        obj->render(_prenderer);
+    }
+}
+
 bool AsteroidGame::loadTextures()
 {
     bool success = true;
@@ -40,7 +62,7 @@ bool AsteroidGame::loadTextures()
     for(int i = 0; i < static_cast<unsigned int>(TextureType::TEX_TOTAL); i++){
         CTexture tmp;
         success &= tmp.loadFromFile(_prenderer, getTexturePath(static_cast<TextureType>(i)));
-        mainTextures.push_back(std::move(tmp));
+        _mainTextures.push_back(std::move(tmp));
     }
     return success;
 }
@@ -58,8 +80,8 @@ std::string AsteroidGame::getTexturePath(TextureType type)
         case TextureType::TEX_ASTEROID_SMALL_1: return "img/asteroid_small1.png";
         case TextureType::TEX_ASTEROID_SMALL_2: return "img/asteroid_small2.png";
         case TextureType::TEX_ASTEROID_SMALL_3: return "img/asteroid_small3.png";
+        default: return "";
     }
-    return "";
 }
 
 AsteroidGame::AsteroidGame()
@@ -68,6 +90,8 @@ AsteroidGame::AsteroidGame()
         exit(0);
     if(!loadTextures())
         exit(0);
+
+    initLevel();
 }
 
 AsteroidGame::~AsteroidGame()
@@ -114,8 +138,11 @@ bool AsteroidGame::init()
 
 void AsteroidGame::cleanup()
 {
+    for(auto& obj: _gameObjects){
+        delete obj;
+    }
 
-    for(auto& tex: mainTextures){
+    for(auto& tex: _mainTextures){
         tex.free();
     }
 
