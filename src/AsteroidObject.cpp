@@ -18,5 +18,6 @@ void AsteroidObject::update(Uint32 updateTime)
     if(_pos.y > AsteroidConstants::SCREEN_HEIGHT){
         _pos.y = 0;
     }
+    _rotation++;
 
 }

@@ -31,6 +31,7 @@ class GameObject{
         Point _pos{0,0};
         double _velocity{0};
         double _acceleration{0};
+        double _rotation{0};
         Uint32 _lastUpdated{0};
         CTexture* _pTex;
 
