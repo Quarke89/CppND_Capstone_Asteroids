@@ -1,5 +1,6 @@
 #include "AsteroidGame.h"
 #include "constants.h"
+#include <random>
 
 void AsteroidGame::run()
 {
@@ -15,10 +16,10 @@ void AsteroidGame::run()
             }
         }
 
-        Uint32 ticks = SDL_GetTicks();
-        fps = static_cast<double>(frames)/ticks * 1000;
+        // Uint32 ticks = SDL_GetTicks();
+        // fps = static_cast<double>(frames)/ticks * 1000;
 
-        std::cout << fps << std::endl;
+        // std::cout << fps << std::endl;
 
         //Clear screen
         SDL_SetRenderDrawColor( _prenderer, 0x00, 0x00, 0x00, 0xFF );
@@ -37,7 +38,16 @@ void AsteroidGame::run()
 
 void AsteroidGame::initLevel()
 {
-    _gameObjects.push_back(GameObject::Create(ObjectType::ASTEROID, &_mainTextures[static_cast<int>(TextureType::TEX_ASTEROID_SMALL_1)] ) );
+    std::random_device rd;
+    std::uniform_int_distribution<> distx(0, AsteroidConstants::SCREEN_WIDTH);
+    std::uniform_int_distribution<> disty(0, AsteroidConstants::SCREEN_HEIGHT);
+
+    for(int i = 0; i < 1; i++){
+        // Point pos{distx(rd), distx(rd)};
+        Point pos{780,580};
+        _gameObjects.push_back(GameObject::Create(pos, ObjectType::ASTEROID, &_mainTextures[static_cast<int>(TextureType::TEX_ASTEROID_SMALL_1)] ) );
+    }
+
 }
 
 void AsteroidGame::updateObjects()

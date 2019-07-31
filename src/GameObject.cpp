@@ -1,14 +1,17 @@
 #include "GameObject.h"
 #include "AsteroidObject.h"
 
-GameObject::GameObject()
+
+GameObject::GameObject(Point pos, CTexture* pTex)
+    :_pos(pos), _pTex(pTex)
 {}
 
-GameObject* GameObject::Create(ObjectType type, CTexture* tex)
+GameObject* GameObject::Create(Point pos, ObjectType type, CTexture* tex)
 {
     switch(type){
-        case ObjectType::ASTEROID: return new AsteroidObject(tex);
-        default: return nullptr;
+        case ObjectType::ASTEROID: return new AsteroidObject(pos, tex);
+        default: 
+            return nullptr;
 
     }
 }
@@ -16,7 +19,6 @@ GameObject* GameObject::Create(ObjectType type, CTexture* tex)
 void GameObject::render(SDL_Renderer* renderer)
 {
     SDL_Rect renderQuad{_pos.x, _pos.y, _pTex->getWidth(), _pTex->getHeight()};
-    // SDL_RenderCopy( renderer, _pTex->getTexture(), NULL, &renderQuad );
-    SDL_RenderCopyEx( renderer, _pTex->getTexture(), NULL, &renderQuad, _rotation, nullptr, SDL_FLIP_NONE);
+    SDL_RenderCopy( renderer, _pTex->getTexture(), NULL, &renderQuad );    
 
 }
