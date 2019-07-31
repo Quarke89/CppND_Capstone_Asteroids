@@ -3,13 +3,13 @@
 #and may not be redistributed without written permission.
 
 #OBJS specifies which files to compile as part of the project
-OBJS = src/main.cpp src/AsteroidGame.cpp src/CTexture.cpp
+OBJS = src/main.cpp src/AsteroidGame.cpp src/GameObject.cpp src/AsteroidObject.cpp src/CTexture.cpp
 
 #CC specifies which compiler we're using
 CC = g++
 
 #INCLUDE_PATHS specifies the additional include paths we'll need
-INCLUDE_PATHS = -IC:\mingw_dev_lib\include\SDL2
+INCLUDE_PATHS = -IC:\mingw_dev_lib\include
 
 #LIBRARY_PATHS specifies the additional library paths we'll need
 LIBRARY_PATHS = -LC:\mingw_dev_lib\lib
