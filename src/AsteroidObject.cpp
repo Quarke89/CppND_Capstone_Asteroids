@@ -2,8 +2,8 @@
 #include "constants.h"
 #include <cmath>
 
-AsteroidObject::AsteroidObject(Point pos, CTexture* tex)
-    : GameObject(pos, tex)
+AsteroidObject::AsteroidObject(Point pos, CTexture* tex, CVector velocity, CVector acceleration)
+    : GameObject(pos, tex, velocity, acceleration)
 {
 }
 
@@ -155,8 +155,11 @@ void AsteroidObject::renderBoxes(SDL_Renderer* renderer)
 
 void AsteroidObject::update(Uint32 updateTime)
 {
-    _pos.x++;
-    _pos.y++;
+
+    double timeDelta = static_cast<double>(updateTime - _lastUpdated)/1000;
+
+    _pos.x += _velocity.getXProjection() * timeDelta;
+    _pos.y += _velocity.getYProjection() * timeDelta;
 
     if(_pos.x >= AsteroidConstants::SCREEN_WIDTH){
         _pos.x = 0;
@@ -172,5 +175,7 @@ void AsteroidObject::update(Uint32 updateTime)
         _pos.y = AsteroidConstants::SCREEN_HEIGHT;
     }
     //_rotation++;
+
+    _lastUpdated = updateTime;
 
 }

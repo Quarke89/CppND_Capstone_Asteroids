@@ -41,11 +41,16 @@ void AsteroidGame::initLevel()
     std::random_device rd;
     std::uniform_int_distribution<> distx(0, AsteroidConstants::SCREEN_WIDTH);
     std::uniform_int_distribution<> disty(0, AsteroidConstants::SCREEN_HEIGHT);
+    std::uniform_int_distribution<> distAngle(0, 360);
+    std::uniform_int_distribution<> distVelocity(100, 200);
 
-    for(int i = 0; i < 1; i++){
-        // Point pos{distx(rd), distx(rd)};
-        Point pos{780,580};
-        _gameObjects.push_back(GameObject::Create(pos, ObjectType::ASTEROID, &_mainTextures[static_cast<int>(TextureType::TEX_ASTEROID_SMALL_1)] ) );
+    Point pos{AsteroidConstants::SCREEN_WIDTH/2, AsteroidConstants::SCREEN_HEIGHT/2};
+    CVector acceleration{0,0};
+
+    for(int i = 0; i < 10; i++){
+        CVector velocity{static_cast<double>(distVelocity(rd)), static_cast<double>(distAngle(rd))};
+
+        _gameObjects.push_back(GameObject::Create(pos, ObjectType::ASTEROID, &_mainTextures[static_cast<int>(TextureType::TEX_ASTEROID_SMALL_1)], velocity, acceleration) );
     }
 
 }

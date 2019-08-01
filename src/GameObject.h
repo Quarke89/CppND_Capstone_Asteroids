@@ -17,19 +17,19 @@ class GameObject{
 
     public:
 
-        GameObject(Point pos, CTexture* pTex);
+        GameObject(Point pos, CTexture* pTex, CVector velocity, CVector acceleration);
 
         virtual void render(SDL_Renderer* renderer);
         virtual void update(Uint32 updateTime){};
         
-        static GameObject* Create(Point pos, ObjectType type, CTexture* tex);
+        static GameObject* Create(Point pos, ObjectType type, CTexture* tex, CVector velocity, CVector acceleration);
 
     protected:
 
-        Point _pos{0,0};
-        CVector _velocity{0,0};
-        CVector _acceleration{0,0};
-        double _rotation{0};
+        Point _pos;
+        CVector _velocity;
+        CVector _acceleration;
+        double _rotation;
         Uint32 _lastUpdated{0};
         CTexture* _pTex;
 
