@@ -20,6 +20,7 @@ enum class TextureType
     TEX_ASTEROID_SMALL_1,
     TEX_ASTEROID_SMALL_2,
     TEX_ASTEROID_SMALL_3,
+    TEX_SHIP,
     TEX_TOTAL
 };
 
@@ -37,6 +38,8 @@ class AsteroidGame{
         std::string getTexturePath(TextureType type);
 
         void initLevel();
+        void initShip();
+        
         void renderObjects();
         void updateObjects();
         
@@ -49,6 +52,9 @@ class AsteroidGame{
         int _currentLevel;
 
         std::vector<GameObject*> _gameObjects;
+
+        std::unique_ptr<GameObject> _pship;
+
         
 
 };

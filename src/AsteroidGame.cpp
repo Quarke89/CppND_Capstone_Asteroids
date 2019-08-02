@@ -50,7 +50,7 @@ void AsteroidGame::initLevel()
     for(int i = 0; i < 10; i++){
         CVector velocity{static_cast<double>(distVelocity(rd)), static_cast<double>(distAngle(rd))};
 
-        _gameObjects.push_back(GameObject::Create(pos, ObjectType::ASTEROID, &_mainTextures[static_cast<int>(TextureType::TEX_ASTEROID_SMALL_1)], velocity, acceleration) );
+        _gameObjects.push_back(GameObject::Create(pos, ObjectType::ASTEROID, &_mainTextures[static_cast<int>(TextureType::TEX_SHIP)], velocity, acceleration) );
     }
 
 }
@@ -95,6 +95,7 @@ std::string AsteroidGame::getTexturePath(TextureType type)
         case TextureType::TEX_ASTEROID_SMALL_1: return "img/asteroid_small1.png";
         case TextureType::TEX_ASTEROID_SMALL_2: return "img/asteroid_small2.png";
         case TextureType::TEX_ASTEROID_SMALL_3: return "img/asteroid_small3.png";
+        case TextureType::TEX_SHIP: return "img/ship.png";
         default: return "";
     }
 }
