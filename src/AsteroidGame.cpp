@@ -14,6 +14,17 @@ void AsteroidGame::run()
             if(e.type == SDL_QUIT){
                 quit = true;
             }
+            else if(e.type == SDL_KEYDOWN)
+            {
+                switch (e.key.keysym.sym)
+                {
+                case SDLK_a:
+                    break;
+                
+                default:
+                    break;
+                }
+            }
         }
 
         // Uint32 ticks = SDL_GetTicks();
@@ -36,6 +47,18 @@ void AsteroidGame::run()
 
 }
 
+void AsteroidGame::initShip()
+{
+    Point pos{AsteroidConstants::SCREEN_WIDTH/2, AsteroidConstants::SCREEN_HEIGHT/2};
+    CVector velocity{0,0,VectorType::POLAR};
+    CVector acceleration{0,0,VectorType::POLAR};
+
+    CTexture* pTex = &_mainTextures[static_cast<int>(TextureType::TEX_SHIP)];
+
+    _pship = GameObject::Create(pos, ObjectType::SHIP, pTex, velocity, acceleration);
+
+}
+
 void AsteroidGame::initLevel()
 {
     std::random_device rd;
@@ -45,12 +68,14 @@ void AsteroidGame::initLevel()
     std::uniform_int_distribution<> distVelocity(100, 200);
 
     Point pos{AsteroidConstants::SCREEN_WIDTH/2, AsteroidConstants::SCREEN_HEIGHT/2};
-    CVector acceleration{0,0};
+    CVector acceleration{0,0,VectorType::POLAR};
+
+    CTexture* pTex = &_mainTextures[static_cast<int>(TextureType::TEX_ASTEROID_MED_1)];
 
     for(int i = 0; i < 10; i++){
-        CVector velocity{static_cast<double>(distVelocity(rd)), static_cast<double>(distAngle(rd))};
+        CVector velocity{static_cast<double>(distVelocity(rd)), static_cast<double>(distAngle(rd)), VectorType::POLAR};
 
-        _gameObjects.push_back(GameObject::Create(pos, ObjectType::ASTEROID, &_mainTextures[static_cast<int>(TextureType::TEX_SHIP)], velocity, acceleration) );
+        _gameObjects.push_back(GameObject::Create(pos, ObjectType::ASTEROID, &_mainTextures[static_cast<int>(TextureType::TEX_ASTEROID_MED_1)], velocity, acceleration) );
     }
 
 }
@@ -68,6 +93,7 @@ void AsteroidGame::renderObjects()
     for(auto const& obj: _gameObjects){
         obj->render(_prenderer);
     }
+    _pship->render(_prenderer);
 }
 
 bool AsteroidGame::loadTextures()
@@ -108,6 +134,7 @@ AsteroidGame::AsteroidGame()
         exit(0);
 
     initLevel();
+    initShip();
 }
 
 AsteroidGame::~AsteroidGame()

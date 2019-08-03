@@ -4,6 +4,7 @@
 #include <memory>
 #include "CTexture.h"
 #include "CVector.h"
+#include <vector>
 
 
 enum class ObjectType
@@ -26,11 +27,14 @@ class GameObject{
 
     protected:
 
+         void calculateRenderRectangles(int objPosX, int objPosY, int objWidth, int objHeight, int screenWidth, int screenHeight, 
+                                        std::vector<SDL_Rect> &srcRect, std::vector<SDL_Rect> &dstRect);
+
         Point _pos;
         CVector _velocity;
         CVector _acceleration;
         double _rotation;
-        Uint32 _lastUpdated{0};
+        Uint32 _lastUpdated;
         CTexture* _pTex;
 
 

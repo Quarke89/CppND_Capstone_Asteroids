@@ -53,7 +53,7 @@ class AsteroidGame{
 
         std::vector<GameObject*> _gameObjects;
 
-        std::unique_ptr<GameObject> _pship;
+        GameObject* _pship;
 
         
 

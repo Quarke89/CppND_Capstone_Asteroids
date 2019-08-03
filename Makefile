@@ -3,7 +3,7 @@
 #and may not be redistributed without written permission.
 
 #OBJS specifies which files to compile as part of the project
-OBJS = src/main.cpp src/AsteroidGame.cpp src/GameObject.cpp src/AsteroidObject.cpp src/CTexture.cpp src/CVector.cpp
+OBJS = src/main.cpp src/AsteroidGame.cpp src/GameObject.cpp src/AsteroidObject.cpp src/ShipObject.cpp src/CTexture.cpp src/CVector.cpp
 
 #CC specifies which compiler we're using
 CC = g++
