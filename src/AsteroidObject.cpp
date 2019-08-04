@@ -24,15 +24,15 @@ void AsteroidObject::render(SDL_Renderer* renderer)
         SDL_RenderCopyEx( renderer, _pTex->getTexture(), &srcRect[i], &dstRect[i], _rotation, nullptr, SDL_FLIP_NONE);
     }
 
-    _boundingBoxs = std::move(dstRect);
-    //renderBoxes(renderer);
+    _boundingBoxes = std::move(dstRect);
+    renderBoxes(renderer);
 
 }
 
 void AsteroidObject::renderBoxes(SDL_Renderer* renderer)
 {
     SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);  
-    for(const SDL_Rect& box: _boundingBoxs){
+    for(const SDL_Rect& box: _boundingBoxes){
         SDL_RenderDrawRect(renderer, &box);
     }
 }
@@ -59,8 +59,12 @@ void AsteroidObject::update(Uint32 updateTime)
     if(_pos.y < 0){
         _pos.y = AsteroidConstants::SCREEN_HEIGHT;
     }
-    //_rotation++;
 
     _lastUpdated = updateTime;
 
+}
+
+std::vector<SDL_Rect>& AsteroidObject::getBoundingBoxes()
+{
+    return _boundingBoxes;
 }

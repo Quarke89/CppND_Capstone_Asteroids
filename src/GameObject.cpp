@@ -1,21 +1,33 @@
 #include "GameObject.h"
 #include "AsteroidObject.h"
 #include "ShipObject.h"
+#include "LaserObject.h"
 
 
 GameObject::GameObject(Point pos, CTexture* pTex, CVector velocity, CVector acceleration)
     :_pos(pos), _pTex(pTex), _velocity(velocity), _acceleration(acceleration), _lastUpdated(0)
 {}
 
-GameObject* GameObject::Create(Point pos, ObjectType type, CTexture* tex, CVector velocity, CVector acceleration)
+GameObject* GameObject::Create(Point pos, ObjectType type, CTexture* tex, CVector velocity, CVector acceleration, double rotation)
 {
     switch(type){
         case ObjectType::ASTEROID: return new AsteroidObject(pos, tex, velocity, acceleration);
         case ObjectType::SHIP: return new ShipObject(pos, tex, velocity, acceleration);
+        case ObjectType::LASER: return new LaserObject(pos, tex, velocity, acceleration, rotation);
         default: 
             return nullptr;
 
     }
+}
+
+Point GameObject::getPos()
+{
+    return _pos;
+}
+
+double GameObject::getRotation()
+{
+    return _rotation;
 }
 
 void GameObject::render(SDL_Renderer* renderer)

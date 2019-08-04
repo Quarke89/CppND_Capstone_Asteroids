@@ -21,6 +21,7 @@ enum class TextureType
     TEX_ASTEROID_SMALL_2,
     TEX_ASTEROID_SMALL_3,
     TEX_SHIP,
+    TEX_LASER,
     TEX_TOTAL
 };
 
@@ -33,6 +34,8 @@ class AsteroidGame{
         bool init();
         void run();
         void cleanup();
+        
+        void handleInput(SDL_Event &e);
 
         bool loadTextures();
         std::string getTexturePath(TextureType type);
@@ -42,6 +45,12 @@ class AsteroidGame{
         
         void renderObjects();
         void updateObjects();
+
+        bool checkShipCollision();
+        bool checkCollision(const SDL_Rect &a, const SDL_Rect &b);
+
+        void createLaser();
+
         
     private:
 
@@ -51,9 +60,11 @@ class AsteroidGame{
 
         int _currentLevel;
 
-        std::vector<GameObject*> _gameObjects;
+        std::vector<GameObject*> _pAsteroids;
+        GameObject* _pShip;
+        std::vector<GameObject*> _pLasers;
 
-        GameObject* _pship;
+        bool _running;
 
         
 

@@ -1,36 +1,17 @@
 #include "AsteroidGame.h"
 #include "constants.h"
+#include "AsteroidObject.h"
+#include "ShipObject.h"
 #include <random>
 
 void AsteroidGame::run()
 {
-    bool quit = false;
     SDL_Event e;
     int frames = 0;
     double fps;
-    while(!quit){
+    while(_running){
 
-        while(SDL_PollEvent(&e) != 0){
-            if(e.type == SDL_QUIT){
-                quit = true;
-            }
-            else if(e.type == SDL_KEYDOWN)
-            {
-                switch (e.key.keysym.sym)
-                {
-                case SDLK_a:
-                    break;
-                
-                default:
-                    break;
-                }
-            }
-        }
-
-        // Uint32 ticks = SDL_GetTicks();
-        // fps = static_cast<double>(frames)/ticks * 1000;
-
-        // std::cout << fps << std::endl;
+        handleInput(e);
 
         //Clear screen
         SDL_SetRenderDrawColor( _prenderer, 0x00, 0x00, 0x00, 0xFF );
@@ -42,9 +23,145 @@ void AsteroidGame::run()
 
         //Update screen
         SDL_RenderPresent( _prenderer );
+
+        if(checkShipCollision())
+            _running = false;
+
+        // Uint32 ticks = SDL_GetTicks();
+        // fps = static_cast<double>(frames)/ticks * 1000;
+
+        // std::cout << fps << std::endl;
+
         ++frames;
     }
 
+}
+
+void AsteroidGame::createLaser()
+{
+
+    CTexture *pTex = &_mainTextures[static_cast<int>(TextureType::TEX_LASER)];
+    // Point laserPos = static_cast<ShipObject*>(_pShip)->getTipPos();
+    Point laserPos = _pShip->getPos();
+
+    CVector velocity{0,0,VectorType::POLAR};
+    CVector acceleration{0,0,VectorType::POLAR};
+
+    _pLasers.push_back(GameObject::Create(laserPos, ObjectType::LASER, pTex, velocity, acceleration, _pShip->getRotation()) );
+
+}
+
+void AsteroidGame::handleInput(SDL_Event &e)
+{
+
+    while(SDL_PollEvent(&e) != 0){
+        if(e.type == SDL_QUIT){
+            _running = false;
+        }
+        else if(e.type == SDL_KEYDOWN)
+        {
+            switch (e.key.keysym.sym)
+            {
+                case SDLK_a:
+                    static_cast<ShipObject*>(_pShip)->setRotateLeft(true);
+                    break;
+                case SDLK_d:
+                    static_cast<ShipObject*>(_pShip)->setRotateRight(true);
+                    break;
+                case SDLK_w:
+                    static_cast<ShipObject*>(_pShip)->setMoveForward(true);
+                    break;
+                case SDLK_s:
+                    static_cast<ShipObject*>(_pShip)->setMoveBackward(true);
+                    break;
+                default:
+                    break;
+            }
+        }
+        else if(e.type == SDL_KEYUP)
+        {
+            switch(e.key.keysym.sym)
+            {
+                case SDLK_a:
+                    static_cast<ShipObject*>(_pShip)->setRotateLeft(false);
+                    break;
+                case SDLK_d:
+                    static_cast<ShipObject*>(_pShip)->setRotateRight(false);
+                    break;
+                case SDLK_w:
+                    static_cast<ShipObject*>(_pShip)->setMoveForward(false);
+                    break;
+                case SDLK_s:
+                    static_cast<ShipObject*>(_pShip)->setMoveBackward(false);
+                    break;
+                case SDLK_SPACE:
+                    createLaser();
+                    break;
+                default:
+                    break;
+
+            }
+        }
+    }
+}
+
+bool AsteroidGame::checkShipCollision()
+{
+    const SDL_Rect &shipRect = static_cast<ShipObject*>(_pShip)->getBoundingBox();
+    
+    for(GameObject* const &asteroid: _pAsteroids){
+        const std::vector<SDL_Rect> &boxes = static_cast<AsteroidObject*>(asteroid)->getBoundingBoxes();
+        for(const SDL_Rect &box: boxes){
+            if(checkCollision(shipRect, box))
+                return true;
+        }
+    }
+    return false;
+}
+
+bool AsteroidGame::checkCollision(const SDL_Rect &a, const SDL_Rect &b)
+{
+    //The sides of the rectangles
+    int leftA, leftB;
+    int rightA, rightB;
+    int topA, topB;
+    int bottomA, bottomB;
+
+    //Calculate the sides of rect A
+    leftA = a.x;
+    rightA = a.x + a.w;
+    topA = a.y;
+    bottomA = a.y + a.h;
+
+    //Calculate the sides of rect B
+    leftB = b.x;
+    rightB = b.x + b.w;
+    topB = b.y;
+    bottomB = b.y + b.h;
+
+    //If any of the sides from A are outside of B
+    if( bottomA <= topB )
+    {
+        return false;
+    }
+
+    if( topA >= bottomB )
+    {
+        return false;
+    }
+
+    if( rightA <= leftB )
+    {
+        return false;
+    }
+
+    if( leftA >= rightB )
+    {
+        return false;
+    }
+
+    //If none of the sides from A are outside B
+    return true;
 }
 
 void AsteroidGame::initShip()
@@ -55,7 +172,7 @@ void AsteroidGame::initShip()
 
     CTexture* pTex = &_mainTextures[static_cast<int>(TextureType::TEX_SHIP)];
 
-    _pship = GameObject::Create(pos, ObjectType::SHIP, pTex, velocity, acceleration);
+    _pShip = GameObject::Create(pos, ObjectType::SHIP, pTex, velocity, acceleration);
 
 }
 
@@ -72,10 +189,10 @@ void AsteroidGame::initLevel()
 
     CTexture* pTex = &_mainTextures[static_cast<int>(TextureType::TEX_ASTEROID_MED_1)];
 
-    for(int i = 0; i < 10; i++){
+    for(int i = 0; i < 2; i++){
         CVector velocity{static_cast<double>(distVelocity(rd)), static_cast<double>(distAngle(rd)), VectorType::POLAR};
 
-        _gameObjects.push_back(GameObject::Create(pos, ObjectType::ASTEROID, &_mainTextures[static_cast<int>(TextureType::TEX_ASTEROID_MED_1)], velocity, acceleration) );
+        _pAsteroids.push_back(GameObject::Create(pos, ObjectType::ASTEROID, &_mainTextures[static_cast<int>(TextureType::TEX_ASTEROID_SMALL_1)], velocity, acceleration) );
     }
 
 }
@@ -83,17 +200,22 @@ void AsteroidGame::initLevel()
 void AsteroidGame::updateObjects()
 {
     Uint32 time = SDL_GetTicks();
-    for(auto& obj: _gameObjects){
+    for(auto& obj: _pAsteroids){
         obj->update(time);
     }
+    _pShip->update(time);
 }
 
 void AsteroidGame::renderObjects()
 {
-    for(auto const& obj: _gameObjects){
+    for(auto const& obj: _pAsteroids){
         obj->render(_prenderer);
     }
-    _pship->render(_prenderer);
+    for(auto const& laser: _pLasers){
+        laser->render(_prenderer);
+    }
+    _pShip->render(_prenderer);
+
 }
 
 bool AsteroidGame::loadTextures()
@@ -121,19 +243,21 @@ std::string AsteroidGame::getTexturePath(TextureType type)
         case TextureType::TEX_ASTEROID_SMALL_1: return "img/asteroid_small1.png";
         case TextureType::TEX_ASTEROID_SMALL_2: return "img/asteroid_small2.png";
         case TextureType::TEX_ASTEROID_SMALL_3: return "img/asteroid_small3.png";
+        case TextureType::TEX_LASER: return "img/laser.png";
         case TextureType::TEX_SHIP: return "img/ship.png";
         default: return "";
     }
 }
 
 AsteroidGame::AsteroidGame()
+    :_running(true)
 {
     if(!init())
         exit(0);
     if(!loadTextures())
         exit(0);
 
-    initLevel();
+    //initLevel();
     initShip();
 }
 
@@ -181,7 +305,8 @@ bool AsteroidGame::init()
 
 void AsteroidGame::cleanup()
 {
-    for(auto& obj: _gameObjects){
+    delete _pShip; 
+    for(auto& obj: _pAsteroids){
         delete obj;
     }
 

@@ -11,7 +11,8 @@ enum class ObjectType
 {
     BACKGROUND_IMG,
     ASTEROID,
-    SHIP
+    SHIP,
+    LASER
 };
 
 class GameObject{
@@ -23,7 +24,10 @@ class GameObject{
         virtual void render(SDL_Renderer* renderer);
         virtual void update(Uint32 updateTime){};
         
-        static GameObject* Create(Point pos, ObjectType type, CTexture* tex, CVector velocity, CVector acceleration);
+        static GameObject* Create(Point pos, ObjectType type, CTexture* tex, CVector velocity, CVector acceleration, double rotation=0);
+
+        Point getPos();
+        double getRotation();
 
     protected:
 

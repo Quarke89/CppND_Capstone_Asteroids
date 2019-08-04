@@ -3,6 +3,14 @@
 #include "GameObject.h"
 #include <vector>
 
+enum class ShipMovement
+{
+    MOVE_FORWARD,
+    MOVE_BACKWARD,
+    ROTATE_LEFT,
+    ROTATE_RIGHT
+};
+
 class ShipObject : public GameObject
 {
     public:
@@ -12,7 +20,23 @@ class ShipObject : public GameObject
         virtual void update(Uint32 updateTime);
         virtual void render(SDL_Renderer* renderer);
 
+        void setRotateLeft(bool val);
+        void setRotateRight(bool val);
+        void setMoveForward(bool val);
+        void setMoveBackward(bool val);
+
+        Point getTipPos();
+
+        SDL_Rect& getBoundingBox();
+
     private:
 
-        std::vector<SDL_Rect> _boundingBoxs;
+        int _width;
+        int _height;
+        SDL_Rect _boundingBox;
+        bool _rotateLeft;
+        bool _rotateRight;
+        bool _moveForward;
+        bool _moveBackward;
+        double _directionAngle;
 };
