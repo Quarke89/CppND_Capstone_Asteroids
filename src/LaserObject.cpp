@@ -54,3 +54,8 @@ void LaserObject::render(SDL_Renderer* renderer)
     _boundingBox = std::move(dstRect);
 
 }
+
+SDL_Rect& LaserObject::getBoundingBox()
+{
+    return _boundingBox;
+}

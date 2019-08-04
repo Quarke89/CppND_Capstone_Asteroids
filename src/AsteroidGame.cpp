@@ -28,6 +28,12 @@ void AsteroidGame::run()
         if(checkShipCollision())
             _running = false;
 
+        std::vector<int> asteroidCollisions = checkAsteroidCollision();
+        for(auto asteroidIdx: asteroidCollisions){
+            delete _asteroidHash[asteroidIdx];
+            _asteroidHash.erase(asteroidIdx);
+        }
+
         // Uint32 ticks = SDL_GetTicks();
         // fps = static_cast<double>(frames)/ticks * 1000;
 
@@ -118,14 +124,32 @@ bool AsteroidGame::checkShipCollision()
 {
     const SDL_Rect &shipRect = static_cast<ShipObject*>(_pShip)->getBoundingBox();
     
-    for(GameObject* const &asteroid: _pAsteroids){
-        const std::vector<SDL_Rect> &boxes = static_cast<AsteroidObject*>(asteroid)->getBoundingBoxes();
+    for(auto const &asteroid: _asteroidHash){
+        const std::vector<SDL_Rect> &boxes = static_cast<AsteroidObject*>(asteroid.second)->getBoundingBoxes();
         for(const SDL_Rect &box: boxes){
             if(checkCollision(shipRect, box))
                 return true;
         }
     }
     return false;
+}
+
+std::vector<int> AsteroidGame::checkAsteroidCollision()
+{
+    std::vector<int> result;
+
+    for(const auto &laser: _laserHash){
+        const SDL_Rect &laserRect = static_cast<LaserObject*>(laser.second)->getBoundingBox();
+        for(const auto &asteroid: _asteroidHash){
+            const std::vector<SDL_Rect> &boxes = static_cast<AsteroidObject*>(asteroid.second)->getBoundingBoxes();
+            for(const SDL_Rect &box: boxes){
+                if(checkCollision(laserRect, box))
+                    result.push_back(asteroid.first);
+            }
+
+        }
+    }
+    return result;
 }
 
 bool AsteroidGame::checkCollision(const SDL_Rect &a, const SDL_Rect &b)
@@ -193,15 +217,17 @@ void AsteroidGame::initLevel()
     std::uniform_int_distribution<> distAngle(0, 360);
     std::uniform_int_distribution<> distVelocity(100, 200);
 
-    Point pos{AsteroidConstants::SCREEN_WIDTH/2, AsteroidConstants::SCREEN_HEIGHT/2};
+    Point pos{0, 0};
     CVector acceleration{0,0,VectorType::POLAR};
 
-    CTexture* pTex = &_mainTextures[static_cast<int>(TextureType::TEX_ASTEROID_SMALL_1)];
+    CTexture* pTex = &_mainTextures[static_cast<int>(TextureType::TEX_ASTEROID_MED_1)];
 
     for(int i = 0; i < 2; i++){
-        CVector velocity{static_cast<double>(distVelocity(rd)), static_cast<double>(distAngle(rd)), VectorType::POLAR};
+        double angle = static_cast<double>(distAngle(rd));
+        CVector velocity{static_cast<double>(distVelocity(rd)), angle, VectorType::POLAR};
 
-        _pAsteroids.push_back(GameObject::Create(pos, ObjectType::ASTEROID, pTex, velocity, acceleration, SDL_GetTicks()) );
+        GameObject *pAsteroid = GameObject::Create(pos, ObjectType::ASTEROID, pTex, velocity, acceleration, SDL_GetTicks());
+        _asteroidHash.insert(std::make_pair(pAsteroid->getID(), pAsteroid));
     }
 
 }
@@ -209,8 +235,8 @@ void AsteroidGame::initLevel()
 void AsteroidGame::updateObjects()
 {
     Uint32 time = SDL_GetTicks();
-    for(auto& obj: _pAsteroids){
-        obj->update(time);
+    for(auto& asteroid: _asteroidHash){
+        asteroid.second->update(time);
     }
     for(auto& laser: _laserHash){
         laser.second->update(time);
@@ -223,14 +249,12 @@ void AsteroidGame::updateObjects()
     }
     _pShip->update(time);
 
-    std::cout << "Total Lasers: " << _laserHash.size() << std::endl;
-
 }
 
 void AsteroidGame::renderObjects()
 {
-    for(auto const& obj: _pAsteroids){
-        obj->render(_prenderer);
+    for(auto const& asteroid: _asteroidHash){
+        asteroid.second->render(_prenderer);
     }
     for(auto const& laser: _laserHash){
         laser.second->render(_prenderer);
@@ -278,7 +302,7 @@ AsteroidGame::AsteroidGame()
     if(!loadTextures())
         exit(0);
 
-    //initLevel();
+    initLevel();
     initShip();
 }
 
@@ -332,8 +356,8 @@ void AsteroidGame::cleanup()
         delete laser.second;
     }
 
-    for(auto& obj: _pAsteroids){
-        delete obj;
+    for(auto& asteroid: _asteroidHash){
+        delete asteroid.second;
     }
 
     for(auto& tex: _mainTextures){

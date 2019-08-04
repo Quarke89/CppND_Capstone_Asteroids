@@ -9,6 +9,7 @@
 #include "GameObject.h"
 #include <unordered_map>
 #include <utility>
+#include <vector>
 
 enum class TextureType
 {
@@ -49,6 +50,7 @@ class AsteroidGame{
         void updateObjects();
 
         bool checkShipCollision();
+        std::vector<int> checkAsteroidCollision();
         bool checkCollision(const SDL_Rect &a, const SDL_Rect &b);
 
         void createLaser();
@@ -62,10 +64,10 @@ class AsteroidGame{
 
         int _currentLevel;
 
-        std::vector<GameObject*> _pAsteroids;
         GameObject* _pShip;
 
         std::unordered_map<int, GameObject*> _laserHash;
+        std::unordered_map<int, GameObject*> _asteroidHash;
 
         bool _running;
 
