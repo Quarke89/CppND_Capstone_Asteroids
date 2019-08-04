@@ -4,9 +4,9 @@
 LaserObject::LaserObject(Point pos, CTexture* tex, CVector velocity, CVector acceleration, Uint32 updateTime, double rotation)
     : GameObject(pos, tex, velocity, acceleration, updateTime)
 {
-    std::cout << "Laser ID: " << _id << "\n";
-    std::cout << "Position (" << pos.x << ", " << pos.y << ")\n";
-    std::cout << "New laser velocity: " <<  velocity << std::endl;
+    // std::cout << "Laser ID: " << _id << "\n";
+    // std::cout << "Position (" << pos.x << ", " << pos.y << ")\n";
+    // std::cout << "New laser velocity: " <<  velocity << std::endl;
 
     _rotation = rotation;
     _width = _pTex->getWidth()/20;
@@ -22,6 +22,16 @@ void LaserObject::update(Uint32 updateTime)
     _pos.y += _velocity.getYProjection() * timeDelta;
 
     _lastUpdated = updateTime;
+
+}
+
+bool LaserObject::checkOffscreen()
+{
+    if(_pos.x < -AsteroidConstants::OFFSCREEN_BOUNDARY || _pos.x > AsteroidConstants::SCREEN_WIDTH + AsteroidConstants::OFFSCREEN_BOUNDARY)
+        return true;
+    if(_pos.y < -AsteroidConstants::OFFSCREEN_BOUNDARY || _pos.y > AsteroidConstants::SCREEN_HEIGHT + AsteroidConstants::OFFSCREEN_BOUNDARY)
+        return true;
+    return false;
 }
 
 void LaserObject::render(SDL_Renderer* renderer)

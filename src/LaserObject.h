@@ -14,6 +14,8 @@ class LaserObject : public GameObject
 
         SDL_Rect& getBoundingBox();
 
+        bool checkOffscreen();
+
     private:
 
         int _width;

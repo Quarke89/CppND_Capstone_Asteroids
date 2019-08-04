@@ -22,6 +22,11 @@ GameObject* GameObject::Create(Point pos, ObjectType type, CTexture* tex, CVecto
     }
 }
 
+int GameObject::getID()
+{
+    return _id;
+}
+
 Point GameObject::getPos()
 {
     return _pos;

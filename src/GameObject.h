@@ -28,6 +28,7 @@ class GameObject{
 
         Point getPos();
         double getRotation();
+        int getID();
 
     protected:
 

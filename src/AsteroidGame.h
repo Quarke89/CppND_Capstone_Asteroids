@@ -7,6 +7,8 @@
 #include <memory>
 #include <vector>
 #include "GameObject.h"
+#include <unordered_map>
+#include <utility>
 
 enum class TextureType
 {
@@ -62,7 +64,8 @@ class AsteroidGame{
 
         std::vector<GameObject*> _pAsteroids;
         GameObject* _pShip;
-        std::vector<GameObject*> _pLasers;
+
+        std::unordered_map<int, GameObject*> _laserHash;
 
         bool _running;
 

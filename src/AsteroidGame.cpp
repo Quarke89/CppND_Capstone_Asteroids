@@ -2,6 +2,7 @@
 #include "constants.h"
 #include "AsteroidObject.h"
 #include "ShipObject.h"
+#include "LaserObject.h"
 #include <random>
 
 void AsteroidGame::run()
@@ -47,12 +48,15 @@ void AsteroidGame::createLaser()
     double angle = _pShip->getRotation();
     double velocityAngle = angle - 90;
 
-    std::cout << "Ship position: (" << laserPos.x << ", " << laserPos.y << ")" << std::endl;
+    // std::cout << "Ship position: (" << laserPos.x << ", " << laserPos.y << ")" << std::endl;
 
     CVector velocity{500, velocityAngle ,VectorType::POLAR};
     CVector acceleration{0,0,VectorType::POLAR};
 
-    _pLasers.push_back(GameObject::Create(laserPos, ObjectType::LASER, pTex, velocity, acceleration, SDL_GetTicks(), angle) );
+    GameObject *pLaser = GameObject::Create(laserPos, ObjectType::LASER, pTex, velocity, acceleration, SDL_GetTicks(), angle);
+    _laserHash.insert(std::make_pair(pLaser->getID(), pLaser));
+
+    // _pLasers.push_back(GameObject::Create(laserPos, ObjectType::LASER, pTex, velocity, acceleration, SDL_GetTicks(), angle) );
 
 }
 
@@ -208,10 +212,19 @@ void AsteroidGame::updateObjects()
     for(auto& obj: _pAsteroids){
         obj->update(time);
     }
-    for(auto& laser: _pLasers){
-        laser->update(time);
+    for(auto& laser: _laserHash){
+        laser.second->update(time);
+    }
+    for(auto& laser: _laserHash){
+        if(static_cast<LaserObject*>(laser.second)->checkOffscreen()){
+            delete laser.second;
+            _laserHash.erase(laser.first);
+        }
     }
     _pShip->update(time);
+
+    std::cout << "Total Lasers: " << _laserHash.size() << std::endl;
+
 }
 
 void AsteroidGame::renderObjects()
@@ -219,8 +232,8 @@ void AsteroidGame::renderObjects()
     for(auto const& obj: _pAsteroids){
         obj->render(_prenderer);
     }
-    for(auto const& laser: _pLasers){
-        laser->render(_prenderer);
+    for(auto const& laser: _laserHash){
+        laser.second->render(_prenderer);
     }
     _pShip->render(_prenderer);
 
@@ -314,6 +327,11 @@ bool AsteroidGame::init()
 void AsteroidGame::cleanup()
 {
     delete _pShip; 
+
+    for(auto& laser: _laserHash){
+        delete laser.second;
+    }
+
     for(auto& obj: _pAsteroids){
         delete obj;
     }
