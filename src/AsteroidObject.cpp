@@ -2,8 +2,8 @@
 #include "constants.h"
 #include <cmath>
 
-AsteroidObject::AsteroidObject(Point pos, CTexture* tex, CVector velocity, CVector acceleration)
-    : GameObject(pos, tex, velocity, acceleration)
+AsteroidObject::AsteroidObject(Point pos, CTexture* tex, CVector velocity, CVector acceleration, Uint32 updateTime)
+    : GameObject(pos, tex, velocity, acceleration, updateTime)
 {
 }
 
@@ -25,7 +25,7 @@ void AsteroidObject::render(SDL_Renderer* renderer)
     }
 
     _boundingBoxes = std::move(dstRect);
-    renderBoxes(renderer);
+    // renderBoxes(renderer);
 
 }
 

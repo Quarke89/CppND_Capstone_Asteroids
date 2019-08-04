@@ -4,19 +4,21 @@
 #include "LaserObject.h"
 
 
-GameObject::GameObject(Point pos, CTexture* pTex, CVector velocity, CVector acceleration)
-    :_pos(pos), _pTex(pTex), _velocity(velocity), _acceleration(acceleration), _lastUpdated(0)
-{}
+int GameObject::_count = 0;
 
-GameObject* GameObject::Create(Point pos, ObjectType type, CTexture* tex, CVector velocity, CVector acceleration, double rotation)
+GameObject::GameObject(Point pos, CTexture* pTex, CVector velocity, CVector acceleration, Uint32 updateTime)
+    :_pos(pos), _pTex(pTex), _velocity(velocity), _acceleration(acceleration), _id(++_count), _lastUpdated(updateTime)
+{
+}
+
+GameObject* GameObject::Create(Point pos, ObjectType type, CTexture* tex, CVector velocity, CVector acceleration, Uint32 updateTime, double rotation)
 {
     switch(type){
-        case ObjectType::ASTEROID: return new AsteroidObject(pos, tex, velocity, acceleration);
-        case ObjectType::SHIP: return new ShipObject(pos, tex, velocity, acceleration);
-        case ObjectType::LASER: return new LaserObject(pos, tex, velocity, acceleration, rotation);
+        case ObjectType::ASTEROID: return new AsteroidObject(pos, tex, velocity, acceleration, updateTime);
+        case ObjectType::SHIP: return new ShipObject(pos, tex, velocity, acceleration, updateTime);
+        case ObjectType::LASER: return new LaserObject(pos, tex, velocity, acceleration, updateTime, rotation);
         default: 
             return nullptr;
-
     }
 }
 

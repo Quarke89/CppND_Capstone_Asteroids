@@ -1,8 +1,8 @@
 #include "ShipObject.h"
 #include "constants.h"
 
-ShipObject::ShipObject(Point pos, CTexture* tex, CVector velocity, CVector acceleration)
-    : GameObject(pos, tex, velocity, acceleration), _rotateLeft(false), _rotateRight(false), _directionAngle(-90)
+ShipObject::ShipObject(Point pos, CTexture* tex, CVector velocity, CVector acceleration, Uint32 updateTime)
+    : GameObject(pos, tex, velocity, acceleration, updateTime), _rotateLeft(false), _rotateRight(false), _directionAngle(-90)
 {
     _width = _pTex->getWidth()/1.5;
     _height = _pTex->getHeight()/1.5;
@@ -56,8 +56,8 @@ void ShipObject::render(SDL_Renderer* renderer)
 
     SDL_RenderCopyEx( renderer, _pTex->getTexture(), nullptr, &dstRect, _rotation, nullptr, SDL_FLIP_NONE);
 
-    SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);  
-    SDL_RenderDrawRect(renderer, &dstRect);
+    // SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);  
+    // SDL_RenderDrawRect(renderer, &dstRect);
 
     _boundingBox = std::move(dstRect);
 

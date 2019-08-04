@@ -8,7 +8,7 @@ class AsteroidObject : public GameObject
 {
 
     public:
-        AsteroidObject(Point pos, CTexture* tex, CVector velocity, CVector acceleration);
+        AsteroidObject(Point pos, CTexture* tex, CVector velocity, CVector acceleration, Uint32 updateTime);
 
         virtual void update(Uint32 updateTime);
         virtual void render(SDL_Renderer* renderer);

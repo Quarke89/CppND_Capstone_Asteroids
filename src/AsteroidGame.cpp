@@ -45,11 +45,14 @@ void AsteroidGame::createLaser()
     Point laserPos = _pShip->getPos();
 
     double angle = _pShip->getRotation();
+    double velocityAngle = angle - 90;
 
-    CVector velocity{10, angle,VectorType::POLAR};
+    std::cout << "Ship position: (" << laserPos.x << ", " << laserPos.y << ")" << std::endl;
+
+    CVector velocity{500, velocityAngle ,VectorType::POLAR};
     CVector acceleration{0,0,VectorType::POLAR};
 
-    _pLasers.push_back(GameObject::Create(laserPos, ObjectType::LASER, pTex, velocity, acceleration, angle) );
+    _pLasers.push_back(GameObject::Create(laserPos, ObjectType::LASER, pTex, velocity, acceleration, SDL_GetTicks(), angle) );
 
 }
 
@@ -174,7 +177,7 @@ void AsteroidGame::initShip()
 
     CTexture* pTex = &_mainTextures[static_cast<int>(TextureType::TEX_SHIP)];
 
-    _pShip = GameObject::Create(pos, ObjectType::SHIP, pTex, velocity, acceleration);
+    _pShip = GameObject::Create(pos, ObjectType::SHIP, pTex, velocity, acceleration, SDL_GetTicks());
 
 }
 
@@ -189,12 +192,12 @@ void AsteroidGame::initLevel()
     Point pos{AsteroidConstants::SCREEN_WIDTH/2, AsteroidConstants::SCREEN_HEIGHT/2};
     CVector acceleration{0,0,VectorType::POLAR};
 
-    CTexture* pTex = &_mainTextures[static_cast<int>(TextureType::TEX_ASTEROID_MED_1)];
+    CTexture* pTex = &_mainTextures[static_cast<int>(TextureType::TEX_ASTEROID_SMALL_1)];
 
     for(int i = 0; i < 2; i++){
         CVector velocity{static_cast<double>(distVelocity(rd)), static_cast<double>(distAngle(rd)), VectorType::POLAR};
 
-        _pAsteroids.push_back(GameObject::Create(pos, ObjectType::ASTEROID, &_mainTextures[static_cast<int>(TextureType::TEX_ASTEROID_SMALL_1)], velocity, acceleration) );
+        _pAsteroids.push_back(GameObject::Create(pos, ObjectType::ASTEROID, pTex, velocity, acceleration, SDL_GetTicks()) );
     }
 
 }

@@ -15,7 +15,7 @@ class ShipObject : public GameObject
 {
     public:
 
-        ShipObject(Point pos, CTexture* tex, CVector velocity, CVector acceleration);
+        ShipObject(Point pos, CTexture* tex, CVector velocity, CVector acceleration, Uint32 updateTime);
 
         virtual void update(Uint32 updateTime);
         virtual void render(SDL_Renderer* renderer);

@@ -7,7 +7,7 @@ class LaserObject : public GameObject
 {
     public:
 
-        LaserObject(Point pos, CTexture* tex, CVector velocity, CVector acceleration, double rotation);
+        LaserObject(Point pos, CTexture* tex, CVector velocity, CVector acceleration, Uint32 updateTime, double rotation) ;
 
         virtual void update(Uint32 updateTime);
         virtual void render(SDL_Renderer* renderer);
