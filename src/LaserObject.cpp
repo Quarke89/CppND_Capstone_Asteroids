@@ -6,7 +6,7 @@ LaserObject::LaserObject(Point pos, CTexture* tex, CVector velocity, CVector acc
 {
     _rotation = rotation;
     _width = _pTex->getWidth()/20;
-    _height = _pTex->getHeight()/20;
+    _height = _pTex->getHeight()/24;
 }
 
 void LaserObject::update(Uint32 updateTime)
@@ -27,7 +27,6 @@ void LaserObject::render(SDL_Renderer* renderer)
 
     int left = xPosCenter - _width/2;
     int top = yPosCenter - _height/2;
-
 
     SDL_Rect dstRect{left, top, _width, _height};
 

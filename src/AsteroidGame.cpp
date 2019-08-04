@@ -44,10 +44,12 @@ void AsteroidGame::createLaser()
     // Point laserPos = static_cast<ShipObject*>(_pShip)->getTipPos();
     Point laserPos = _pShip->getPos();
 
-    CVector velocity{0,0,VectorType::POLAR};
+    double angle = _pShip->getRotation();
+
+    CVector velocity{10, angle,VectorType::POLAR};
     CVector acceleration{0,0,VectorType::POLAR};
 
-    _pLasers.push_back(GameObject::Create(laserPos, ObjectType::LASER, pTex, velocity, acceleration, _pShip->getRotation()) );
+    _pLasers.push_back(GameObject::Create(laserPos, ObjectType::LASER, pTex, velocity, acceleration, angle) );
 
 }
 
@@ -202,6 +204,9 @@ void AsteroidGame::updateObjects()
     Uint32 time = SDL_GetTicks();
     for(auto& obj: _pAsteroids){
         obj->update(time);
+    }
+    for(auto& laser: _pLasers){
+        laser->update(time);
     }
     _pShip->update(time);
 }
