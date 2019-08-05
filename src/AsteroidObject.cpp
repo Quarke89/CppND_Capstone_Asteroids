@@ -19,6 +19,49 @@ TextureType AsteroidObject::getTexType()
     return _texType;
 }
 
+AsteroidSize AsteroidObject::getSize()
+{
+    return _asteroidSize;
+}
+AsteroidSize AsteroidObject::getNextSize()
+{
+    if(_asteroidSize == AsteroidSize::BIG) return AsteroidSize::MED;
+    return AsteroidSize::SMALL;
+}
+
+AsteroidColor AsteroidObject::getNextColor(AsteroidColor color)
+{
+    switch(color){
+        case AsteroidColor::GREY:   return AsteroidColor::RED;
+        case AsteroidColor::RED:   return AsteroidColor::BROWN;
+        case AsteroidColor::BROWN:   return AsteroidColor::GREY;
+    }
+}
+
+TextureType AsteroidObject::getAsteroidTexture(AsteroidSize size, AsteroidColor color)
+{
+    switch(size){
+        case AsteroidSize::BIG:
+            switch(color){
+                case AsteroidColor::GREY:   return TextureType::TEX_ASTEROID_BIG_1;
+                case AsteroidColor::RED:    return TextureType::TEX_ASTEROID_BIG_2;
+                case AsteroidColor::BROWN:  return TextureType::TEX_ASTEROID_BIG_3;
+            }
+        case AsteroidSize::MED:
+            switch(color){
+                case AsteroidColor::GREY:   return TextureType::TEX_ASTEROID_MED_1;
+                case AsteroidColor::RED:    return TextureType::TEX_ASTEROID_MED_2;
+                case AsteroidColor::BROWN:  return TextureType::TEX_ASTEROID_MED_3;
+            }
+        case AsteroidSize::SMALL:
+            switch(color){
+                case AsteroidColor::GREY:   return TextureType::TEX_ASTEROID_SMALL_1;
+                case AsteroidColor::RED:    return TextureType::TEX_ASTEROID_SMALL_2;
+                case AsteroidColor::BROWN:  return TextureType::TEX_ASTEROID_SMALL_3;
+            }
+    }
+}
+
 AsteroidType AsteroidObject::texture2asteroid(TextureType type)
 {
     switch(type)

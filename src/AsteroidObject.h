@@ -10,6 +10,19 @@ enum class AsteroidType
     SMALL
 };
 
+enum class AsteroidSize
+{
+    BIG,
+    MED,
+    SMALL
+};
+enum class AsteroidColor
+{
+    GREY,
+    RED,
+    BROWN
+};
+
 class AsteroidObject : public GameObject
 {
 
@@ -24,9 +37,17 @@ class AsteroidObject : public GameObject
         AsteroidType getType();
         TextureType getTexType();
 
+        AsteroidSize getSize();
+        AsteroidSize getNextSize();
+        static AsteroidColor getNextColor(AsteroidColor color);
+        static TextureType getAsteroidTexture(AsteroidSize size, AsteroidColor color);
+
     private:
         
         void renderBoxes(SDL_Renderer* renderer);
+
+        AsteroidSize _asteroidSize;
+        AsteroidColor _asteroidColor;
         
         AsteroidType _type;
         TextureType _texType;

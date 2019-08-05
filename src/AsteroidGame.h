@@ -68,6 +68,8 @@ class AsteroidGame{
         bool _running;
         int _currentLevel;
 
+        AsteroidColor _currentColor;
+
         MenuMain _mainmenu;
 
 };
