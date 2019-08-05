@@ -42,4 +42,9 @@ namespace AsteroidConstants
     constexpr int FONTSIZE_MENU{32};
     constexpr int FONTSIZE_TEXT{24};
 
+    constexpr double SCALE_SHIP_W{1.5};
+    constexpr double SCALE_SHIP_H{1.5};
+    constexpr double SCALE_LASER_W{20};
+    constexpr double SCALE_LASER_H{24};
+
 } 

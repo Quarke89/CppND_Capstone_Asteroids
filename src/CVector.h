@@ -10,6 +10,7 @@ enum class VectorType
 class CVector
 {
     public:
+        CVector();
         CVector(double mag, double angle, VectorType type);
         void calculateProjection();
         void calculatePolar();

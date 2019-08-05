@@ -9,7 +9,7 @@
 
 enum class ObjectType
 {
-    BACKGROUND_IMG,
+    STATIC,
     ASTEROID,
     SHIP,
     LASER
@@ -19,33 +19,34 @@ class GameObject{
 
     public:
 
-        GameObject(Point pos, CTexture* pTex, CVector velocity, CVector acceleration, Uint32 updateTime);
+        GameObject(Point pos, CTexture* pTex);
+        GameObject(Point pos, CTexture* pTex, CVector velocity);
+        GameObject(Point pos, CTexture* pTex, CVector velocity, double rotation);
 
         virtual void render(SDL_Renderer* renderer);
         virtual void update(Uint32 updateTime){};
         
-        static GameObject* Create(Point pos, ObjectType type, CTexture* tex, CVector velocity, CVector acceleration,  Uint32 updateTime, double rotation=0);
+        static GameObject* Create(ObjectType type, Point pos, CTexture* tex, CVector velocity, double rotation=0);
 
         Point getPos();
+        CVector getVelocity();
         double getRotation();
         int getID();
-        CVector getVelocity();
-
+        
     protected:
 
          void calculateRenderRectangles(int objPosX, int objPosY, int objWidth, int objHeight, int screenWidth, int screenHeight, 
                                         std::vector<SDL_Rect> &srcRect, std::vector<SDL_Rect> &dstRect);
 
         Point _pos;
-        CVector _velocity;
-        CVector _acceleration;
-        double _rotation;
-        Uint32 _lastUpdated;
         CTexture* _pTex;
+
+        CVector _velocity;
+        double _rotation;
+
+        Uint32 _lastUpdated;
+                        
         int _id;
-
         static int _count;
-
-
 };
 

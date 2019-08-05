@@ -2,8 +2,8 @@
 #include "constants.h"
 #include <cmath>
 
-AsteroidObject::AsteroidObject(Point pos, CTexture* tex, CVector velocity, CVector acceleration, Uint32 updateTime)
-    : GameObject(pos, tex, velocity, acceleration, updateTime)
+AsteroidObject::AsteroidObject(Point pos, CTexture* tex, CVector velocity)
+    : GameObject(pos, tex, velocity)
 {
     _type = texture2asteroid(tex->getType());
     _texType = tex->getType();

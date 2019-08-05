@@ -1,11 +1,11 @@
 #include "ShipObject.h"
 #include "constants.h"
 
-ShipObject::ShipObject(Point pos, CTexture* tex, CVector velocity, CVector acceleration, Uint32 updateTime)
-    : GameObject(pos, tex, velocity, acceleration, updateTime), _rotateLeft(false), _rotateRight(false), _directionAngle(-90)
+ShipObject::ShipObject(Point pos, CTexture* tex, CVector velocity)
+    : GameObject(pos, tex, velocity), _rotateLeft(false), _rotateRight(false)
 {
-    _width = _pTex->getWidth()/1.5;
-    _height = _pTex->getHeight()/1.5;
+    _width = _pTex->getWidth()/AsteroidConstants::SCALE_SHIP_W;
+    _height = _pTex->getHeight()/AsteroidConstants::SCALE_SHIP_H;
 }
 
 void ShipObject::update(Uint32 updateTime)
@@ -13,10 +13,10 @@ void ShipObject::update(Uint32 updateTime)
 
     if(_moveForward || _moveBackward){
         if(_moveForward){
-            _velocity = CVector(150, _directionAngle, VectorType::POLAR);
+            _velocity = CVector(150, _rotation-90, VectorType::POLAR);
         }
         else{
-            _velocity = CVector(-150, _directionAngle, VectorType::POLAR);
+            _velocity = CVector(-150, _rotation-90, VectorType::POLAR);
         }
     }
     else{
@@ -26,13 +26,12 @@ void ShipObject::update(Uint32 updateTime)
     if(_rotateLeft ^ _rotateRight){
         if(_rotateLeft){
             _rotation -= 5;
-            _directionAngle -= 5;
         }
         else{
             _rotation += 5;
-            _directionAngle += 5;
         }
-
+        if(_rotation < 0) _rotation += 360;
+        if(_rotation >= 360) _rotation -= 360;
     }
 
     double timeDelta = static_cast<double>(updateTime - _lastUpdated)/1000;

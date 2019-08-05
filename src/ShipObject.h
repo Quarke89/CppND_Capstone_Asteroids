@@ -15,7 +15,7 @@ class ShipObject : public GameObject
 {
     public:
 
-        ShipObject(Point pos, CTexture* tex, CVector velocity, CVector acceleration, Uint32 updateTime);
+        ShipObject(Point pos, CTexture* tex, CVector velocity);
 
         virtual void update(Uint32 updateTime);
         virtual void render(SDL_Renderer* renderer);
@@ -36,5 +36,4 @@ class ShipObject : public GameObject
         bool _rotateRight;
         bool _moveForward;
         bool _moveBackward;
-        double _directionAngle;
 };

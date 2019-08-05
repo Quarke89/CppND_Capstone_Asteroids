@@ -2,6 +2,9 @@
 #include "constants.h"
 #include <cmath>
 
+CVector::CVector()
+    :CVector(0,0,VectorType::POLAR)
+{}
 
 CVector::CVector(double a1, double a2, VectorType type)
 {

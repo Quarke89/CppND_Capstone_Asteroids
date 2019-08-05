@@ -4,15 +4,18 @@
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
 #include <iostream>
-#include "CTexture.h"
 #include <memory>
 #include <vector>
-#include "GameObject.h"
 #include <unordered_map>
 #include <utility>
 #include <vector>
+
+#include "CTexture.h"
+#include "GameObject.h"
 #include "AsteroidObject.h"
 #include "constants.h"
+
+#include "MenuMain.h"
 
 
 class AsteroidGame{
@@ -57,12 +60,14 @@ class AsteroidGame{
         std::vector<CTexture> _mainTextures;
         std::vector<TTF_Font*> _mainFonts;
         
-        GameObject* _pShip;
+        GameObject* _pShip{nullptr};
 
         std::unordered_map<int, GameObject*> _laserHash;
         std::unordered_map<int, GameObject*> _asteroidHash;
 
         bool _running;
         int _currentLevel;
+
+        MenuMain _mainmenu;
 
 };

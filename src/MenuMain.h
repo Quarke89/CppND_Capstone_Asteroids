@@ -9,25 +9,18 @@
 class MenuMain
 {
     public:
-        MenuMain(std::vector<TTF_Font*> &mainFonts);
+        MenuMain();
         ~MenuMain();
 
-        void free();
+        void init(SDL_Renderer* renderer, std::vector<TTF_Font*> &mainFonts);
+        void run();        
 
     private:
 
+        SDL_Renderer* _prenderer;
         CTexture _textTitle;
         CTexture _textPlay;
         CTexture _textQuit;
 
 };
 
-MenuMain::MenuMain(std::vector<TTF_Font*> &mainFonts)
-{
-
-}
-
-MenuMain::~MenuMain()
-{
-    free();
-}

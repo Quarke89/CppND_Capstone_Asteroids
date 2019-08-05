@@ -6,17 +6,25 @@
 
 int GameObject::_count = 0;
 
-GameObject::GameObject(Point pos, CTexture* pTex, CVector velocity, CVector acceleration, Uint32 updateTime)
-    :_pos(pos), _pTex(pTex), _velocity(velocity), _acceleration(acceleration), _id(++_count), _lastUpdated(updateTime), _rotation(0)
-{
-}
+GameObject::GameObject(Point pos, CTexture* pTex)
+    : GameObject(pos, pTex, CVector())
+{}
 
-GameObject* GameObject::Create(Point pos, ObjectType type, CTexture* tex, CVector velocity, CVector acceleration, Uint32 updateTime, double rotation)
+
+GameObject::GameObject(Point pos, CTexture* pTex, CVector velocity)
+    : GameObject(pos, pTex, velocity, 0)
+{}
+
+GameObject::GameObject(Point pos, CTexture* pTex, CVector velocity, double rotation)
+    : _pos(pos), _pTex(pTex), _velocity(velocity), _lastUpdated(SDL_GetTicks()), _id(++_count), _rotation(rotation)
+{}
+
+GameObject* GameObject::Create(ObjectType type, Point pos, CTexture* tex, CVector velocity, double rotation)
 {
     switch(type){
-        case ObjectType::ASTEROID: return new AsteroidObject(pos, tex, velocity, acceleration, updateTime);
-        case ObjectType::SHIP: return new ShipObject(pos, tex, velocity, acceleration, updateTime);
-        case ObjectType::LASER: return new LaserObject(pos, tex, velocity, acceleration, updateTime, rotation);
+        case ObjectType::ASTEROID:  return new AsteroidObject(pos, tex, velocity);
+        case ObjectType::SHIP:      return new ShipObject(pos, tex, velocity);
+        case ObjectType::LASER:     return new LaserObject(pos, tex, velocity, rotation);
         default: 
             return nullptr;
     }

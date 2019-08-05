@@ -1,16 +1,11 @@
 #include "LaserObject.h"
 #include "constants.h"
 
-LaserObject::LaserObject(Point pos, CTexture* tex, CVector velocity, CVector acceleration, Uint32 updateTime, double rotation)
-    : GameObject(pos, tex, velocity, acceleration, updateTime)
+LaserObject::LaserObject(Point pos, CTexture* tex, CVector velocity, double rotation)
+    : GameObject(pos, tex, velocity, rotation)
 {
-    // std::cout << "Laser ID: " << _id << "\n";
-    // std::cout << "Position (" << pos.x << ", " << pos.y << ")\n";
-    // std::cout << "New laser velocity: " <<  velocity << std::endl;
-
-    _rotation = rotation;
-    _width = _pTex->getWidth()/20;
-    _height = _pTex->getHeight()/24;
+    _width = _pTex->getWidth()/AsteroidConstants::SCALE_LASER_W;
+    _height = _pTex->getHeight()/AsteroidConstants::SCALE_LASER_H;
 }
 
 void LaserObject::update(Uint32 updateTime)
@@ -43,8 +38,6 @@ void LaserObject::render(SDL_Renderer* renderer)
     int top = yPosCenter - _height/2;
 
     SDL_Rect dstRect{left, top, _width, _height};
-
-    //std::cout << "Laser position: (" << left << ", " << top << ")" << std::endl;
 
     SDL_RenderCopyEx( renderer, _pTex->getTexture(), nullptr, &dstRect, _rotation, nullptr, SDL_FLIP_NONE);
 

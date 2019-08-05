@@ -7,6 +7,7 @@
 
 void AsteroidGame::run()
 {
+    // _mainmenu.run();
     SDL_Event e;
     int frames = 0;
     double fps;
@@ -164,9 +165,8 @@ void AsteroidGame::createLaser(Point pos, CVector velocity)
 
     CTexture *pTex = &_mainTextures[static_cast<int>(TextureType::TEX_LASER)];
 
-    CVector acceleration{0,0,VectorType::POLAR};
-
-    GameObject *pLaser = GameObject::Create(pos, ObjectType::LASER, pTex, velocity, acceleration, SDL_GetTicks(), velocity.getAngle() + 90);
+    GameObject *pLaser = GameObject::Create(ObjectType::LASER, pos, pTex, velocity, velocity.getAngle() + 90);
+    
     _laserHash.insert(std::make_pair(pLaser->getID(), pLaser));
 
 }
@@ -199,9 +199,7 @@ void AsteroidGame::splitAsteroid(AsteroidObject* asteroid)
 void AsteroidGame::createAsteroid(Point pos, CVector velocity, CTexture* pTex)
 {
 
-    CVector acceleration{0,0,VectorType::POLAR};
-
-    GameObject *pAsteroid = GameObject::Create(pos, ObjectType::ASTEROID, pTex, velocity, acceleration, SDL_GetTicks());
+    GameObject *pAsteroid = GameObject::Create(ObjectType::ASTEROID, pos, pTex, velocity);
     _asteroidHash.insert(std::make_pair(pAsteroid->getID(), pAsteroid));
 }
 
@@ -254,11 +252,10 @@ void AsteroidGame::initShip()
 {
     Point pos{AsteroidConstants::SCREEN_WIDTH/2, AsteroidConstants::SCREEN_HEIGHT/2};
     CVector velocity{0,0,VectorType::POLAR};
-    CVector acceleration{0,0,VectorType::POLAR};
 
     CTexture* pTex = &_mainTextures[static_cast<int>(TextureType::TEX_SHIP)];
 
-    _pShip = GameObject::Create(pos, ObjectType::SHIP, pTex, velocity, acceleration, SDL_GetTicks());
+    _pShip = GameObject::Create(ObjectType::SHIP, pos, pTex, velocity);
 
 }
 
@@ -274,7 +271,7 @@ void AsteroidGame::initLevel()
 
     CTexture* pTex = &_mainTextures[static_cast<int>(TextureType::TEX_ASTEROID_BIG_1)];
 
-    for(int i = 0; i < 2; i++){
+    for(int i = 0; i < 0; i++){
         double angle = static_cast<double>(distAngle(rd));
         CVector velocity{static_cast<double>(distVelocity(rd)), angle, VectorType::POLAR};
 
@@ -388,6 +385,8 @@ AsteroidGame::AsteroidGame()
     if(!loadFonts())
         exit(0);
 
+    _mainmenu.init(_prenderer, _mainFonts);
+
     initLevel();
     initShip();
 }
@@ -442,7 +441,9 @@ bool AsteroidGame::init()
 
 void AsteroidGame::cleanup()
 {
-    delete _pShip; 
+    if(_pShip)
+        delete _pShip;
+    _pShip = nullptr; 
 
     for(auto& laser: _laserHash){
         delete laser.second;
@@ -454,6 +455,10 @@ void AsteroidGame::cleanup()
 
     for(auto& tex: _mainTextures){
         tex.free();
+    }
+
+    for(auto& font: _mainFonts){
+        TTF_CloseFont(font);
     }
 
     SDL_DestroyRenderer(_prenderer);
