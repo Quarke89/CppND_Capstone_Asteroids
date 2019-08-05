@@ -87,15 +87,3 @@ SDL_Rect& ShipObject::getBoundingBox()
 {
     return _boundingBox;
 }
-
-Point ShipObject::getTipPos()
-{
-    int xPosCenter = std::round(_pos.x);
-    int yPosCenter = std::round(_pos.y);
-
-    int top = yPosCenter - _height/2;
-
-    Point tip{static_cast<double>(xPosCenter), static_cast<double>(top)};
-
-    return tip;
-}

@@ -22,6 +22,12 @@ GameObject* GameObject::Create(Point pos, ObjectType type, CTexture* tex, CVecto
     }
 }
 
+
+CVector GameObject::getVelocity()
+{
+    return _velocity;
+}
+
 int GameObject::getID()
 {
     return _id;

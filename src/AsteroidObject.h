@@ -3,6 +3,12 @@
 #include "GameObject.h"
 #include <vector>
 
+enum class AsteroidType
+{
+    BIG,
+    MED,
+    SMALL
+};
 
 class AsteroidObject : public GameObject
 {
@@ -15,9 +21,18 @@ class AsteroidObject : public GameObject
         
         std::vector<SDL_Rect>& getBoundingBoxes();
 
+        AsteroidType getType();
+        TextureType getTexType();
+
     private:
    
+        
         void renderBoxes(SDL_Renderer* renderer);
+        AsteroidType _type;
+        TextureType _texType;
+
+        AsteroidType texture2asteroid(TextureType type);
+
         int _numTex;
         std::vector<SDL_Rect> _boundingBoxes;
 

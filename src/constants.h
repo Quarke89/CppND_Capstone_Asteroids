@@ -7,4 +7,6 @@ namespace AsteroidConstants
 
     constexpr int OFFSCREEN_BOUNDARY{50};
 
+    constexpr int LASER_VELOCITY{500};
+
 } 

@@ -28,11 +28,8 @@ void AsteroidGame::run()
         if(checkShipCollision())
             _running = false;
 
-        std::vector<int> asteroidCollisions = checkAsteroidCollision();
-        for(auto asteroidIdx: asteroidCollisions){
-            delete _asteroidHash[asteroidIdx];
-            _asteroidHash.erase(asteroidIdx);
-        }
+        checkAsteroidCollision();
+        
 
         // Uint32 ticks = SDL_GetTicks();
         // fps = static_cast<double>(frames)/ticks * 1000;
@@ -44,27 +41,7 @@ void AsteroidGame::run()
 
 }
 
-void AsteroidGame::createLaser()
-{
 
-    CTexture *pTex = &_mainTextures[static_cast<int>(TextureType::TEX_LASER)];
-    // Point laserPos = static_cast<ShipObject*>(_pShip)->getTipPos();
-    Point laserPos = _pShip->getPos();
-
-    double angle = _pShip->getRotation();
-    double velocityAngle = angle - 90;
-
-    // std::cout << "Ship position: (" << laserPos.x << ", " << laserPos.y << ")" << std::endl;
-
-    CVector velocity{500, velocityAngle ,VectorType::POLAR};
-    CVector acceleration{0,0,VectorType::POLAR};
-
-    GameObject *pLaser = GameObject::Create(laserPos, ObjectType::LASER, pTex, velocity, acceleration, SDL_GetTicks(), angle);
-    _laserHash.insert(std::make_pair(pLaser->getID(), pLaser));
-
-    // _pLasers.push_back(GameObject::Create(laserPos, ObjectType::LASER, pTex, velocity, acceleration, SDL_GetTicks(), angle) );
-
-}
 
 void AsteroidGame::handleInput(SDL_Event &e)
 {
@@ -110,7 +87,7 @@ void AsteroidGame::handleInput(SDL_Event &e)
                     static_cast<ShipObject*>(_pShip)->setMoveBackward(false);
                     break;
                 case SDLK_SPACE:
-                    createLaser();
+                    shootLaser();
                     break;
                 default:
                     break;
@@ -134,22 +111,93 @@ bool AsteroidGame::checkShipCollision()
     return false;
 }
 
-std::vector<int> AsteroidGame::checkAsteroidCollision()
+void AsteroidGame::checkAsteroidCollision()
 {
-    std::vector<int> result;
+    std::vector<int> asteroidCollideIdx;
+    std::vector<int> laserCollideIdx;
 
     for(const auto &laser: _laserHash){
         const SDL_Rect &laserRect = static_cast<LaserObject*>(laser.second)->getBoundingBox();
+        bool collide = false;
+
         for(const auto &asteroid: _asteroidHash){
             const std::vector<SDL_Rect> &boxes = static_cast<AsteroidObject*>(asteroid.second)->getBoundingBoxes();
             for(const SDL_Rect &box: boxes){
-                if(checkCollision(laserRect, box))
-                    result.push_back(asteroid.first);
+                if(checkCollision(laserRect, box)){
+                    asteroidCollideIdx.push_back(asteroid.first);
+                    collide = true;
+                    break;
+                }                    
+            }
+            if(collide){
+                laserCollideIdx.push_back(laser.first);
+                break;
             }
 
         }
     }
-    return result;
+
+    for(int idx: asteroidCollideIdx){
+        splitAsteroid(static_cast<AsteroidObject*>(_asteroidHash[idx]));
+        delete _asteroidHash[idx];
+        _asteroidHash.erase(idx);
+    }
+    for(int idx: laserCollideIdx){
+        delete _laserHash[idx];
+        _laserHash.erase(idx);
+    }
+   
+}
+
+void AsteroidGame::shootLaser()
+{
+    Point laserPos = _pShip->getPos();
+    double velocityAngle = _pShip->getRotation() - 90;
+
+    CVector velocity{AsteroidConstants::LASER_VELOCITY, velocityAngle, VectorType::POLAR};
+
+    createLaser(laserPos, velocity);
+}
+
+void AsteroidGame::createLaser(Point pos, CVector velocity)
+{
+
+    CTexture *pTex = &_mainTextures[static_cast<int>(TextureType::TEX_LASER)];
+
+    CVector acceleration{0,0,VectorType::POLAR};
+
+    GameObject *pLaser = GameObject::Create(pos, ObjectType::LASER, pTex, velocity, acceleration, SDL_GetTicks(), velocity.getAngle() + 90);
+    _laserHash.insert(std::make_pair(pLaser->getID(), pLaser));
+
+}
+
+void AsteroidGame::splitAsteroid(AsteroidObject* asteroid)
+{
+    if(asteroid->getType() == AsteroidType::SMALL)
+        return;
+
+    TextureType currentTex = asteroid->getTexType();
+    int nextTex = static_cast<int>(currentTex) + 1;
+    CTexture* pTex = &_mainTextures[nextTex];
+
+    Point pos = asteroid->getPos();
+
+    CVector currentVelocity = asteroid->getVelocity();
+    CVector velocity1(currentVelocity.getMag(), currentVelocity.getAngle() - 45, VectorType::POLAR);
+    CVector velocity2(currentVelocity.getMag(), currentVelocity.getAngle() + 45, VectorType::POLAR);
+
+    createAsteroid(pos, velocity1, pTex);
+    createAsteroid(pos, velocity2, pTex);
+
+}
+
+void AsteroidGame::createAsteroid(Point pos, CVector velocity, CTexture* pTex)
+{
+
+    CVector acceleration{0,0,VectorType::POLAR};
+
+    GameObject *pAsteroid = GameObject::Create(pos, ObjectType::ASTEROID, pTex, velocity, acceleration, SDL_GetTicks());
+    _asteroidHash.insert(std::make_pair(pAsteroid->getID(), pAsteroid));
 }
 
 bool AsteroidGame::checkCollision(const SDL_Rect &a, const SDL_Rect &b)
@@ -218,7 +266,6 @@ void AsteroidGame::initLevel()
     std::uniform_int_distribution<> distVelocity(100, 200);
 
     Point pos{0, 0};
-    CVector acceleration{0,0,VectorType::POLAR};
 
     CTexture* pTex = &_mainTextures[static_cast<int>(TextureType::TEX_ASTEROID_MED_1)];
 
@@ -226,8 +273,8 @@ void AsteroidGame::initLevel()
         double angle = static_cast<double>(distAngle(rd));
         CVector velocity{static_cast<double>(distVelocity(rd)), angle, VectorType::POLAR};
 
-        GameObject *pAsteroid = GameObject::Create(pos, ObjectType::ASTEROID, pTex, velocity, acceleration, SDL_GetTicks());
-        _asteroidHash.insert(std::make_pair(pAsteroid->getID(), pAsteroid));
+        createAsteroid(pos, velocity, pTex);
+
     }
 
 }
@@ -268,7 +315,7 @@ bool AsteroidGame::loadTextures()
     bool success = true;
 
     for(int i = 0; i < static_cast<unsigned int>(TextureType::TEX_TOTAL); i++){
-        CTexture tmp;
+        CTexture tmp(static_cast<TextureType>(i));
         success &= tmp.loadFromFile(_prenderer, getTexturePath(static_cast<TextureType>(i)));
         _mainTextures.push_back(std::move(tmp));
     }

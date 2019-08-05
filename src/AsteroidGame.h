@@ -10,23 +10,9 @@
 #include <unordered_map>
 #include <utility>
 #include <vector>
+#include "AsteroidObject.h"
 
-enum class TextureType
-{
-    TEX_BACKGROUND,
-    TEX_ASTEROID_BIG_1,
-    TEX_ASTEROID_BIG_2,
-    TEX_ASTEROID_BIG_3,
-    TEX_ASTEROID_MED_1,
-    TEX_ASTEROID_MED_2,
-    TEX_ASTEROID_MED_3,
-    TEX_ASTEROID_SMALL_1,
-    TEX_ASTEROID_SMALL_2,
-    TEX_ASTEROID_SMALL_3,
-    TEX_SHIP,
-    TEX_LASER,
-    TEX_TOTAL
-};
+
 
 class AsteroidGame{
 
@@ -50,10 +36,14 @@ class AsteroidGame{
         void updateObjects();
 
         bool checkShipCollision();
-        std::vector<int> checkAsteroidCollision();
+        void checkAsteroidCollision();
         bool checkCollision(const SDL_Rect &a, const SDL_Rect &b);
 
-        void createLaser();
+        void shootLaser();
+        void createLaser(Point pos, CVector velocity);
+
+        void splitAsteroid(AsteroidObject* asteroid);
+        void createAsteroid(Point pos, CVector velocity, CTexture* pTex);
 
         
     private:

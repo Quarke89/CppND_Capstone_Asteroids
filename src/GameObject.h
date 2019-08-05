@@ -29,6 +29,7 @@ class GameObject{
         Point getPos();
         double getRotation();
         int getID();
+        CVector getVelocity();
 
     protected:
 

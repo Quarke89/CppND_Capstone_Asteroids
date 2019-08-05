@@ -5,10 +5,27 @@
 #include <SDL2/SDL_image.h>
 #include <iostream>
 
+enum class TextureType
+{    
+    TEX_ASTEROID_BIG_1,
+    TEX_ASTEROID_MED_1,
+    TEX_ASTEROID_SMALL_1,
+    TEX_ASTEROID_BIG_2,
+    TEX_ASTEROID_MED_2,
+    TEX_ASTEROID_SMALL_2,
+    TEX_ASTEROID_BIG_3,
+    TEX_ASTEROID_MED_3,
+    TEX_ASTEROID_SMALL_3,
+    TEX_SHIP,
+    TEX_LASER,
+    TEX_BACKGROUND,
+    TEX_TOTAL
+};
+
 class CTexture
 {
     public:
-        CTexture();
+        CTexture(TextureType type);
         ~CTexture();
 
         CTexture(const CTexture& a) = delete;
@@ -22,10 +39,13 @@ class CTexture
         void free();        
 
         int getWidth();
-        int getHeight();        
+        int getHeight();
+
+        TextureType getType();        
 
     private:
 
+        TextureType _type;
         SDL_Texture* _texture{nullptr};
 
         int _width{0};

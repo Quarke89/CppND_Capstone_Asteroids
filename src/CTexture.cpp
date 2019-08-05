@@ -1,10 +1,16 @@
 #include "CTexture.h"
 
-CTexture::CTexture(){}
+CTexture::CTexture(TextureType type) :_type(type)
+{}
 
 CTexture::~CTexture()
 {
     free();
+}
+
+TextureType CTexture::getType()
+{
+    return _type;
 }
 
 bool CTexture::loadFromFile(SDL_Renderer* renderer, std::string path)

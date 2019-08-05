@@ -25,8 +25,6 @@ class ShipObject : public GameObject
         void setMoveForward(bool val);
         void setMoveBackward(bool val);
 
-        Point getTipPos();
-
         SDL_Rect& getBoundingBox();
 
     private:

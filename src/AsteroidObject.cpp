@@ -5,6 +5,37 @@
 AsteroidObject::AsteroidObject(Point pos, CTexture* tex, CVector velocity, CVector acceleration, Uint32 updateTime)
     : GameObject(pos, tex, velocity, acceleration, updateTime)
 {
+    _type = texture2asteroid(tex->getType());
+    _texType = tex->getType();
+}
+
+AsteroidType AsteroidObject::getType()
+{
+    return _type;
+}
+
+TextureType AsteroidObject::getTexType()
+{
+    return _texType;
+}
+
+AsteroidType AsteroidObject::texture2asteroid(TextureType type)
+{
+    switch(type)
+    {
+        case TextureType::TEX_ASTEROID_BIG_1:
+        case TextureType::TEX_ASTEROID_BIG_2:
+        case TextureType::TEX_ASTEROID_BIG_3:
+            return AsteroidType::BIG;
+        case TextureType::TEX_ASTEROID_MED_1:
+        case TextureType::TEX_ASTEROID_MED_2:
+        case TextureType::TEX_ASTEROID_MED_3:
+            return AsteroidType::MED;
+        case TextureType::TEX_ASTEROID_SMALL_1:
+        case TextureType::TEX_ASTEROID_SMALL_2:
+        case TextureType::TEX_ASTEROID_SMALL_3:
+            return AsteroidType::SMALL;
+    }
 }
 
 void AsteroidObject::render(SDL_Renderer* renderer)
