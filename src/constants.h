@@ -1,4 +1,32 @@
 
+#pragma once 
+
+enum class FontType
+{
+    TITLE1,
+    TITLE2,
+    MENU,
+    TEXT,
+    FONT_TOTAL
+};
+
+enum class TextureType
+{    
+    TEX_ASTEROID_BIG_1,
+    TEX_ASTEROID_MED_1,
+    TEX_ASTEROID_SMALL_1,
+    TEX_ASTEROID_BIG_2,
+    TEX_ASTEROID_MED_2,
+    TEX_ASTEROID_SMALL_2,
+    TEX_ASTEROID_BIG_3,
+    TEX_ASTEROID_MED_3,
+    TEX_ASTEROID_SMALL_3,
+    TEX_SHIP,
+    TEX_LASER,
+    TEX_BACKGROUND,
+    TEX_TOTAL
+};
+
 namespace AsteroidConstants
 {
     constexpr int SCREEN_WIDTH{800};
@@ -8,5 +36,10 @@ namespace AsteroidConstants
     constexpr int OFFSCREEN_BOUNDARY{50};
 
     constexpr int LASER_VELOCITY{500};
+
+    constexpr int FONTSIZE_TITLE1{72};
+    constexpr int FONTSIZE_TITLE2{64};
+    constexpr int FONTSIZE_MENU{32};
+    constexpr int FONTSIZE_TEXT{24};
 
 } 

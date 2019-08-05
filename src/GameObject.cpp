@@ -7,7 +7,7 @@
 int GameObject::_count = 0;
 
 GameObject::GameObject(Point pos, CTexture* pTex, CVector velocity, CVector acceleration, Uint32 updateTime)
-    :_pos(pos), _pTex(pTex), _velocity(velocity), _acceleration(acceleration), _id(++_count), _lastUpdated(updateTime)
+    :_pos(pos), _pTex(pTex), _velocity(velocity), _acceleration(acceleration), _id(++_count), _lastUpdated(updateTime), _rotation(0)
 {
 }
 

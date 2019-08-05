@@ -1,5 +1,8 @@
 #include "CTexture.h"
 
+CTexture::CTexture()
+{}
+
 CTexture::CTexture(TextureType type) :_type(type)
 {}
 
@@ -38,15 +41,40 @@ bool CTexture::loadFromFile(SDL_Renderer* renderer, std::string path)
 
 }
 
+bool CTexture::loadFromRenderedText(SDL_Renderer* renderer, TTF_Font* font, std::string text, SDL_Color textColor)
+{
+    free();
+
+    SDL_Surface* textSurface = TTF_RenderText_Solid(font, text.c_str(), textColor);
+    if(textSurface == nullptr){
+        std::cout << "Unable to render text surface! SDL_ttf Error: " << TTF_GetError() << "\n";
+        return false;
+    }
+
+    _texture = SDL_CreateTextureFromSurface(renderer, textSurface);
+    if(_texture == nullptr){
+        std::cout << "Unable to create texture from rendered text! SDL Error: " << SDL_GetError() << "\n";
+        return false;
+    }
+    
+    //get image dimensions
+    _width = textSurface->w;
+    _height = textSurface->h;       
+    SDL_FreeSurface(textSurface);        
+    
+    return true;
+}
+
 CTexture::CTexture(CTexture&& o)
 {
     _texture = o._texture;
     _width = o._width;
     _height = o._height;
+    _type = o._type;
 
     o._texture = nullptr;
     o._width = 0;
-    o._height = 0;
+    o._height = 0;    
 }
 
 SDL_Texture* CTexture::getTexture()

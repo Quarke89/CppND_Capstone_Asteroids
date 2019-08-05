@@ -1,31 +1,18 @@
 #pragma once
 
-#include <string>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
 #include <iostream>
+#include <string>
+#include "constants.h"
 
-enum class TextureType
-{    
-    TEX_ASTEROID_BIG_1,
-    TEX_ASTEROID_MED_1,
-    TEX_ASTEROID_SMALL_1,
-    TEX_ASTEROID_BIG_2,
-    TEX_ASTEROID_MED_2,
-    TEX_ASTEROID_SMALL_2,
-    TEX_ASTEROID_BIG_3,
-    TEX_ASTEROID_MED_3,
-    TEX_ASTEROID_SMALL_3,
-    TEX_SHIP,
-    TEX_LASER,
-    TEX_BACKGROUND,
-    TEX_TOTAL
-};
 
 class CTexture
 {
     public:
         CTexture(TextureType type);
+        CTexture();
         ~CTexture();
 
         CTexture(const CTexture& a) = delete;
@@ -34,6 +21,7 @@ class CTexture
         CTexture(CTexture&& o);
 
         bool loadFromFile(SDL_Renderer* renderer, std::string path);
+        bool loadFromRenderedText(SDL_Renderer* renderer, TTF_Font* font, std::string text, SDL_Color textColor);
 
         SDL_Texture* getTexture();
         void free();        

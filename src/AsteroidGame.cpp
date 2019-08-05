@@ -177,8 +177,13 @@ void AsteroidGame::splitAsteroid(AsteroidObject* asteroid)
         return;
 
     TextureType currentTex = asteroid->getTexType();
+
+    
+
     int nextTex = static_cast<int>(currentTex) + 1;
     CTexture* pTex = &_mainTextures[nextTex];
+
+    //std::cout << "Current Texture: " << currentTex << ", Next texture: " << nextTex << std::endl;
 
     Point pos = asteroid->getPos();
 
@@ -267,7 +272,7 @@ void AsteroidGame::initLevel()
 
     Point pos{0, 0};
 
-    CTexture* pTex = &_mainTextures[static_cast<int>(TextureType::TEX_ASTEROID_MED_1)];
+    CTexture* pTex = &_mainTextures[static_cast<int>(TextureType::TEX_ASTEROID_BIG_1)];
 
     for(int i = 0; i < 2; i++){
         double angle = static_cast<double>(distAngle(rd));
@@ -322,6 +327,38 @@ bool AsteroidGame::loadTextures()
     return success;
 }
 
+bool AsteroidGame::loadFonts()
+{
+    bool success = true;
+
+    for(int i = 0; i < static_cast<unsigned int>(FontType::FONT_TOTAL); i++){
+        TTF_Font *pFont;
+        switch(static_cast<FontType>(i)){
+            case FontType::TITLE1:
+                pFont = TTF_OpenFont( "fonts/Alexis Laser Italic.ttf", AsteroidConstants::FONTSIZE_TITLE1);
+                break;
+            case FontType::TITLE2:
+                pFont = TTF_OpenFont( "fonts/Alexis Italic.ttf", AsteroidConstants::FONTSIZE_TITLE2);
+                break;
+            case FontType::MENU:
+                pFont = TTF_OpenFont( "fonts/Alexis.ttf", AsteroidConstants::FONTSIZE_MENU);
+                break;
+            case FontType::TEXT:
+                pFont = TTF_OpenFont( "fonts/Alexis.ttf", AsteroidConstants::FONTSIZE_TEXT);
+                break;
+        }
+        if(pFont == nullptr){
+            std::cout << "Failed to load lazy font! SDL_ttf Error: " << TTF_GetError() << "\n";		
+		    success &= false;
+	    }
+        else{
+            _mainFonts.push_back(pFont);
+        }        
+    }
+
+    return success;
+}
+
 std::string AsteroidGame::getTexturePath(TextureType type)
 {
     switch(type){
@@ -347,6 +384,8 @@ AsteroidGame::AsteroidGame()
     if(!init())
         exit(0);
     if(!loadTextures())
+        exit(0);
+    if(!loadFonts())
         exit(0);
 
     initLevel();
@@ -388,7 +427,13 @@ bool AsteroidGame::init()
     // initialize PNG loading
     int imgFlags = IMG_INIT_PNG;
     if( !(IMG_Init(imgFlags) & imgFlags) ){
-        std::cout << "SDL_image could not initialize! SDL_image Error: " << IMG_GetError() <<"\n";
+        std::cout << "SDL_image could not initialize! SDL_image Error: " << IMG_GetError() << "\n";
+        return false;
+    }
+
+    //Initialize SDL_ttf
+    if( TTF_Init() == -1 ){
+        std::cout << "SDL_ttf could not initialize! SDL_ttf Error: " <<  TTF_GetError() << "\n";
         return false;
     }
 
@@ -416,6 +461,8 @@ void AsteroidGame::cleanup()
     _prenderer = nullptr;
     _pwindow = nullptr;
 
+    // Quit SDL subsystems
+    TTF_Quit();
     IMG_Quit();
     SDL_Quit();
 }

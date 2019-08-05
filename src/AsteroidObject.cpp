@@ -52,7 +52,7 @@ void AsteroidObject::render(SDL_Renderer* renderer)
     calculateRenderRectangles(xPosCenter, yPosCenter, width, height, AsteroidConstants::SCREEN_WIDTH, AsteroidConstants::SCREEN_HEIGHT, srcRect, dstRect);    
 
     for(int i = 0; i < srcRect.size(); i++){
-        SDL_RenderCopyEx( renderer, _pTex->getTexture(), &srcRect[i], &dstRect[i], _rotation, nullptr, SDL_FLIP_NONE);
+        SDL_RenderCopy( renderer, _pTex->getTexture(), &srcRect[i], &dstRect[i]);
     }
 
     _boundingBoxes = std::move(dstRect);
