@@ -3,13 +3,6 @@
 #include "GameObject.h"
 #include <vector>
 
-enum class AsteroidType
-{
-    BIG,
-    MED,
-    SMALL
-};
-
 enum class AsteroidSize
 {
     BIG,
@@ -34,11 +27,9 @@ class AsteroidObject : public GameObject
         
         std::vector<SDL_Rect>& getBoundingBoxes();
 
-        AsteroidType getType();
-        TextureType getTexType();
-
         AsteroidSize getSize();
         AsteroidSize getNextSize();
+        void setAsteroidAttr(AsteroidSize size, AsteroidColor color);
         static AsteroidColor getNextColor(AsteroidColor color);
         static TextureType getAsteroidTexture(AsteroidSize size, AsteroidColor color);
 
@@ -48,10 +39,6 @@ class AsteroidObject : public GameObject
 
         AsteroidSize _asteroidSize;
         AsteroidColor _asteroidColor;
-        
-        AsteroidType _type;
-        TextureType _texType;
-        AsteroidType texture2asteroid(TextureType type);
 
         std::vector<SDL_Rect> _boundingBoxes;
 };

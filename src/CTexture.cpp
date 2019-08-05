@@ -3,18 +3,11 @@
 CTexture::CTexture()
 {}
 
-CTexture::CTexture(TextureType type) :_type(type)
-{}
-
 CTexture::~CTexture()
 {
     free();
 }
 
-TextureType CTexture::getType()
-{
-    return _type;
-}
 
 bool CTexture::loadFromFile(SDL_Renderer* renderer, std::string path)
 {
@@ -70,7 +63,6 @@ CTexture::CTexture(CTexture&& o)
     _texture = o._texture;
     _width = o._width;
     _height = o._height;
-    _type = o._type;
 
     o._texture = nullptr;
     o._width = 0;

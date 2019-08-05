@@ -4,20 +4,14 @@
 
 AsteroidObject::AsteroidObject(Point pos, CTexture* tex, CVector velocity)
     : GameObject(pos, tex, velocity)
+{}
+
+void AsteroidObject::setAsteroidAttr(AsteroidSize size, AsteroidColor color)
 {
-    _type = texture2asteroid(tex->getType());
-    _texType = tex->getType();
+    _asteroidSize = size;
+    _asteroidColor = color;
 }
 
-AsteroidType AsteroidObject::getType()
-{
-    return _type;
-}
-
-TextureType AsteroidObject::getTexType()
-{
-    return _texType;
-}
 
 AsteroidSize AsteroidObject::getSize()
 {
@@ -59,25 +53,6 @@ TextureType AsteroidObject::getAsteroidTexture(AsteroidSize size, AsteroidColor 
                 case AsteroidColor::RED:    return TextureType::TEX_ASTEROID_SMALL_2;
                 case AsteroidColor::BROWN:  return TextureType::TEX_ASTEROID_SMALL_3;
             }
-    }
-}
-
-AsteroidType AsteroidObject::texture2asteroid(TextureType type)
-{
-    switch(type)
-    {
-        case TextureType::TEX_ASTEROID_BIG_1:
-        case TextureType::TEX_ASTEROID_BIG_2:
-        case TextureType::TEX_ASTEROID_BIG_3:
-            return AsteroidType::BIG;
-        case TextureType::TEX_ASTEROID_MED_1:
-        case TextureType::TEX_ASTEROID_MED_2:
-        case TextureType::TEX_ASTEROID_MED_3:
-            return AsteroidType::MED;
-        case TextureType::TEX_ASTEROID_SMALL_1:
-        case TextureType::TEX_ASTEROID_SMALL_2:
-        case TextureType::TEX_ASTEROID_SMALL_3:
-            return AsteroidType::SMALL;
     }
 }
 

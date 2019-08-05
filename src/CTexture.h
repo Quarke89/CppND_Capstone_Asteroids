@@ -11,7 +11,6 @@
 class CTexture
 {
     public:
-        CTexture(TextureType type);
         CTexture();
         ~CTexture();
 
@@ -29,11 +28,8 @@ class CTexture
         int getWidth();
         int getHeight();
 
-        TextureType getType();        
-
     private:
 
-        TextureType _type;
         SDL_Texture* _texture{nullptr};
 
         int _width{0};

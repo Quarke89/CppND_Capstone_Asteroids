@@ -173,17 +173,12 @@ void AsteroidGame::createLaser(Point pos, CVector velocity)
 
 void AsteroidGame::splitAsteroid(AsteroidObject* asteroid)
 {
-    if(asteroid->getType() == AsteroidType::SMALL)
+    if(asteroid->getSize() == AsteroidSize::SMALL)
         return;
 
-    TextureType currentTex = asteroid->getTexType();
-
-    
-
-    int nextTex = static_cast<int>(currentTex) + 1;
-    CTexture* pTex = &_mainTextures[nextTex];
-
-    //std::cout << "Current Texture: " << currentTex << ", Next texture: " << nextTex << std::endl;
+    AsteroidSize nextSize = asteroid->getNextSize();
+    int nextTexIdx = static_cast<int>(AsteroidObject::getAsteroidTexture(nextSize, _currentColor));
+    CTexture* pTex = &_mainTextures[nextTexIdx];
 
     Point pos = asteroid->getPos();
 
@@ -191,15 +186,17 @@ void AsteroidGame::splitAsteroid(AsteroidObject* asteroid)
     CVector velocity1(currentVelocity.getMag(), currentVelocity.getAngle() - 45, VectorType::POLAR);
     CVector velocity2(currentVelocity.getMag(), currentVelocity.getAngle() + 45, VectorType::POLAR);
 
-    createAsteroid(pos, velocity1, pTex);
-    createAsteroid(pos, velocity2, pTex);
+    createAsteroid(pos, velocity1, pTex, nextSize, _currentColor);
+    createAsteroid(pos, velocity2, pTex, nextSize, _currentColor);
 
 }
 
-void AsteroidGame::createAsteroid(Point pos, CVector velocity, CTexture* pTex)
+void AsteroidGame::createAsteroid(Point pos, CVector velocity, CTexture* pTex, AsteroidSize size, AsteroidColor color)
 {
 
     GameObject *pAsteroid = GameObject::Create(ObjectType::ASTEROID, pos, pTex, velocity);
+    static_cast<AsteroidObject*>(pAsteroid)->setAsteroidAttr(size, color);
+    
     _asteroidHash.insert(std::make_pair(pAsteroid->getID(), pAsteroid));
 }
 
@@ -261,6 +258,8 @@ void AsteroidGame::initShip()
 
 void AsteroidGame::initLevel()
 {
+
+    int numAsteroid = 2;
     std::random_device rd;
     std::uniform_int_distribution<> distx(0, AsteroidConstants::SCREEN_WIDTH);
     std::uniform_int_distribution<> disty(0, AsteroidConstants::SCREEN_HEIGHT);
@@ -269,13 +268,15 @@ void AsteroidGame::initLevel()
 
     Point pos{0, 0};
 
-    CTexture* pTex = &_mainTextures[static_cast<int>(TextureType::TEX_ASTEROID_BIG_1)];
+    AsteroidSize size = AsteroidSize::BIG;
 
-    for(int i = 0; i < 0; i++){
+    CTexture* pTex = &_mainTextures[static_cast<int>(AsteroidObject::getAsteroidTexture(size, _currentColor))];
+
+    for(int i = 0; i < numAsteroid; i++){
         double angle = static_cast<double>(distAngle(rd));
         CVector velocity{static_cast<double>(distVelocity(rd)), angle, VectorType::POLAR};
 
-        createAsteroid(pos, velocity, pTex);
+        createAsteroid(pos, velocity, pTex, size, _currentColor);
 
     }
 
@@ -317,7 +318,7 @@ bool AsteroidGame::loadTextures()
     bool success = true;
 
     for(int i = 0; i < static_cast<unsigned int>(TextureType::TEX_TOTAL); i++){
-        CTexture tmp(static_cast<TextureType>(i));
+        CTexture tmp;
         success &= tmp.loadFromFile(_prenderer, getTexturePath(static_cast<TextureType>(i)));
         _mainTextures.push_back(std::move(tmp));
     }
@@ -343,6 +344,7 @@ bool AsteroidGame::loadFonts()
             case FontType::TEXT:
                 pFont = TTF_OpenFont( "fonts/Alexis.ttf", AsteroidConstants::FONTSIZE_TEXT);
                 break;
+            default: break;
         }
         if(pFont == nullptr){
             std::cout << "Failed to load lazy font! SDL_ttf Error: " << TTF_GetError() << "\n";		
@@ -376,7 +378,7 @@ std::string AsteroidGame::getTexturePath(TextureType type)
 }
 
 AsteroidGame::AsteroidGame()
-    :_running(true)
+    :_running(true), _currentColor(AsteroidColor::GREY)
 {
     if(!init())
         exit(0);

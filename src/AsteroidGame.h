@@ -44,7 +44,7 @@ class AsteroidGame{
         bool checkShipCollision();
         void checkAsteroidCollision();
         void splitAsteroid(AsteroidObject* asteroid);
-        void createAsteroid(Point pos, CVector velocity, CTexture* pTex);
+        void createAsteroid(Point pos, CVector velocity, CTexture* pTex, AsteroidSize size, AsteroidColor color);
 
         void cleanup();
 
