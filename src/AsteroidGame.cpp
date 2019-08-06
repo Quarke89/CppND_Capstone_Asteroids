@@ -13,7 +13,7 @@ void AsteroidGame::run()
         initLevel();        
         runLevel();
         if(_state == GameState::LEVEL_COMPLETE){
-            _state = GameState::RUNNING;
+            runNextMenu();
         }
         if(_state == GameState::GAMEOVER){
             runGameOverMenu();
@@ -33,30 +33,23 @@ bool AsteroidGame::runLevel()
         updateObjects();
         renderObjects();
 
-        if(checkShipCollision()){
-            _state = GameState::GAMEOVER;
-        }
-            
+        checkShipCollision();            
         checkAsteroidCollision();      
 
-        if(checkLevelCompleted()){
-            levelCompleted();
-        }
+        checkLevelCompleted(); 
     }
     cleanupLevel();
 }
 
-bool AsteroidGame::checkLevelCompleted()
+void AsteroidGame::checkLevelCompleted()
 {
-    return _asteroidHash.size() == 0;
+    if(_asteroidHash.size() == 0){
+        _state = GameState::LEVEL_COMPLETE;
+        _currentLevel++;
+        _currentColor = AsteroidObject::getNextColor(_currentColor);
+    }
 }
 
-void AsteroidGame::levelCompleted()
-{
-    _state = GameState::LEVEL_COMPLETE;
-    _currentLevel++;
-    _currentColor = AsteroidObject::getNextColor(_currentColor);
-}
 
 void AsteroidGame::runMainMenu()
 {
@@ -74,6 +67,21 @@ void AsteroidGame::runGameOverMenu()
         _currentLevel = 1;
         _state = GameState::RUNNING;
     }
+}
+
+void AsteroidGame::runNextMenu()
+{
+    MenuNext nextMenu;
+    nextMenu.init(_prenderer, _mainFonts);
+    _state = nextMenu.run();
+}
+    
+
+void AsteroidGame::runPauseMenu()
+{
+    MenuPause pauseMenu;
+    pauseMenu.init(_prenderer, _mainFonts);
+    _state = pauseMenu.run();
 }
 
 
@@ -123,6 +131,9 @@ void AsteroidGame::handleInput(SDL_Event &event)
                 case SDLK_SPACE:
                     shootLaser();
                     break;
+                case SDLK_ESCAPE:
+                    runPauseMenu();
+                    break;
                 default:
                     break;
 
@@ -131,18 +142,20 @@ void AsteroidGame::handleInput(SDL_Event &event)
     }
 }
 
-bool AsteroidGame::checkShipCollision()
+void AsteroidGame::checkShipCollision()
 {
     const SDL_Rect &shipRect = static_cast<ShipObject*>(_pShip)->getBoundingBox();
     
     for(auto const &asteroid: _asteroidHash){
         const std::vector<SDL_Rect> &boxes = static_cast<AsteroidObject*>(asteroid.second)->getBoundingBoxes();
         for(const SDL_Rect &box: boxes){
-            if(checkCollision(shipRect, box))
-                return true;
+            if(checkCollision(shipRect, box)){
+                _state = GameState::GAMEOVER;
+                return;
+            }
+                
         }
     }
-    return false;
 }
 
 void AsteroidGame::checkAsteroidCollision()

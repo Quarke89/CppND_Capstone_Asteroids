@@ -17,7 +17,8 @@
 
 #include "MenuMain.h"
 #include "MenuGameOver.h"
-
+#include "MenuPause.h"
+#include "MenuNext.h"
 
 class AsteroidGame{
 
@@ -45,12 +46,12 @@ class AsteroidGame{
         void shootLaser();
         void createLaser(Point pos, CVector velocity);
 
-        bool checkShipCollision();
+        void checkShipCollision();
         void checkAsteroidCollision();
         void splitAsteroid(AsteroidObject* asteroid);
         void createAsteroid(Point pos, CVector velocity, CTexture* pTex, AsteroidSize size, AsteroidColor color);
 
-        bool checkLevelCompleted();
+        void checkLevelCompleted();
         void levelCompleted();
 
         void cleanup();
@@ -62,6 +63,8 @@ class AsteroidGame{
 
         void runMainMenu();
         void runGameOverMenu();
+        void runNextMenu();
+        void runPauseMenu();
         
     private:
 
