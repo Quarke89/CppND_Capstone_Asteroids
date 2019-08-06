@@ -27,12 +27,12 @@ class MenuMain
         ~MenuMain();
 
         void init(SDL_Renderer* renderer, std::vector<TTF_Font*> &mainFonts);
-        MenuAction run();     
+        GameState run();     
 
         void renderItems();
 
         void toggleState(); 
-        MenuAction select();
+        GameState select();
 
     private:
 

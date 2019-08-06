@@ -2,7 +2,7 @@
 #include "constants.h"
 
 ShipObject::ShipObject(Point pos, CTexture* tex, CVector velocity)
-    : GameObject(pos, tex, velocity), _rotateLeft(false), _rotateRight(false)
+    : GameObject(pos, tex, velocity), _rotateLeft(false), _rotateRight(false), _moveForward(false), _moveBackward(false)
 {
     _width = _pTex->getWidth()/AsteroidConstants::SCALE_SHIP_W;
     _height = _pTex->getHeight()/AsteroidConstants::SCALE_SHIP_H;
@@ -54,9 +54,6 @@ void ShipObject::render(SDL_Renderer* renderer)
     SDL_Rect dstRect{left, top, _width, _height};
 
     SDL_RenderCopyEx( renderer, _pTex->getTexture(), nullptr, &dstRect, _rotation, nullptr, SDL_FLIP_NONE);
-
-    // SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);  
-    // SDL_RenderDrawRect(renderer, &dstRect);
 
     _boundingBox = std::move(dstRect);
 

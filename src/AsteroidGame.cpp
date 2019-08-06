@@ -7,42 +7,59 @@
 
 void AsteroidGame::run()
 {
-    MenuAction action = _mainmenu.run();
-    if(action == MenuAction::QUIT)
-        _running = false;
+    runMainMenu();
+    
+    while(_state == GameState::RUNNING){
+        initLevel();        
+        runLevel();
+        if(_state == GameState::LEVEL_COMPLETE){
+            _state = GameState::RUNNING;
+        }
+    }
 
+}
+
+bool AsteroidGame::runLevel()
+{
     SDL_Event event;
-    int frames = 0;
-    double fps;
-    while(_running){
+
+    while(_state == GameState::RUNNING){
 
         handleInput(event);
-
-        //Clear screen
-        SDL_SetRenderDrawColor( _prenderer, 0x00, 0x00, 0x00, 0xFF );
-        SDL_RenderClear( _prenderer );
 
         updateObjects();
         renderObjects();
 
+        if(checkShipCollision()){
+            _state = GameState::GAMEOVER;
+        }
+            
+        checkAsteroidCollision();      
 
-        //Update screen
-        SDL_RenderPresent( _prenderer );
-
-        if(checkShipCollision())
-            _running = false;
-
-        checkAsteroidCollision();
-        
-
-        // Uint32 ticks = SDL_GetTicks();
-        // fps = static_cast<double>(frames)/ticks * 1000;
-
-        // std::cout << fps << std::endl;
-
-        ++frames;
+        if(checkLevelCompleted()){
+            levelCompleted();
+        }
     }
+    cleanupLevel();
+}
 
+bool AsteroidGame::checkLevelCompleted()
+{
+    return _asteroidHash.size() == 0;
+}
+
+void AsteroidGame::levelCompleted()
+{
+    _state = GameState::LEVEL_COMPLETE;
+    _currentLevel++;
+    _currentColor = AsteroidObject::getNextColor(_currentColor);
+}
+
+void AsteroidGame::runMainMenu()
+{
+    MenuMain mainmenu;
+    mainmenu.init(_prenderer, _mainFonts);
+    _state = mainmenu.run();
 }
 
 
@@ -52,7 +69,7 @@ void AsteroidGame::handleInput(SDL_Event &event)
 
     while(SDL_PollEvent(&event) != 0){
         if(event.type == SDL_QUIT){
-            _running = false;
+            _state = GameState::QUIT;
         }
         else if(event.type == SDL_KEYDOWN)
         {
@@ -262,27 +279,39 @@ void AsteroidGame::initShip()
 void AsteroidGame::initLevel()
 {
 
-    int numAsteroid = 2;
-    std::random_device rd;
-    std::uniform_int_distribution<> distx(0, AsteroidConstants::SCREEN_WIDTH);
-    std::uniform_int_distribution<> disty(0, AsteroidConstants::SCREEN_HEIGHT);
-    std::uniform_int_distribution<> distAngle(0, 360);
-    std::uniform_int_distribution<> distVelocity(100, 200);
-
-    Point pos{0, 0};
+    int numAsteroid = _currentLevel;
+    double asteroidVelocity = AsteroidConstants::INIT_ASTEROID_VELOCITY * std::pow(AsteroidConstants::ASTEROID_VELOCITY_MULTIPLIER, _currentLevel-1);
+    Point pos = getRandomCorner();
 
     AsteroidSize size = AsteroidSize::BIG;
+    CTexture* pTex = &_mainTextures[static_cast<int>(AsteroidObject::getAsteroidTexture(size, _currentColor))];    
 
-    CTexture* pTex = &_mainTextures[static_cast<int>(AsteroidObject::getAsteroidTexture(size, _currentColor))];
+    std::random_device rd;
+    std::uniform_int_distribution<> randomAngle(0, 360);                
 
     for(int i = 0; i < numAsteroid; i++){
-        double angle = static_cast<double>(distAngle(rd));
-        CVector velocity{static_cast<double>(distVelocity(rd)), angle, VectorType::POLAR};
+        double angle = static_cast<double>(randomAngle(rd));
+        CVector velocity{asteroidVelocity, angle, VectorType::POLAR};
 
         createAsteroid(pos, velocity, pTex, size, _currentColor);
-
     }
 
+    initShip();
+}
+
+Point AsteroidGame::getRandomCorner()
+{
+    std::random_device rd;
+    std::uniform_int_distribution<> rdCorner(0, 3);
+
+    int corner = rdCorner(rd);
+
+    switch(corner){
+        case 0:     return Point{0, 0};
+        case 1:     return Point{0, AsteroidConstants::SCREEN_HEIGHT};
+        case 2:     return Point{AsteroidConstants::SCREEN_WIDTH, 0};
+        case 3:     return Point{AsteroidConstants::SCREEN_WIDTH, AsteroidConstants::SCREEN_HEIGHT};
+    }
 }
 
 void AsteroidGame::updateObjects()
@@ -306,6 +335,10 @@ void AsteroidGame::updateObjects()
 
 void AsteroidGame::renderObjects()
 {
+    //Clear screen
+    SDL_SetRenderDrawColor( _prenderer, 0x00, 0x00, 0x00, 0xFF );
+    SDL_RenderClear( _prenderer );
+
     for(auto const& asteroid: _asteroidHash){
         asteroid.second->render(_prenderer);
     }
@@ -313,6 +346,9 @@ void AsteroidGame::renderObjects()
         laser.second->render(_prenderer);
     }
     _pShip->render(_prenderer);
+
+    //Update screen
+    SDL_RenderPresent( _prenderer );
 
 }
 
@@ -381,7 +417,7 @@ std::string AsteroidGame::getTexturePath(TextureType type)
 }
 
 AsteroidGame::AsteroidGame()
-    :_running(true), _currentColor(AsteroidColor::GREY)
+    :_currentColor(AsteroidColor::GREY), _state(GameState::RUNNING), _currentLevel(1)
 {
     if(!init())
         exit(0);
@@ -390,10 +426,6 @@ AsteroidGame::AsteroidGame()
     if(!loadFonts())
         exit(0);
 
-    _mainmenu.init(_prenderer, _mainFonts);
-
-    initLevel();
-    initShip();
 }
 
 AsteroidGame::~AsteroidGame()
@@ -444,7 +476,7 @@ bool AsteroidGame::init()
     return true;
 }
 
-void AsteroidGame::cleanup()
+void AsteroidGame::cleanupLevel()
 {
     if(_pShip)
         delete _pShip;
@@ -457,6 +489,11 @@ void AsteroidGame::cleanup()
     for(auto& asteroid: _asteroidHash){
         delete asteroid.second;
     }
+}
+
+void AsteroidGame::cleanup()
+{
+    cleanupLevel();
 
     for(auto& tex: _mainTextures){
         tex.free();

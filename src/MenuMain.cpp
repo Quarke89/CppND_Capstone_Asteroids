@@ -41,7 +41,7 @@ void MenuMain::init(SDL_Renderer* renderer, std::vector<TTF_Font*> &mainFonts)
 
 }
 
-MenuAction MenuMain::run()
+GameState MenuMain::run()
 {
     SDL_Event event;
 
@@ -49,7 +49,7 @@ MenuAction MenuMain::run()
 
         while( SDL_PollEvent( &event ) != 0 ) {            
             if( event.type == SDL_QUIT ){
-                return MenuAction::QUIT;
+                return GameState::QUIT;
             }
             else if(event.type == SDL_KEYUP){
                 switch(event.key.keysym.sym)
@@ -99,12 +99,12 @@ void MenuMain::toggleState()
     _state = !_state;
 }
 
-MenuAction MenuMain::select()
+GameState MenuMain::select()
 {
     if(_state){
-        return MenuAction::PLAY;
+        return GameState::RUNNING;
     }
     else{
-        return MenuAction::QUIT;
+        return GameState::QUIT;
     }
 }

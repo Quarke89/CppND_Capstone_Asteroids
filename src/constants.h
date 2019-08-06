@@ -1,11 +1,12 @@
 
 #pragma once 
 
-enum class MenuAction
+enum class GameState
 {
     QUIT,
-    PLAY,
-    CONTINUE
+    LEVEL_COMPLETE,
+    GAMEOVER,
+    RUNNING
 };
 
 enum class FontType
@@ -40,9 +41,11 @@ namespace AsteroidConstants
     constexpr int SCREEN_HEIGHT{600};        
     constexpr double PI{3.14159265};
 
-    constexpr int OFFSCREEN_BOUNDARY{50};
-
+    constexpr int INIT_ASTEROID_VELOCITY{100};
+    constexpr double ASTEROID_VELOCITY_MULTIPLIER{1.1};
     constexpr int LASER_VELOCITY{500};
+
+    constexpr int OFFSCREEN_BOUNDARY{50};
 
     constexpr int FONTSIZE_TITLE1{100};
     constexpr int FONTSIZE_TITLE2{64};
@@ -53,5 +56,7 @@ namespace AsteroidConstants
     constexpr double SCALE_SHIP_H{1.5};
     constexpr double SCALE_LASER_W{20};
     constexpr double SCALE_LASER_H{24};
+
+
 
 } 

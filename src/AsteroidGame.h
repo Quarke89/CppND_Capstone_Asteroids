@@ -31,6 +31,9 @@ class AsteroidGame{
         bool loadTextures();
         bool loadFonts();
 
+        bool runLevel();
+        void cleanupLevel();
+
         void run();                
         void handleInput(SDL_Event &e);                
                 
@@ -46,11 +49,17 @@ class AsteroidGame{
         void splitAsteroid(AsteroidObject* asteroid);
         void createAsteroid(Point pos, CVector velocity, CTexture* pTex, AsteroidSize size, AsteroidColor color);
 
-        void cleanup();
+        bool checkLevelCompleted();
+        void levelCompleted();
 
+        void cleanup();
+        Point getRandomCorner();
+    
         // utlity methods
         std::string getTexturePath(TextureType type);
         bool checkCollision(const SDL_Rect &a, const SDL_Rect &b);
+
+        void runMainMenu();
         
     private:
 
@@ -61,15 +70,11 @@ class AsteroidGame{
         std::vector<TTF_Font*> _mainFonts;
         
         GameObject* _pShip{nullptr};
-
         std::unordered_map<int, GameObject*> _laserHash;
         std::unordered_map<int, GameObject*> _asteroidHash;
 
-        bool _running;
+        GameState _state;
         int _currentLevel;
-
         AsteroidColor _currentColor;
-
-        MenuMain _mainmenu;
 
 };
