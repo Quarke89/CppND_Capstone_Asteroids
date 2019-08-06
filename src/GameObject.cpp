@@ -2,7 +2,7 @@
 #include "AsteroidObject.h"
 #include "ShipObject.h"
 #include "LaserObject.h"
-
+#include "StaticObject.h"
 
 int GameObject::_count = 0;
 
@@ -22,6 +22,7 @@ GameObject::GameObject(Point pos, CTexture* pTex, CVector velocity, double rotat
 GameObject* GameObject::Create(ObjectType type, Point pos, CTexture* tex, CVector velocity, double rotation)
 {
     switch(type){
+        case ObjectType::STATIC:    return new StaticObject(pos, tex);
         case ObjectType::ASTEROID:  return new AsteroidObject(pos, tex, velocity);
         case ObjectType::SHIP:      return new ShipObject(pos, tex, velocity);
         case ObjectType::LASER:     return new LaserObject(pos, tex, velocity, rotation);

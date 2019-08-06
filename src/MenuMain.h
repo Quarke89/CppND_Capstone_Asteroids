@@ -5,6 +5,19 @@
 #include <SDL2/SDL_ttf.h>
 #include "CTexture.h"
 #include <vector>
+#include "GameObject.h"
+#include <unordered_map>
+#include <utility>
+
+enum class MenuItem
+{
+    TITLE,
+    PLAY,
+    QUIT,
+    PLAY_SELECT,
+    QUIT_SELECT,
+    ITEM_TOTAL
+};
 
 class MenuMain
 {
@@ -13,14 +26,16 @@ class MenuMain
         ~MenuMain();
 
         void init(SDL_Renderer* renderer, std::vector<TTF_Font*> &mainFonts);
-        void run();        
+        void run();       
+        void toggleState(); 
 
     private:
 
         SDL_Renderer* _prenderer;
-        CTexture _textTitle;
-        CTexture _textPlay;
-        CTexture _textQuit;
+        
+        bool _state;
 
+        std::unordered_map<MenuItem, CTexture> _textTextureHash;
+        std::unordered_map<MenuItem, GameObject*> _textObjectHash;
 };
 

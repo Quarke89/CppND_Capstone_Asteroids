@@ -7,38 +7,38 @@
 
 void AsteroidGame::run()
 {
-    // _mainmenu.run();
-    SDL_Event e;
-    int frames = 0;
-    double fps;
-    while(_running){
+    _mainmenu.run();
+    // SDL_Event e;
+    // int frames = 0;
+    // double fps;
+    // while(_running){
 
-        handleInput(e);
+    //     handleInput(e);
 
-        //Clear screen
-        SDL_SetRenderDrawColor( _prenderer, 0x00, 0x00, 0x00, 0xFF );
-        SDL_RenderClear( _prenderer );
+    //     //Clear screen
+    //     SDL_SetRenderDrawColor( _prenderer, 0x00, 0x00, 0x00, 0xFF );
+    //     SDL_RenderClear( _prenderer );
 
-        updateObjects();
-        renderObjects();
+    //     updateObjects();
+    //     renderObjects();
 
 
-        //Update screen
-        SDL_RenderPresent( _prenderer );
+    //     //Update screen
+    //     SDL_RenderPresent( _prenderer );
 
-        if(checkShipCollision())
-            _running = false;
+    //     if(checkShipCollision())
+    //         _running = false;
 
-        checkAsteroidCollision();
+    //     checkAsteroidCollision();
         
 
-        // Uint32 ticks = SDL_GetTicks();
-        // fps = static_cast<double>(frames)/ticks * 1000;
+    //     // Uint32 ticks = SDL_GetTicks();
+    //     // fps = static_cast<double>(frames)/ticks * 1000;
 
-        // std::cout << fps << std::endl;
+    //     // std::cout << fps << std::endl;
 
-        ++frames;
-    }
+    //     ++frames;
+    // }
 
 }
 

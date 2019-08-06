@@ -37,7 +37,7 @@ namespace AsteroidConstants
 
     constexpr int LASER_VELOCITY{500};
 
-    constexpr int FONTSIZE_TITLE1{72};
+    constexpr int FONTSIZE_TITLE1{100};
     constexpr int FONTSIZE_TITLE2{64};
     constexpr int FONTSIZE_MENU{32};
     constexpr int FONTSIZE_TEXT{24};
