@@ -3,6 +3,7 @@
 #include "ShipObject.h"
 #include "LaserObject.h"
 #include "StaticObject.h"
+#include "ExplosionObject.h"
 
 int GameObject::_count = 0;
 
@@ -26,6 +27,7 @@ GameObject* GameObject::Create(ObjectType type, Point pos, CTexture* tex, CVecto
         case ObjectType::ASTEROID:  return new AsteroidObject(pos, tex, velocity);
         case ObjectType::SHIP:      return new ShipObject(pos, tex, velocity);
         case ObjectType::LASER:     return new LaserObject(pos, tex, velocity, rotation);
+        case ObjectType::EXPLOSION: return new ExplosionObject(pos, tex);
         default: 
             return nullptr;
     }

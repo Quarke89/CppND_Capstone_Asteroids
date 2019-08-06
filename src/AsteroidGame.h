@@ -10,14 +10,18 @@
 #include <vector>
 #include <unordered_map>
 #include <utility>
-#include <vector>
 #include <string>
 #include <sstream>
+#include <random>
 
+#include "constants.h"
+#include "utility.h"
 #include "CTexture.h"
 #include "GameObject.h"
 #include "AsteroidObject.h"
-#include "constants.h"
+#include "ShipObject.h"
+#include "LaserObject.h"
+#include "ExplosionObject.h"
 
 #include "MenuMain.h"
 #include "MenuGameOver.h"
@@ -54,6 +58,10 @@ class AsteroidGame{
         void checkAsteroidCollision();
         void splitAsteroid(AsteroidObject* asteroid);
         void createAsteroid(Point pos, CVector velocity, CTexture* pTex, AsteroidSize size, AsteroidColor color);
+        
+        void checkExplosionDone(); 
+
+        void createExplosion(Point pos, AsteroidSize size);
 
         void checkLevelCompleted();
         void levelCompleted();
@@ -83,6 +91,8 @@ class AsteroidGame{
         GameObject* _pShip{nullptr};
         std::unordered_map<int, GameObject*> _laserHash;
         std::unordered_map<int, GameObject*> _asteroidHash;
+        std::unordered_map<int, GameObject*> _explosionHash;
+        GameObject* _backgroundObject;
 
         GameState _state;                
         AsteroidColor _currentColor;

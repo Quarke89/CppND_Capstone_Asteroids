@@ -1,19 +1,11 @@
 #pragma once
 
-#include "utility.h"
+#include <vector>
 #include <memory>
+
 #include "CTexture.h"
 #include "CVector.h"
-#include <vector>
-
-
-enum class ObjectType
-{
-    STATIC,
-    ASTEROID,
-    SHIP,
-    LASER
-};
+#include "utility.h"
 
 class GameObject{
 

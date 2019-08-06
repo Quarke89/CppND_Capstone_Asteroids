@@ -5,3 +5,61 @@ struct Point{
     double x;
     double y;
 };
+
+enum class GameState
+{
+    QUIT,
+    LEVEL_COMPLETE,
+    GAMEOVER,
+    RUNNING,
+    PLAY_AGAIN
+};
+
+enum class ObjectType
+{
+    STATIC,
+    ASTEROID,
+    SHIP,
+    LASER,
+    EXPLOSION
+};
+
+enum class AsteroidSize
+{
+    BIG,
+    MED,
+    SMALL
+};
+enum class AsteroidColor
+{
+    GREY,
+    RED,
+    BROWN
+};
+
+enum class FontType
+{
+    TITLE1,
+    TITLE2,
+    MENU,
+    TEXT,
+    FONT_TOTAL
+};
+
+enum class TextureType
+{    
+    TEX_ASTEROID_BIG_1,
+    TEX_ASTEROID_MED_1,
+    TEX_ASTEROID_SMALL_1,
+    TEX_ASTEROID_BIG_2,
+    TEX_ASTEROID_MED_2,
+    TEX_ASTEROID_SMALL_2,
+    TEX_ASTEROID_BIG_3,
+    TEX_ASTEROID_MED_3,
+    TEX_ASTEROID_SMALL_3,
+    TEX_SHIP,
+    TEX_LASER,
+    TEX_BACKGROUND,
+    TEX_EXPLOSION_SPRITE_SHEET,
+    TEX_TOTAL
+};

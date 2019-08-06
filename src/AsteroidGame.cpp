@@ -1,9 +1,5 @@
 #include "AsteroidGame.h"
-#include "constants.h"
-#include "AsteroidObject.h"
-#include "ShipObject.h"
-#include "LaserObject.h"
-#include <random>
+
 
 void AsteroidGame::run()
 {
@@ -37,6 +33,8 @@ bool AsteroidGame::runLevel()
         checkAsteroidCollision();      
 
         checkLevelCompleted(); 
+
+        //TODO: add frame rate limitation
     }
     cleanupLevel();
 }
@@ -230,22 +228,37 @@ void AsteroidGame::createLaser(Point pos, CVector velocity)
 
 void AsteroidGame::splitAsteroid(AsteroidObject* asteroid)
 {
-    if(asteroid->getSize() == AsteroidSize::SMALL)
-        return;
-
-    AsteroidSize nextSize = asteroid->getNextSize();
-    int nextTexIdx = static_cast<int>(AsteroidObject::getAsteroidTexture(nextSize, _currentColor));
-    CTexture* pTex = &_mainTextures[nextTexIdx];
-
+    AsteroidSize currentSize = asteroid->getSize();
     Point pos = asteroid->getPos();
 
+    if(currentSize == AsteroidSize::SMALL){
+        createExplosion(pos, currentSize);
+        return;
+    }
+        
+
+    AsteroidSize nextSize = asteroid->getNextSize();
+
+    int nextTexIdx = static_cast<int>(AsteroidObject::getAsteroidTexture(nextSize, _currentColor));
+    CTexture* pTex = &_mainTextures[nextTexIdx];
+    
     CVector currentVelocity = asteroid->getVelocity();
     CVector velocity1(currentVelocity.getMag(), currentVelocity.getAngle() - 45, VectorType::POLAR);
     CVector velocity2(currentVelocity.getMag(), currentVelocity.getAngle() + 45, VectorType::POLAR);
 
+    createExplosion(pos, currentSize);
     createAsteroid(pos, velocity1, pTex, nextSize, _currentColor);
     createAsteroid(pos, velocity2, pTex, nextSize, _currentColor);
 
+}
+
+void AsteroidGame::createExplosion(Point pos, AsteroidSize size)
+{   
+    CTexture *pTex = &_mainTextures[static_cast<int>(TextureType::TEX_EXPLOSION_SPRITE_SHEET)];
+    GameObject *pExplosion = GameObject::Create(ObjectType::EXPLOSION, pos, pTex);
+    static_cast<ExplosionObject*>(pExplosion)->setSize(size);
+
+    _explosionHash.insert(std::make_pair(pExplosion->getID(), pExplosion));
 }
 
 void AsteroidGame::createAsteroid(Point pos, CVector velocity, CTexture* pTex, AsteroidSize size, AsteroidColor color)
@@ -256,6 +269,7 @@ void AsteroidGame::createAsteroid(Point pos, CVector velocity, CTexture* pTex, A
     
     _asteroidHash.insert(std::make_pair(pAsteroid->getID(), pAsteroid));
 }
+
 
 bool AsteroidGame::checkCollision(const SDL_Rect &a, const SDL_Rect &b)
 {
@@ -382,6 +396,9 @@ void AsteroidGame::updateObjects()
             _laserHash.erase(laser.first);
         }
     }
+    for(auto& explosion: _explosionHash){
+        explosion.second->update(time);
+    }
     _pShip->update(time);
 
 }
@@ -392,12 +409,19 @@ void AsteroidGame::renderObjects()
     SDL_SetRenderDrawColor( _prenderer, 0x00, 0x00, 0x00, 0xFF );
     SDL_RenderClear( _prenderer );
 
+    for(auto& explosion: _explosionHash){
+        explosion.second->render(_prenderer);
+        if(static_cast<ExplosionObject*>(explosion.second)->isAnimationDone()){
+            delete explosion.second;
+            _explosionHash.erase(explosion.first);
+        }
+    }
     for(auto const& asteroid: _asteroidHash){
         asteroid.second->render(_prenderer);
     }
     for(auto const& laser: _laserHash){
         laser.second->render(_prenderer);
-    }
+    }    
     _pShip->render(_prenderer);
 
     _fontObjectLevel->render(_prenderer);
@@ -468,6 +492,7 @@ std::string AsteroidGame::getTexturePath(TextureType type)
         case TextureType::TEX_ASTEROID_SMALL_3: return "img/asteroid_small3.png";
         case TextureType::TEX_LASER: return "img/laser.png";
         case TextureType::TEX_SHIP: return "img/ship.png";
+        case TextureType::TEX_EXPLOSION_SPRITE_SHEET: return "img/explosion_sheet.png";
         default: return "";
     }
 }
@@ -481,6 +506,9 @@ AsteroidGame::AsteroidGame()
         exit(0);
     if(!loadFonts())
         exit(0);
+
+    Point backgroundPos{0,0};
+    _backgroundObject = GameObject::Create(ObjectType::STATIC, backgroundPos, &_mainTextures[static_cast<int>(TextureType::TEX_BACKGROUND)]);
 
 }
 
@@ -537,6 +565,11 @@ void AsteroidGame::cleanupLevel()
     if(_pShip)
         delete _pShip;
     _pShip = nullptr; 
+
+    for(auto& explosion: _explosionHash){
+        delete explosion.second;
+    }
+    _explosionHash.clear();
 
     for(auto& laser: _laserHash){
         delete laser.second;

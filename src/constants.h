@@ -1,41 +1,6 @@
 
 #pragma once 
 
-enum class GameState
-{
-    QUIT,
-    LEVEL_COMPLETE,
-    GAMEOVER,
-    RUNNING,
-    PLAY_AGAIN
-};
-
-enum class FontType
-{
-    TITLE1,
-    TITLE2,
-    MENU,
-    TEXT,
-    FONT_TOTAL
-};
-
-enum class TextureType
-{    
-    TEX_ASTEROID_BIG_1,
-    TEX_ASTEROID_MED_1,
-    TEX_ASTEROID_SMALL_1,
-    TEX_ASTEROID_BIG_2,
-    TEX_ASTEROID_MED_2,
-    TEX_ASTEROID_SMALL_2,
-    TEX_ASTEROID_BIG_3,
-    TEX_ASTEROID_MED_3,
-    TEX_ASTEROID_SMALL_3,
-    TEX_SHIP,
-    TEX_LASER,
-    TEX_BACKGROUND,
-    TEX_TOTAL
-};
-
 namespace AsteroidConstants
 {
     constexpr int SCREEN_WIDTH{800};
@@ -62,6 +27,10 @@ namespace AsteroidConstants
     constexpr int FONT_LEVEL_POS_Y{10};
     constexpr int FONT_SCORE_POS_X{SCREEN_WIDTH-200};
     constexpr int FONT_SCORE_POS_Y{10};
+
+    constexpr int EXPLOSION_SPRITE_WIDTH{64};
+    constexpr int EXPLOSION_SPRITE_HEIGHT{64};
+    constexpr int EXPLOSION_SPRITE_NUM{25};
 
 
 } 

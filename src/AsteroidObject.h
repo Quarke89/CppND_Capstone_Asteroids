@@ -3,19 +3,6 @@
 #include "GameObject.h"
 #include <vector>
 
-enum class AsteroidSize
-{
-    BIG,
-    MED,
-    SMALL
-};
-enum class AsteroidColor
-{
-    GREY,
-    RED,
-    BROWN
-};
-
 class AsteroidObject : public GameObject
 {
 
