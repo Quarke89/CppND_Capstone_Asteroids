@@ -6,7 +6,8 @@ enum class GameState
     QUIT,
     LEVEL_COMPLETE,
     GAMEOVER,
-    RUNNING
+    RUNNING,
+    PLAY_AGAIN
 };
 
 enum class FontType

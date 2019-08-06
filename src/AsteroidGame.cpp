@@ -15,6 +15,9 @@ void AsteroidGame::run()
         if(_state == GameState::LEVEL_COMPLETE){
             _state = GameState::RUNNING;
         }
+        if(_state == GameState::GAMEOVER){
+            runGameOverMenu();
+        }
     }
 
 }
@@ -57,11 +60,21 @@ void AsteroidGame::levelCompleted()
 
 void AsteroidGame::runMainMenu()
 {
-    MenuMain mainmenu;
-    mainmenu.init(_prenderer, _mainFonts);
-    _state = mainmenu.run();
+    MenuMain mainMenu;
+    mainMenu.init(_prenderer, _mainFonts);
+    _state = mainMenu.run();
 }
 
+void AsteroidGame::runGameOverMenu()
+{
+    MenuGameOver gameOverMenu;
+    gameOverMenu.init(_prenderer, _mainFonts);    
+    _state = gameOverMenu.run();
+    if(_state == GameState::PLAY_AGAIN){
+        _currentLevel = 1;
+        _state = GameState::RUNNING;
+    }
+}
 
 
 void AsteroidGame::handleInput(SDL_Event &event)
@@ -288,14 +301,13 @@ void AsteroidGame::initLevel()
 
     std::random_device rd;
     std::uniform_int_distribution<> randomAngle(0, 360);                
-
+    
     for(int i = 0; i < numAsteroid; i++){
         double angle = static_cast<double>(randomAngle(rd));
         CVector velocity{asteroidVelocity, angle, VectorType::POLAR};
 
         createAsteroid(pos, velocity, pTex, size, _currentColor);
     }
-
     initShip();
 }
 
@@ -485,10 +497,12 @@ void AsteroidGame::cleanupLevel()
     for(auto& laser: _laserHash){
         delete laser.second;
     }
+    _laserHash.clear();
 
     for(auto& asteroid: _asteroidHash){
         delete asteroid.second;
     }
+    _asteroidHash.clear();
 }
 
 void AsteroidGame::cleanup()

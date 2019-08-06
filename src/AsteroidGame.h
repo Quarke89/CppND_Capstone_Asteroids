@@ -16,6 +16,7 @@
 #include "constants.h"
 
 #include "MenuMain.h"
+#include "MenuGameOver.h"
 
 
 class AsteroidGame{
@@ -60,6 +61,7 @@ class AsteroidGame{
         bool checkCollision(const SDL_Rect &a, const SDL_Rect &b);
 
         void runMainMenu();
+        void runGameOverMenu();
         
     private:
 
