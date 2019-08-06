@@ -3,12 +3,16 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
+
 #include <iostream>
+#include <iomanip>
 #include <memory>
 #include <vector>
 #include <unordered_map>
 #include <utility>
 #include <vector>
+#include <string>
+#include <sstream>
 
 #include "CTexture.h"
 #include "GameObject.h"
@@ -65,6 +69,8 @@ class AsteroidGame{
         void runGameOverMenu();
         void runNextMenu();
         void runPauseMenu();
+
+        void updateScore(int scoreIncrease);
         
     private:
 
@@ -78,8 +84,17 @@ class AsteroidGame{
         std::unordered_map<int, GameObject*> _laserHash;
         std::unordered_map<int, GameObject*> _asteroidHash;
 
-        GameState _state;
-        int _currentLevel;
+        GameState _state;                
         AsteroidColor _currentColor;
+        int _currentLevel;
+        
+        int _score;
+        int _lastUpdatedScore;
+
+        CTexture _fontTextureLevel;        
+        GameObject* _fontObjectLevel;
+
+        CTexture _fontTextureScore;
+        GameObject* _fontObjectScore;
 
 };

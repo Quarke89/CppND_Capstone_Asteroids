@@ -65,6 +65,7 @@ void AsteroidGame::runGameOverMenu()
     _state = gameOverMenu.run();
     if(_state == GameState::PLAY_AGAIN){
         _currentLevel = 1;
+        _score = 0;
         _state = GameState::RUNNING;
     }
 }
@@ -84,6 +85,15 @@ void AsteroidGame::runPauseMenu()
     _state = pauseMenu.run();
 }
 
+void AsteroidGame::updateScore(int scoreIncrease)
+{
+    _score += scoreIncrease;
+
+    SDL_Color whiteTextColor{255,255,255};
+    std::stringstream ss("");
+    ss << "Score: " << std::setw(5) << _score;
+    _fontTextureScore.loadFromRenderedText(_prenderer, _mainFonts[static_cast<int>(FontType::MENU)], ss.str(), whiteTextColor);
+}
 
 void AsteroidGame::handleInput(SDL_Event &event)
 {
@@ -188,6 +198,7 @@ void AsteroidGame::checkAsteroidCollision()
         splitAsteroid(static_cast<AsteroidObject*>(_asteroidHash[idx]));
         delete _asteroidHash[idx];
         _asteroidHash.erase(idx);
+        updateScore(10);
     }
     for(int idx: laserCollideIdx){
         delete _laserHash[idx];
@@ -322,6 +333,23 @@ void AsteroidGame::initLevel()
         createAsteroid(pos, velocity, pTex, size, _currentColor);
     }
     initShip();
+
+    SDL_Color whiteTextColor{255,255,255};
+
+    std::stringstream ss("");
+    ss << "Level: " << _currentLevel;
+    _fontTextureLevel.loadFromRenderedText(_prenderer, _mainFonts[static_cast<int>(FontType::MENU)], ss.str(), whiteTextColor);
+
+    Point levelPos{AsteroidConstants::FONT_LEVEL_POS_X, AsteroidConstants::FONT_LEVEL_POS_Y};
+    _fontObjectLevel = GameObject::Create(ObjectType::STATIC, levelPos, &_fontTextureLevel); 
+
+    ss.str("");
+    ss << "Score: " << std::setw(5) << _score;
+    _fontTextureScore.loadFromRenderedText(_prenderer, _mainFonts[static_cast<int>(FontType::MENU)], ss.str(), whiteTextColor);
+
+    Point scorePos{AsteroidConstants::FONT_SCORE_POS_X, AsteroidConstants::FONT_SCORE_POS_Y};
+    _fontObjectScore = GameObject::Create(ObjectType::STATIC, scorePos, &_fontTextureScore); 
+
 }
 
 Point AsteroidGame::getRandomCorner()
@@ -371,6 +399,9 @@ void AsteroidGame::renderObjects()
         laser.second->render(_prenderer);
     }
     _pShip->render(_prenderer);
+
+    _fontObjectLevel->render(_prenderer);
+    _fontObjectScore->render(_prenderer);
 
     //Update screen
     SDL_RenderPresent( _prenderer );
@@ -442,7 +473,7 @@ std::string AsteroidGame::getTexturePath(TextureType type)
 }
 
 AsteroidGame::AsteroidGame()
-    :_currentColor(AsteroidColor::GREY), _state(GameState::RUNNING), _currentLevel(1)
+    :_currentColor(AsteroidColor::GREY), _state(GameState::RUNNING), _currentLevel(1), _score(0)
 {
     if(!init())
         exit(0);

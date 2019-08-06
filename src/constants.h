@@ -58,6 +58,10 @@ namespace AsteroidConstants
     constexpr double SCALE_LASER_W{20};
     constexpr double SCALE_LASER_H{24};
 
+    constexpr int FONT_LEVEL_POS_X{10};
+    constexpr int FONT_LEVEL_POS_Y{10};
+    constexpr int FONT_SCORE_POS_X{SCREEN_WIDTH-200};
+    constexpr int FONT_SCORE_POS_Y{10};
 
 
 } 
