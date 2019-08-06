@@ -18,7 +18,7 @@ void AsteroidGame::run()
 
 }
 
-bool AsteroidGame::runLevel()
+void AsteroidGame::runLevel()
 {
     SDL_Event event;
 
@@ -378,6 +378,7 @@ Point AsteroidGame::getRandomCorner()
         case 1:     return Point{0, AsteroidConstants::SCREEN_HEIGHT};
         case 2:     return Point{AsteroidConstants::SCREEN_WIDTH, 0};
         case 3:     return Point{AsteroidConstants::SCREEN_WIDTH, AsteroidConstants::SCREEN_HEIGHT};
+        default:    return Point{0, 0};
     }
 }
 

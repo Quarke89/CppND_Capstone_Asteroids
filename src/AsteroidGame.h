@@ -41,7 +41,7 @@ class AsteroidGame{
         bool loadTextures();
         bool loadFonts();
 
-        bool runLevel();
+        void runLevel();
         void cleanupLevel();
 
         void run();                
