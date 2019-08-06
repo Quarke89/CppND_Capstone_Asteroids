@@ -8,8 +8,9 @@
 #include "GameObject.h"
 #include <unordered_map>
 #include <utility>
+#include "constants.h"
 
-enum class MenuItem
+enum class MainMenuItem
 {
     TITLE,
     PLAY,
@@ -26,8 +27,12 @@ class MenuMain
         ~MenuMain();
 
         void init(SDL_Renderer* renderer, std::vector<TTF_Font*> &mainFonts);
-        void run();       
+        MenuAction run();     
+
+        void renderItems();
+
         void toggleState(); 
+        MenuAction select();
 
     private:
 
@@ -35,7 +40,7 @@ class MenuMain
         
         bool _state;
 
-        std::unordered_map<MenuItem, CTexture> _textTextureHash;
-        std::unordered_map<MenuItem, GameObject*> _textObjectHash;
+        std::unordered_map<MainMenuItem, CTexture> _textTextureHash;
+        std::unordered_map<MainMenuItem, GameObject*> _textObjectHash;
 };
 

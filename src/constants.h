@@ -1,6 +1,13 @@
 
 #pragma once 
 
+enum class MenuAction
+{
+    QUIT,
+    PLAY,
+    CONTINUE
+};
+
 enum class FontType
 {
     TITLE1,

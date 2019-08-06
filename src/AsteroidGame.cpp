@@ -7,53 +7,56 @@
 
 void AsteroidGame::run()
 {
-    _mainmenu.run();
-    // SDL_Event e;
-    // int frames = 0;
-    // double fps;
-    // while(_running){
+    MenuAction action = _mainmenu.run();
+    if(action == MenuAction::QUIT)
+        _running = false;
 
-    //     handleInput(e);
+    SDL_Event event;
+    int frames = 0;
+    double fps;
+    while(_running){
 
-    //     //Clear screen
-    //     SDL_SetRenderDrawColor( _prenderer, 0x00, 0x00, 0x00, 0xFF );
-    //     SDL_RenderClear( _prenderer );
+        handleInput(event);
 
-    //     updateObjects();
-    //     renderObjects();
+        //Clear screen
+        SDL_SetRenderDrawColor( _prenderer, 0x00, 0x00, 0x00, 0xFF );
+        SDL_RenderClear( _prenderer );
+
+        updateObjects();
+        renderObjects();
 
 
-    //     //Update screen
-    //     SDL_RenderPresent( _prenderer );
+        //Update screen
+        SDL_RenderPresent( _prenderer );
 
-    //     if(checkShipCollision())
-    //         _running = false;
+        if(checkShipCollision())
+            _running = false;
 
-    //     checkAsteroidCollision();
+        checkAsteroidCollision();
         
 
-    //     // Uint32 ticks = SDL_GetTicks();
-    //     // fps = static_cast<double>(frames)/ticks * 1000;
+        // Uint32 ticks = SDL_GetTicks();
+        // fps = static_cast<double>(frames)/ticks * 1000;
 
-    //     // std::cout << fps << std::endl;
+        // std::cout << fps << std::endl;
 
-    //     ++frames;
-    // }
+        ++frames;
+    }
 
 }
 
 
 
-void AsteroidGame::handleInput(SDL_Event &e)
+void AsteroidGame::handleInput(SDL_Event &event)
 {
 
-    while(SDL_PollEvent(&e) != 0){
-        if(e.type == SDL_QUIT){
+    while(SDL_PollEvent(&event) != 0){
+        if(event.type == SDL_QUIT){
             _running = false;
         }
-        else if(e.type == SDL_KEYDOWN)
+        else if(event.type == SDL_KEYDOWN)
         {
-            switch (e.key.keysym.sym)
+            switch (event.key.keysym.sym)
             {
                 case SDLK_a:
                     static_cast<ShipObject*>(_pShip)->setRotateLeft(true);
@@ -71,9 +74,9 @@ void AsteroidGame::handleInput(SDL_Event &e)
                     break;
             }
         }
-        else if(e.type == SDL_KEYUP)
+        else if(event.type == SDL_KEYUP)
         {
-            switch(e.key.keysym.sym)
+            switch(event.key.keysym.sym)
             {
                 case SDLK_a:
                     static_cast<ShipObject*>(_pShip)->setRotateLeft(false);
