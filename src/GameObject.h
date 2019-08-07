@@ -14,9 +14,10 @@ class GameObject{
         GameObject(Point pos, CTexture* pTex);
         GameObject(Point pos, CTexture* pTex, CVector velocity);
         GameObject(Point pos, CTexture* pTex, CVector velocity, double rotation);
+        virtual ~GameObject() = default;
 
         virtual void render(SDL_Renderer* renderer);
-        virtual void update(Uint32 updateTime){};
+        virtual void update(Uint32 updateTime);
         
         static GameObject* Create(ObjectType type, Point pos, CTexture* tex, CVector velocity=CVector(), double rotation=0);
 

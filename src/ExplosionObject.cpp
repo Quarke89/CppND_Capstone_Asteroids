@@ -3,7 +3,7 @@
 std::vector<SDL_Rect> ExplosionObject::_spriteClips = std::vector<SDL_Rect>();
 
 ExplosionObject::ExplosionObject(Point pos, CTexture* tex)
-    : GameObject(pos, tex), _currentClip(0), _width(AsteroidConstants::EXPLOSION_SPRITE_WIDTH), _height(AsteroidConstants::EXPLOSION_SPRITE_HEIGHT)
+    : GameObject(pos, tex), _width(AsteroidConstants::EXPLOSION_SPRITE_WIDTH), _height(AsteroidConstants::EXPLOSION_SPRITE_HEIGHT), _currentClip(0)
 {
     if(_spriteClips.size() == 0){
 

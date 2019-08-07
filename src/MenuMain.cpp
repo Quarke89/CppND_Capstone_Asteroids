@@ -1,6 +1,6 @@
 #include "MenuMain.h"
 
-MenuMain::MenuMain(GameObject* backgroundObject) :_backgroundObject(backgroundObject),  _state(true)
+MenuMain::MenuMain(GameObject* backgroundObject) : _state(true), _backgroundObject(backgroundObject)
 {}
 
 MenuMain::~MenuMain()
@@ -8,8 +8,8 @@ MenuMain::~MenuMain()
 
 void MenuMain::init(SDL_Renderer* renderer, std::vector<TTF_Font*> &mainFonts)
 {
-    SDL_Color whiteTextColor{255,255,255};
-    SDL_Color selectTextColor{245,227,66};
+    SDL_Color whiteTextColor{255,255,255,255};
+    SDL_Color selectTextColor{245,227,66,255};
 
 
     _prenderer = renderer;

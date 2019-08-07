@@ -8,8 +8,7 @@ MenuNext::~MenuNext()
 
 void MenuNext::init(SDL_Renderer* renderer, std::vector<TTF_Font*> &mainFonts)
 {
-    SDL_Color whiteTextColor{255,255,255};
-    SDL_Color selectTextColor{245,227,66};
+    SDL_Color whiteTextColor{255,255,255,255};
 
     _prenderer = renderer;
 

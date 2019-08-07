@@ -17,7 +17,7 @@ GameObject::GameObject(Point pos, CTexture* pTex, CVector velocity)
 {}
 
 GameObject::GameObject(Point pos, CTexture* pTex, CVector velocity, double rotation)
-    : _pos(pos), _pTex(pTex), _velocity(velocity), _lastUpdated(SDL_GetTicks()), _id(++_count), _rotation(rotation)
+    : _pos(pos), _pTex(pTex), _velocity(velocity), _rotation(rotation), _lastUpdated(SDL_GetTicks()), _id(++_count)
 {}
 
 GameObject* GameObject::Create(ObjectType type, Point pos, CTexture* tex, CVector velocity, double rotation)
@@ -59,6 +59,11 @@ void GameObject::render(SDL_Renderer* renderer)
     SDL_Rect renderQuad{static_cast<int>(_pos.x), static_cast<int>(_pos.y), _pTex->getWidth(), _pTex->getHeight()};
     SDL_RenderCopy( renderer, _pTex->getTexture(), NULL, &renderQuad );    
 
+}
+
+void GameObject::update(Uint32 updateTime)
+{
+    _lastUpdated = updateTime;
 }
 
 void GameObject::calculateRenderRectangles(int objPosX, int objPosY, int objWidth, int objHeight, int screenWidth, int screenHeight, 

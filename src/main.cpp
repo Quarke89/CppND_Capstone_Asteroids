@@ -1,8 +1,6 @@
-#include <iostream>
-#include <SDL2/SDL.h>
 #include "AsteroidGame.h"
 
-int main(int argc, char* args[])
+int main()
 {
     AsteroidGame game;
     game.run();

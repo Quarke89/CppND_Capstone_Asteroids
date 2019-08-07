@@ -108,7 +108,6 @@ class AsteroidGame{
 
         int _currentLevel;
         int _score;
-        int _lastUpdatedScore;
 
         CTexture _fontTextureLevel;         // loaded font to display level
         GameObject* _fontObjectLevel;       // loaded texture/object to display level

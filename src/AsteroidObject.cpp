@@ -69,7 +69,7 @@ void AsteroidObject::render(SDL_Renderer* renderer)
 
     calculateRenderRectangles(xPosCenter, yPosCenter, width, height, AsteroidConstants::SCREEN_WIDTH, AsteroidConstants::SCREEN_HEIGHT, srcRect, dstRect);    
 
-    for(int i = 0; i < srcRect.size(); i++){
+    for(unsigned long i = 0; i < srcRect.size(); i++){
         SDL_RenderCopy( renderer, _pTex->getTexture(), &srcRect[i], &dstRect[i]);
     }
 

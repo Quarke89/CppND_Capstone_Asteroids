@@ -11,7 +11,7 @@
 //////////// Public functions ////////////
 
 AsteroidGame::AsteroidGame()
-    :_currentColor(AsteroidColor::GREY), _state(GameState::RUNNING), _currentLevel(1), _score(0)
+    : _state(GameState::RUNNING), _currentColor(AsteroidColor::GREY), _currentLevel(1), _score(0)
 {
     if(!init())
         exit(0);
@@ -101,8 +101,8 @@ bool AsteroidGame::loadFonts()
 {
     bool success = true;
 
-    for(int i = 0; i < static_cast<unsigned int>(FontType::FONT_TOTAL); i++){
-        TTF_Font *pFont;
+    for(unsigned int i = 0; i < static_cast<unsigned int>(FontType::FONT_TOTAL); i++){
+        TTF_Font *pFont = nullptr;
         switch(static_cast<FontType>(i)){
             case FontType::TITLE1:
                 pFont = TTF_OpenFont( "fonts/Alexis Laser Italic.ttf", AsteroidConstants::FONTSIZE_TITLE1);
@@ -135,7 +135,7 @@ bool AsteroidGame::loadTextures()
 {
     bool success = true;
 
-    for(int i = 0; i < static_cast<unsigned int>(TextureType::TEX_TOTAL); i++){
+    for(unsigned int i = 0; i < static_cast<unsigned int>(TextureType::TEX_TOTAL); i++){
         CTexture tmp;
         success &= tmp.loadFromFile(_prenderer, getTexturePath(static_cast<TextureType>(i)));
         _mainTextures.push_back(std::move(tmp));
@@ -321,7 +321,7 @@ void AsteroidGame::initLevel()
     }
     createShip();
 
-    SDL_Color whiteTextColor{255,255,255};
+    SDL_Color whiteTextColor{255,255,255,255};
 
     std::stringstream ss("");
     ss << "Level: " << _currentLevel;
@@ -593,7 +593,7 @@ void AsteroidGame::updateScore(int scoreIncrease)
 {
     _score += scoreIncrease;
 
-    SDL_Color whiteTextColor{255,255,255};
+    SDL_Color whiteTextColor{255,255,255,255};
     std::stringstream ss("");
     ss << "Score: " << std::setw(5) << _score;
     _fontTextureScore.loadFromRenderedText(_prenderer, _mainFonts[static_cast<int>(FontType::MENU)], ss.str(), whiteTextColor);
