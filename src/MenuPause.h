@@ -22,7 +22,7 @@ enum class PauseMenuItem
 class MenuPause
 {
     public:
-        MenuPause(GameObject* backgroundObject);
+        MenuPause(StaticObject* backgroundObject);
         ~MenuPause();
 
         void init(SDL_Renderer* renderer, std::vector<TTF_Font*> &mainFonts);
@@ -32,11 +32,13 @@ class MenuPause
 
     private:
 
+        std::unique_ptr<StaticObject> createStaticTextObject(Point pos, CTexture* pTex);
+
         SDL_Renderer* _prenderer;
         
         std::unordered_map<PauseMenuItem, CTexture> _textTextureHash;
-        std::unordered_map<PauseMenuItem, GameObject*> _textObjectHash;
+        std::unordered_map<PauseMenuItem, std::unique_ptr<StaticObject>> _textObjectHash;
 
-        GameObject* _backgroundObject;
+        StaticObject* _backgroundObject;
 };
 

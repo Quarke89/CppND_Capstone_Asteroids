@@ -1,6 +1,6 @@
 #include "MenuPause.h"
 
-MenuPause::MenuPause(GameObject* backgroundObject) :_backgroundObject(backgroundObject)
+MenuPause::MenuPause(StaticObject* backgroundObject) :_backgroundObject(backgroundObject)
 {}
 
 MenuPause::~MenuPause()
@@ -20,12 +20,20 @@ void MenuPause::init(SDL_Renderer* renderer, std::vector<TTF_Font*> &mainFonts)
    
     Point titlePos{ static_cast<double>((AsteroidConstants::SCREEN_WIDTH - _textTextureHash[PauseMenuItem::TITLE].getWidth())/2),
                     static_cast<double>((AsteroidConstants::SCREEN_HEIGHT - _textTextureHash[PauseMenuItem::TITLE].getHeight())/3)};
-    _textObjectHash[PauseMenuItem::TITLE] = GameObject::Create(ObjectType::STATIC, titlePos, &_textTextureHash[PauseMenuItem::TITLE]); 
+     
     
     Point playPos{  static_cast<double>((AsteroidConstants::SCREEN_WIDTH - _textTextureHash[PauseMenuItem::PRESS_BUTTON].getWidth())/2),
                     static_cast<double>((AsteroidConstants::SCREEN_HEIGHT - _textTextureHash[PauseMenuItem::PRESS_BUTTON].getHeight())/2)};
-    _textObjectHash[PauseMenuItem::PRESS_BUTTON] = GameObject::Create(ObjectType::STATIC, playPos, &_textTextureHash[PauseMenuItem::PRESS_BUTTON]); 
 
+    _textObjectHash[PauseMenuItem::TITLE] = createStaticTextObject(titlePos, &_textTextureHash[PauseMenuItem::TITLE]); 
+    _textObjectHash[PauseMenuItem::PRESS_BUTTON] = createStaticTextObject(playPos, &_textTextureHash[PauseMenuItem::PRESS_BUTTON]); 
+
+}
+
+std::unique_ptr<StaticObject> MenuPause::createStaticTextObject(Point pos, CTexture* pTex)
+{
+    std::unique_ptr<GameObject> pGO = GameObject::Create(ObjectType::STATIC, pos, pTex); 
+    return static_unique_ptr_cast<StaticObject, GameObject>(std::move(pGO));
 }
 
 GameState MenuPause::run()

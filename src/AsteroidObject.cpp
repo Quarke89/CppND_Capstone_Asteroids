@@ -30,6 +30,7 @@ AsteroidColor AsteroidObject::getNextColor(AsteroidColor color)
         case AsteroidColor::RED:   return AsteroidColor::BROWN;
         case AsteroidColor::BROWN:   return AsteroidColor::GREY;
     }
+    return AsteroidColor::GREY;
 }
 
 TextureType AsteroidObject::getAsteroidTexture(AsteroidSize size, AsteroidColor color)
@@ -54,6 +55,7 @@ TextureType AsteroidObject::getAsteroidTexture(AsteroidSize size, AsteroidColor 
                 case AsteroidColor::BROWN:  return TextureType::TEX_ASTEROID_SMALL_3;
             }
     }
+    return TextureType::TEX_ASTEROID_BIG_1;
 }
 
 void AsteroidObject::render(SDL_Renderer* renderer)

@@ -1,6 +1,6 @@
 #include "AsteroidGame.h"
 
-int main()
+int main(int argc, char *argv[])
 {
     AsteroidGame game;
     game.run();

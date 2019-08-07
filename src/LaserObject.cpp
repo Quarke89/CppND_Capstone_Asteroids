@@ -10,7 +10,6 @@ LaserObject::LaserObject(Point pos, CTexture* tex, CVector velocity, double rota
 
 void LaserObject::update(Uint32 updateTime)
 {
-
     double timeDelta = static_cast<double>(updateTime - _lastUpdated)/1000;
 
     _pos.x += _velocity.getXProjection() * timeDelta;

@@ -22,7 +22,7 @@ enum class NextMenuItem
 class MenuNext
 {
     public:
-        MenuNext(GameObject* backgroundObject);
+        MenuNext(StaticObject* backgroundObject);
         ~MenuNext();
 
         void init(SDL_Renderer* renderer, std::vector<TTF_Font*> &mainFonts);
@@ -32,11 +32,13 @@ class MenuNext
 
     private:
 
+        std::unique_ptr<StaticObject> createStaticTextObject(Point pos, CTexture* pTex);
+
         SDL_Renderer* _prenderer;
         
         std::unordered_map<NextMenuItem, CTexture> _textTextureHash;
-        std::unordered_map<NextMenuItem, GameObject*> _textObjectHash;
+        std::unordered_map<NextMenuItem, std::unique_ptr<StaticObject>> _textObjectHash;
 
-        GameObject* _backgroundObject;
+        StaticObject* _backgroundObject;
 };
 

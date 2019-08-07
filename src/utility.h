@@ -1,6 +1,14 @@
 #pragma once
 
 
+template<typename Derived, typename Base>
+std::unique_ptr<Derived> static_unique_ptr_cast( std::unique_ptr<Base>&& p )
+{
+    auto d = static_cast<Derived *>(p.release());
+    return std::unique_ptr<Derived>(d);
+}
+
+
 struct Point{
     double x;
     double y;

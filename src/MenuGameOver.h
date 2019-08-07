@@ -24,7 +24,7 @@ enum class GameOverMenuItem
 class MenuGameOver
 {
     public:
-        MenuGameOver(GameObject* backgroundObject);
+        MenuGameOver(StaticObject* backgroundObject);
         ~MenuGameOver();
 
         void init(SDL_Renderer* renderer, std::vector<TTF_Font*> &mainFonts);
@@ -37,13 +37,15 @@ class MenuGameOver
 
     private:
 
+        std::unique_ptr<StaticObject> createStaticTextObject(Point pos, CTexture* pTex);
+        
         SDL_Renderer* _prenderer;
         
         bool _state;
 
         std::unordered_map<GameOverMenuItem, CTexture> _textTextureHash;
-        std::unordered_map<GameOverMenuItem, GameObject*> _textObjectHash;
+        std::unordered_map<GameOverMenuItem, std::unique_ptr<StaticObject>> _textObjectHash;
 
-        GameObject* _backgroundObject;
+        StaticObject* _backgroundObject;
 };
 

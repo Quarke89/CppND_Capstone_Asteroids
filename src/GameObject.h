@@ -19,13 +19,13 @@ class GameObject{
         virtual void render(SDL_Renderer* renderer);
         virtual void update(Uint32 updateTime);
         
-        static GameObject* Create(ObjectType type, Point pos, CTexture* tex, CVector velocity=CVector(), double rotation=0);
+        static std::unique_ptr<GameObject> Create(ObjectType type, Point pos, CTexture* tex, CVector velocity=CVector(), double rotation=0);
 
         // getter functions
-        Point getPos();
-        CVector getVelocity();
-        double getRotation();
-        int getID();
+        Point getPos() const;
+        CVector getVelocity() const;
+        double getRotation() const;
+        int getID() const;
         
     protected:
 

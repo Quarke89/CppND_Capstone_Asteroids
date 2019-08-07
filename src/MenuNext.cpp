@@ -1,6 +1,6 @@
 #include "MenuNext.h"
 
-MenuNext::MenuNext(GameObject* backgroundObject) :_backgroundObject(backgroundObject)
+MenuNext::MenuNext(StaticObject* backgroundObject) :_backgroundObject(backgroundObject)
 {}
 
 MenuNext::~MenuNext()
@@ -20,12 +20,19 @@ void MenuNext::init(SDL_Renderer* renderer, std::vector<TTF_Font*> &mainFonts)
    
     Point titlePos{ static_cast<double>((AsteroidConstants::SCREEN_WIDTH - _textTextureHash[NextMenuItem::TITLE].getWidth())/2),
                     static_cast<double>((AsteroidConstants::SCREEN_HEIGHT - _textTextureHash[NextMenuItem::TITLE].getHeight())/3)};
-    _textObjectHash[NextMenuItem::TITLE] = GameObject::Create(ObjectType::STATIC, titlePos, &_textTextureHash[NextMenuItem::TITLE]); 
     
     Point playPos{  static_cast<double>((AsteroidConstants::SCREEN_WIDTH - _textTextureHash[NextMenuItem::PRESS_BUTTON].getWidth())/2),
                     static_cast<double>((AsteroidConstants::SCREEN_HEIGHT - _textTextureHash[NextMenuItem::PRESS_BUTTON].getHeight())/2)};
-    _textObjectHash[NextMenuItem::PRESS_BUTTON] = GameObject::Create(ObjectType::STATIC, playPos, &_textTextureHash[NextMenuItem::PRESS_BUTTON]); 
 
+    _textObjectHash[NextMenuItem::TITLE] = createStaticTextObject(titlePos, &_textTextureHash[NextMenuItem::TITLE]); 
+    _textObjectHash[NextMenuItem::PRESS_BUTTON] = createStaticTextObject(playPos, &_textTextureHash[NextMenuItem::PRESS_BUTTON]); 
+
+}
+
+std::unique_ptr<StaticObject> MenuNext::createStaticTextObject(Point pos, CTexture* pTex)
+{
+    std::unique_ptr<GameObject> pGO = GameObject::Create(ObjectType::STATIC, pos, pTex); 
+    return static_unique_ptr_cast<StaticObject, GameObject>(std::move(pGO));
 }
 
 GameState MenuNext::run()

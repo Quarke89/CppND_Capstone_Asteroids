@@ -1,6 +1,6 @@
 #include "MenuMain.h"
 
-MenuMain::MenuMain(GameObject* backgroundObject) : _state(true), _backgroundObject(backgroundObject)
+MenuMain::MenuMain(StaticObject* backgroundObject) : _state(true), _backgroundObject(backgroundObject)
 {}
 
 MenuMain::~MenuMain()
@@ -22,22 +22,30 @@ void MenuMain::init(SDL_Renderer* renderer, std::vector<TTF_Font*> &mainFonts)
     _textTextureHash[MainMenuItem::QUIT].loadFromRenderedText(_prenderer, mainFonts[static_cast<int>(FontType::MENU)], "Quit", whiteTextColor);
     _textTextureHash[MainMenuItem::PLAY_SELECT].loadFromRenderedText(_prenderer, mainFonts[static_cast<int>(FontType::MENU)], "Play Game", selectTextColor);
     _textTextureHash[MainMenuItem::QUIT_SELECT].loadFromRenderedText(_prenderer, mainFonts[static_cast<int>(FontType::MENU)], "Quit", selectTextColor);
-
     
     Point titlePos{ static_cast<double>((AsteroidConstants::SCREEN_WIDTH - _textTextureHash[MainMenuItem::TITLE].getWidth())/2),
                     static_cast<double>((AsteroidConstants::SCREEN_HEIGHT - _textTextureHash[MainMenuItem::TITLE].getHeight())/3)};
-    _textObjectHash[MainMenuItem::TITLE] = GameObject::Create(ObjectType::STATIC, titlePos, &_textTextureHash[MainMenuItem::TITLE]); 
+     
     
     Point playPos{  static_cast<double>((AsteroidConstants::SCREEN_WIDTH - _textTextureHash[MainMenuItem::PLAY].getWidth())/2),
                     static_cast<double>((AsteroidConstants::SCREEN_HEIGHT - _textTextureHash[MainMenuItem::PLAY].getHeight())/2)};
-    _textObjectHash[MainMenuItem::PLAY] = GameObject::Create(ObjectType::STATIC, playPos, &_textTextureHash[MainMenuItem::PLAY]); 
-    _textObjectHash[MainMenuItem::PLAY_SELECT] = GameObject::Create(ObjectType::STATIC, playPos, &_textTextureHash[MainMenuItem::PLAY_SELECT]); 
-
 
     Point quitPos{  static_cast<double>((AsteroidConstants::SCREEN_WIDTH - _textTextureHash[MainMenuItem::QUIT].getWidth())/2),
                     static_cast<double>((AsteroidConstants::SCREEN_HEIGHT - _textTextureHash[MainMenuItem::QUIT].getHeight())/1.8)};
-    _textObjectHash[MainMenuItem::QUIT] = GameObject::Create(ObjectType::STATIC, quitPos, &_textTextureHash[MainMenuItem::QUIT]); 
-    _textObjectHash[MainMenuItem::QUIT_SELECT] = GameObject::Create(ObjectType::STATIC, quitPos, &_textTextureHash[MainMenuItem::QUIT_SELECT]); 
+
+
+    _textObjectHash[MainMenuItem::TITLE] = createStaticTextObject(titlePos, &_textTextureHash[MainMenuItem::TITLE]);
+    _textObjectHash[MainMenuItem::PLAY] = createStaticTextObject(playPos, &_textTextureHash[MainMenuItem::PLAY]); 
+    _textObjectHash[MainMenuItem::PLAY_SELECT] = createStaticTextObject(playPos, &_textTextureHash[MainMenuItem::PLAY_SELECT]); 
+    _textObjectHash[MainMenuItem::QUIT] = createStaticTextObject(quitPos, &_textTextureHash[MainMenuItem::QUIT]); 
+    _textObjectHash[MainMenuItem::QUIT_SELECT] = createStaticTextObject(quitPos, &_textTextureHash[MainMenuItem::QUIT_SELECT]); 
+
+}
+
+std::unique_ptr<StaticObject> MenuMain::createStaticTextObject(Point pos, CTexture* pTex)
+{
+    std::unique_ptr<GameObject> pGO = GameObject::Create(ObjectType::STATIC, pos, pTex); 
+    return static_unique_ptr_cast<StaticObject, GameObject>(std::move(pGO));
 
 }
 

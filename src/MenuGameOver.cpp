@@ -1,6 +1,6 @@
 #include "MenuGameOver.h"
 
-MenuGameOver::MenuGameOver(GameObject* backgroundObject) : _state(true), _backgroundObject(backgroundObject)
+MenuGameOver::MenuGameOver(StaticObject* backgroundObject) : _state(true), _backgroundObject(backgroundObject)
 {}
 
 MenuGameOver::~MenuGameOver()
@@ -25,18 +25,25 @@ void MenuGameOver::init(SDL_Renderer* renderer, std::vector<TTF_Font*> &mainFont
     
     Point titlePos{ static_cast<double>((AsteroidConstants::SCREEN_WIDTH - _textTextureHash[GameOverMenuItem::TITLE].getWidth())/2),
                     static_cast<double>((AsteroidConstants::SCREEN_HEIGHT - _textTextureHash[GameOverMenuItem::TITLE].getHeight())/3)};
-    _textObjectHash[GameOverMenuItem::TITLE] = GameObject::Create(ObjectType::STATIC, titlePos, &_textTextureHash[GameOverMenuItem::TITLE]); 
-    
+        
     Point playPos{  static_cast<double>((AsteroidConstants::SCREEN_WIDTH - _textTextureHash[GameOverMenuItem::PLAY_AGAIN].getWidth())/2),
                     static_cast<double>((AsteroidConstants::SCREEN_HEIGHT - _textTextureHash[GameOverMenuItem::PLAY_AGAIN].getHeight())/2)};
-    _textObjectHash[GameOverMenuItem::PLAY_AGAIN] = GameObject::Create(ObjectType::STATIC, playPos, &_textTextureHash[GameOverMenuItem::PLAY_AGAIN]); 
-    _textObjectHash[GameOverMenuItem::PLAY_AGAIN_SELECT] = GameObject::Create(ObjectType::STATIC, playPos, &_textTextureHash[GameOverMenuItem::PLAY_AGAIN_SELECT]); 
-
 
     Point quitPos{  static_cast<double>((AsteroidConstants::SCREEN_WIDTH - _textTextureHash[GameOverMenuItem::QUIT].getWidth())/2),
                     static_cast<double>((AsteroidConstants::SCREEN_HEIGHT - _textTextureHash[GameOverMenuItem::QUIT].getHeight())/1.8)};
-    _textObjectHash[GameOverMenuItem::QUIT] = GameObject::Create(ObjectType::STATIC, quitPos, &_textTextureHash[GameOverMenuItem::QUIT]); 
-    _textObjectHash[GameOverMenuItem::QUIT_SELECT] = GameObject::Create(ObjectType::STATIC, quitPos, &_textTextureHash[GameOverMenuItem::QUIT_SELECT]); 
+
+    _textObjectHash[GameOverMenuItem::TITLE] = createStaticTextObject(titlePos, &_textTextureHash[GameOverMenuItem::TITLE]); 
+    _textObjectHash[GameOverMenuItem::PLAY_AGAIN] = createStaticTextObject(playPos, &_textTextureHash[GameOverMenuItem::PLAY_AGAIN]); 
+    _textObjectHash[GameOverMenuItem::PLAY_AGAIN_SELECT] = createStaticTextObject(playPos, &_textTextureHash[GameOverMenuItem::PLAY_AGAIN_SELECT]); 
+    _textObjectHash[GameOverMenuItem::QUIT] = createStaticTextObject(quitPos, &_textTextureHash[GameOverMenuItem::QUIT]); 
+    _textObjectHash[GameOverMenuItem::QUIT_SELECT] = createStaticTextObject(quitPos, &_textTextureHash[GameOverMenuItem::QUIT_SELECT]); 
+
+}
+
+std::unique_ptr<StaticObject> MenuGameOver::createStaticTextObject(Point pos, CTexture* pTex)
+{
+    std::unique_ptr<GameObject> pGO = GameObject::Create(ObjectType::STATIC, pos, pTex); 
+    return static_unique_ptr_cast<StaticObject, GameObject>(std::move(pGO));
 
 }
 

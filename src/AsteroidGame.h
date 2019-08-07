@@ -97,11 +97,16 @@ class AsteroidGame{
         std::vector<CTexture> _mainTextures;    // vector holding the main loaded textures
         std::vector<TTF_Font*> _mainFonts;      // vector holding the fonts converted by SDL_TTF
         
-        GameObject* _pShip{nullptr};                            // Game object for the ship
-        std::unordered_map<int, GameObject*> _laserHash;        // Hashmap for active laser objects with a unique ID as the key
-        std::unordered_map<int, GameObject*> _asteroidHash;     // Hashmap for active asteroid objects with a unique ID as the key
-        std::unordered_map<int, GameObject*> _explosionHash;    // Hashmap for active explosion objects with a unique ID as the key
-        GameObject* _backgroundObject;                          // Game object for the background image
+        // GameObject* _pShip{nullptr};                            // Game object for the ship
+        std::unique_ptr<ShipObject> _pShip;
+        // std::unordered_map<int, GameObject*> _laserHash;        // Hashmap for active laser objects with a unique ID as the key
+        // std::unordered_map<int, GameObject*> _asteroidHash;     // Hashmap for active asteroid objects with a unique ID as the key
+        // std::unordered_map<int, GameObject*> _explosionHash;    // Hashmap for active explosion objects with a unique ID as the key
+        std::unordered_map<int, std::unique_ptr<LaserObject>> _laserHash;        // Hashmap for active laser objects with a unique ID as the key
+        std::unordered_map<int, std::unique_ptr<AsteroidObject>> _asteroidHash;     // Hashmap for active asteroid objects with a unique ID as the key
+        std::unordered_map<int, std::unique_ptr<ExplosionObject>> _explosionHash;    // Hashmap for active explosion objects with a unique ID as the key
+        // GameObject* _backgroundObject;                          // Game object for the background image
+        std::unique_ptr<StaticObject> _backgroundObject;          // Game object for the background image
 
         GameState _state;                   // Game state enum 
         AsteroidColor _currentColor;        // Asteroid color enum, determines color for current level
@@ -110,9 +115,11 @@ class AsteroidGame{
         int _score;
 
         CTexture _fontTextureLevel;         // loaded font to display level
-        GameObject* _fontObjectLevel;       // loaded texture/object to display level
+        // GameObject* _fontObjectLevel;       // loaded texture/object to display level
+        std::unique_ptr<StaticObject> _fontObjectLevel;
 
         CTexture _fontTextureScore;         // loaded font to display score
-        GameObject* _fontObjectScore;       // loaded texture/object to display score
+        // GameObject* _fontObjectScore;       // loaded texture/object to display score
+        std::unique_ptr<StaticObject> _fontObjectScore;
 
 };

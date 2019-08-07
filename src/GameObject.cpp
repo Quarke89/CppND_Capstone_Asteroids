@@ -8,51 +8,15 @@
 int GameObject::_count = 0;
 
 GameObject::GameObject(Point pos, CTexture* pTex)
-    : GameObject(pos, pTex, CVector())
-{}
+    : GameObject(pos, pTex, CVector()){}
 
 
 GameObject::GameObject(Point pos, CTexture* pTex, CVector velocity)
-    : GameObject(pos, pTex, velocity, 0)
-{}
+    : GameObject(pos, pTex, velocity, 0){}
 
 GameObject::GameObject(Point pos, CTexture* pTex, CVector velocity, double rotation)
-    : _pos(pos), _pTex(pTex), _velocity(velocity), _rotation(rotation), _lastUpdated(SDL_GetTicks()), _id(++_count)
-{}
+    : _pos(pos), _pTex(pTex), _velocity(velocity), _rotation(rotation), _lastUpdated(SDL_GetTicks()), _id(++_count){}
 
-GameObject* GameObject::Create(ObjectType type, Point pos, CTexture* tex, CVector velocity, double rotation)
-{
-    switch(type){
-        case ObjectType::STATIC:    return new StaticObject(pos, tex);
-        case ObjectType::ASTEROID:  return new AsteroidObject(pos, tex, velocity);
-        case ObjectType::SHIP:      return new ShipObject(pos, tex, velocity);
-        case ObjectType::LASER:     return new LaserObject(pos, tex, velocity, rotation);
-        case ObjectType::EXPLOSION: return new ExplosionObject(pos, tex);
-        default: 
-            return nullptr;
-    }
-}
-
-
-CVector GameObject::getVelocity()
-{
-    return _velocity;
-}
-
-int GameObject::getID()
-{
-    return _id;
-}
-
-Point GameObject::getPos()
-{
-    return _pos;
-}
-
-double GameObject::getRotation()
-{
-    return _rotation;
-}
 
 void GameObject::render(SDL_Renderer* renderer)
 {
@@ -65,6 +29,26 @@ void GameObject::update(Uint32 updateTime)
 {
     _lastUpdated = updateTime;
 }
+
+std::unique_ptr<GameObject> GameObject::Create(ObjectType type, Point pos, CTexture* tex, CVector velocity, double rotation)
+{
+    switch(type){
+        case ObjectType::STATIC:    return std::unique_ptr<GameObject>(new StaticObject(pos, tex));
+        case ObjectType::ASTEROID:  return std::unique_ptr<GameObject>(new AsteroidObject(pos, tex, velocity));
+        case ObjectType::SHIP:      return std::unique_ptr<GameObject>(new ShipObject(pos, tex, velocity));
+        case ObjectType::LASER:     return std::unique_ptr<GameObject>(new LaserObject(pos, tex, velocity, rotation));
+        case ObjectType::EXPLOSION: return std::unique_ptr<GameObject>(new ExplosionObject(pos, tex));
+        default: 
+            return nullptr;
+    }
+}
+
+CVector GameObject::getVelocity() const { return _velocity;}
+int GameObject::getID() const { return _id;}
+Point GameObject::getPos() const { return _pos;}
+double GameObject::getRotation() const { return _rotation;}
+
+
 
 void GameObject::calculateRenderRectangles(int objPosX, int objPosY, int objWidth, int objHeight, int screenWidth, int screenHeight, 
                                         std::vector<SDL_Rect> &srcRect, std::vector<SDL_Rect> &dstRect)
@@ -174,8 +158,5 @@ void GameObject::calculateRenderRectangles(int objPosX, int objPosY, int objWidt
         dstRect.push_back(SDL_Rect{0, top, right-screenWidth+1, screenHeight-top});
         dstRect.push_back(SDL_Rect{0, 0, right-screenWidth+1, bottom-screenHeight+1});
         return;
-    }
-
-
-            
+    }            
 }

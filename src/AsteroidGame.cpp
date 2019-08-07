@@ -21,7 +21,8 @@ AsteroidGame::AsteroidGame()
         exit(0);
 
     Point backgroundPos{0,0};
-    _backgroundObject = GameObject::Create(ObjectType::STATIC, backgroundPos, &_mainTextures[static_cast<int>(TextureType::TEX_BACKGROUND)]);
+    std::unique_ptr<GameObject> pGameObject = GameObject::Create(ObjectType::STATIC, backgroundPos, &_mainTextures[static_cast<int>(TextureType::TEX_BACKGROUND)]);
+    _backgroundObject = static_unique_ptr_cast<StaticObject, GameObject>(std::move(pGameObject));    
 
 }
 
@@ -198,46 +199,24 @@ void AsteroidGame::handleInput(SDL_Event &event)
         {
             switch (event.key.keysym.sym)
             {
-                case SDLK_a:
-                    static_cast<ShipObject*>(_pShip)->setRotateLeft(true);
-                    break;
-                case SDLK_d:
-                    static_cast<ShipObject*>(_pShip)->setRotateRight(true);
-                    break;
-                case SDLK_w:
-                    static_cast<ShipObject*>(_pShip)->setMoveForward(true);
-                    break;
-                case SDLK_s:
-                    static_cast<ShipObject*>(_pShip)->setMoveBackward(true);
-                    break;
-                default:
-                    break;
+                case SDLK_a:    _pShip->setRotateLeft(true);    break;
+                case SDLK_d:    _pShip->setRotateRight(true);   break;
+                case SDLK_w:    _pShip->setMoveForward(true);   break;
+                case SDLK_s:    _pShip->setMoveBackward(true);  break;
+                default:                                        break;
             }
         }
         else if(event.type == SDL_KEYUP)
         {
             switch(event.key.keysym.sym)
             {
-                case SDLK_a:
-                    static_cast<ShipObject*>(_pShip)->setRotateLeft(false);
-                    break;
-                case SDLK_d:
-                    static_cast<ShipObject*>(_pShip)->setRotateRight(false);
-                    break;
-                case SDLK_w:
-                    static_cast<ShipObject*>(_pShip)->setMoveForward(false);
-                    break;
-                case SDLK_s:
-                    static_cast<ShipObject*>(_pShip)->setMoveBackward(false);
-                    break;
-                case SDLK_SPACE:
-                    shootLaser();
-                    break;
-                case SDLK_ESCAPE:
-                    runPauseMenu();
-                    break;
-                default:
-                    break;
+                case SDLK_a:        _pShip->setRotateLeft(false);   break;
+                case SDLK_d:        _pShip->setRotateRight(false);  break;
+                case SDLK_w:        _pShip->setMoveForward(false);  break;
+                case SDLK_s:        _pShip->setMoveBackward(false); break;
+                case SDLK_SPACE:    shootLaser();                   break;
+                case SDLK_ESCAPE:   runPauseMenu();                 break;
+                default:                                            break;
 
             }
         }
@@ -252,12 +231,11 @@ void AsteroidGame::renderObjects()
     SDL_RenderClear( _prenderer );
 
     SDL_Rect backgroundRect{0,0,AsteroidConstants::SCREEN_WIDTH, AsteroidConstants::SCREEN_HEIGHT};
-    static_cast<StaticObject*>(_backgroundObject)->render(_prenderer, &backgroundRect);
+    _backgroundObject->render(_prenderer, &backgroundRect);
 
     for(auto& explosion: _explosionHash){
         explosion.second->render(_prenderer);
-        if(static_cast<ExplosionObject*>(explosion.second)->isAnimationDone()){
-            delete explosion.second;
+        if(explosion.second->isAnimationDone()){
             _explosionHash.erase(explosion.first);
         }
     }
@@ -287,8 +265,7 @@ void AsteroidGame::updateObjects()
         laser.second->update(time);
     }
     for(auto& laser: _laserHash){
-        if(static_cast<LaserObject*>(laser.second)->checkOffscreen()){
-            delete laser.second;
+        if(laser.second->checkOffscreen()){
             _laserHash.erase(laser.first);
         }
     }
@@ -328,14 +305,16 @@ void AsteroidGame::initLevel()
     _fontTextureLevel.loadFromRenderedText(_prenderer, _mainFonts[static_cast<int>(FontType::MENU)], ss.str(), whiteTextColor);
 
     Point levelPos{AsteroidConstants::FONT_LEVEL_POS_X, AsteroidConstants::FONT_LEVEL_POS_Y};
-    _fontObjectLevel = GameObject::Create(ObjectType::STATIC, levelPos, &_fontTextureLevel); 
+    std::unique_ptr<GameObject> pGameObject = GameObject::Create(ObjectType::STATIC, levelPos, &_fontTextureLevel); 
+    _fontObjectLevel = static_unique_ptr_cast<StaticObject, GameObject>(std::move(pGameObject));    
 
     ss.str("");
     ss << "Score: " << std::setw(5) << _score;
     _fontTextureScore.loadFromRenderedText(_prenderer, _mainFonts[static_cast<int>(FontType::MENU)], ss.str(), whiteTextColor);
 
-    Point scorePos{AsteroidConstants::FONT_SCORE_POS_X, AsteroidConstants::FONT_SCORE_POS_Y};
-    _fontObjectScore = GameObject::Create(ObjectType::STATIC, scorePos, &_fontTextureScore); 
+    Point scorePos{AsteroidConstants::FONT_SCORE_POS_X, AsteroidConstants::FONT_SCORE_POS_Y};    
+    std::unique_ptr<GameObject> pGameObject2 = GameObject::Create(ObjectType::STATIC, scorePos, &_fontTextureScore); 
+    _fontObjectScore = static_unique_ptr_cast<StaticObject, GameObject>(std::move(pGameObject2));
 
 }
 
@@ -347,50 +326,54 @@ void AsteroidGame::createShip()
 
     CTexture* pTex = &_mainTextures[static_cast<int>(TextureType::TEX_SHIP)];
 
-    _pShip = GameObject::Create(ObjectType::SHIP, pos, pTex, velocity);
+    std::unique_ptr<GameObject> pGameObject = GameObject::Create(ObjectType::SHIP, pos, pTex, velocity);
+    _pShip = static_unique_ptr_cast<ShipObject, GameObject>(std::move(pGameObject));
 
 }
 
 // wrapper for factory method for creating laser objects
 void AsteroidGame::createLaser(Point pos, CVector velocity)
 {
-
     CTexture *pTex = &_mainTextures[static_cast<int>(TextureType::TEX_LASER)];
 
-    GameObject *pLaser = GameObject::Create(ObjectType::LASER, pos, pTex, velocity, velocity.getAngle() + 90);
-    
-    _laserHash.insert(std::make_pair(pLaser->getID(), pLaser));
+    std::unique_ptr<GameObject> pLaserGO = GameObject::Create(ObjectType::LASER, pos, pTex, velocity, velocity.getAngle() + 90);         
+    std::unique_ptr<LaserObject> pLaser = static_unique_ptr_cast<LaserObject, GameObject>(std::move(pLaserGO));
 
+    _laserHash.insert(std::make_pair( pLaser->getID(), std::move(pLaser)) );
 }
 
 // wrapper for factory method for creating asteroid objects
 void AsteroidGame::createAsteroid(Point pos, CVector velocity, CTexture* pTex, AsteroidSize size, AsteroidColor color)
 {
+    std::unique_ptr<GameObject> pAsteroidGO = GameObject::Create(ObjectType::ASTEROID, pos, pTex, velocity);
+    std::unique_ptr<AsteroidObject> pAsteroid = static_unique_ptr_cast<AsteroidObject, GameObject>(std::move(pAsteroidGO));
 
-    GameObject *pAsteroid = GameObject::Create(ObjectType::ASTEROID, pos, pTex, velocity);
-    static_cast<AsteroidObject*>(pAsteroid)->setAsteroidAttr(size, color);
-    
-    _asteroidHash.insert(std::make_pair(pAsteroid->getID(), pAsteroid));
+    pAsteroid->setAsteroidAttr(size, color);
+
+    _asteroidHash.insert(std::make_pair(pAsteroid->getID(), std::move(pAsteroid)) );
 }
 
 // wrapper for factory method for creating explosion objects
 void AsteroidGame::createExplosion(Point pos, AsteroidSize size)
 {   
     CTexture *pTex = &_mainTextures[static_cast<int>(TextureType::TEX_EXPLOSION_SPRITE_SHEET)];
-    GameObject *pExplosion = GameObject::Create(ObjectType::EXPLOSION, pos, pTex);
-    static_cast<ExplosionObject*>(pExplosion)->setSize(size);
+    
+    std::unique_ptr<GameObject> pExplosionGO = GameObject::Create(ObjectType::EXPLOSION, pos, pTex);
+    std::unique_ptr<ExplosionObject> pExplosion = static_unique_ptr_cast<ExplosionObject, GameObject>(std::move(pExplosionGO));
 
-    _explosionHash.insert(std::make_pair(pExplosion->getID(), pExplosion));
+    pExplosion->setSize(size);
+
+    _explosionHash.insert(std::make_pair(pExplosion->getID(), std::move(pExplosion)) );
 }
 
 
 // check ship <-> asteroid collision
 void AsteroidGame::checkShipCollision()
 {
-    const SDL_Rect &shipRect = static_cast<ShipObject*>(_pShip)->getBoundingBox();
+    const SDL_Rect &shipRect = _pShip->getBoundingBox();
     
     for(auto const &asteroid: _asteroidHash){
-        const std::vector<SDL_Rect> &boxes = static_cast<AsteroidObject*>(asteroid.second)->getBoundingBoxes();
+        const std::vector<SDL_Rect> &boxes = asteroid.second->getBoundingBoxes();
         for(const SDL_Rect &box: boxes){
             if(checkCollision(shipRect, box)){
                 _state = GameState::GAMEOVER;
@@ -408,11 +391,11 @@ void AsteroidGame::checkAsteroidCollision()
     std::vector<int> laserCollideIdx;
 
     for(const auto &laser: _laserHash){
-        const SDL_Rect &laserRect = static_cast<LaserObject*>(laser.second)->getBoundingBox();
+        const SDL_Rect &laserRect = laser.second->getBoundingBox();
         bool collide = false;
 
         for(const auto &asteroid: _asteroidHash){
-            const std::vector<SDL_Rect> &boxes = static_cast<AsteroidObject*>(asteroid.second)->getBoundingBoxes();
+            const std::vector<SDL_Rect> &boxes = asteroid.second->getBoundingBoxes();
             for(const SDL_Rect &box: boxes){
                 if(checkCollision(laserRect, box)){
                     asteroidCollideIdx.push_back(asteroid.first);
@@ -429,13 +412,11 @@ void AsteroidGame::checkAsteroidCollision()
     }
 
     for(int idx: asteroidCollideIdx){
-        splitAsteroid(static_cast<AsteroidObject*>(_asteroidHash[idx]));
-        delete _asteroidHash[idx];
+        splitAsteroid(_asteroidHash[idx].get());
         _asteroidHash.erase(idx);
         updateScore(10);
     }
     for(int idx: laserCollideIdx){
-        delete _laserHash[idx];
         _laserHash.erase(idx);
     }
    
@@ -515,32 +496,9 @@ void AsteroidGame::checkLevelCompleted()
 // clean up game objects
 void AsteroidGame::cleanupLevel()
 {
-
-    if(_fontObjectLevel)
-        delete _fontObjectLevel;
-    _fontObjectLevel = nullptr;
-
-    if(_fontObjectScore)
-        delete _fontObjectScore;
-    _fontObjectScore  = nullptr;
-
-    if(_pShip)
-        delete _pShip;
-    _pShip = nullptr; 
-
-    for(auto& explosion: _explosionHash){
-        delete explosion.second;
-    }
+ 
     _explosionHash.clear();
-
-    for(auto& laser: _laserHash){
-        delete laser.second;
-    }
     _laserHash.clear();
-
-    for(auto& asteroid: _asteroidHash){
-        delete asteroid.second;
-    }
     _asteroidHash.clear();
 }
 
@@ -549,8 +507,6 @@ void AsteroidGame::cleanupLevel()
 void AsteroidGame::cleanup()
 {
     cleanupLevel();
-
-    delete _backgroundObject;
 
     for(auto& tex: _mainTextures){
         tex.free();
@@ -603,7 +559,7 @@ void AsteroidGame::updateScore(int scoreIncrease)
 // display the main menu
 void AsteroidGame::runMainMenu()
 {
-    MenuMain mainMenu(_backgroundObject);
+    MenuMain mainMenu(_backgroundObject.get());
     mainMenu.init(_prenderer, _mainFonts);
     _state = mainMenu.run();
 }
@@ -611,7 +567,7 @@ void AsteroidGame::runMainMenu()
 // display the gave over menu
 void AsteroidGame::runGameOverMenu()
 {
-    MenuGameOver gameOverMenu(_backgroundObject);
+    MenuGameOver gameOverMenu(_backgroundObject.get());
     gameOverMenu.init(_prenderer, _mainFonts);    
     _state = gameOverMenu.run();
     if(_state == GameState::PLAY_AGAIN){
@@ -624,7 +580,7 @@ void AsteroidGame::runGameOverMenu()
 // display the next level menu
 void AsteroidGame::runNextMenu()
 {
-    MenuNext nextMenu(_backgroundObject);
+    MenuNext nextMenu(_backgroundObject.get());
     nextMenu.init(_prenderer, _mainFonts);
     _state = nextMenu.run();
 }
@@ -632,7 +588,7 @@ void AsteroidGame::runNextMenu()
 // display the pause menu
 void AsteroidGame::runPauseMenu()
 {
-    MenuPause pauseMenu(_backgroundObject);
+    MenuPause pauseMenu(_backgroundObject.get());
     pauseMenu.init(_prenderer, _mainFonts);
     _state = pauseMenu.run();
 }
