@@ -9,6 +9,7 @@
 #include <unordered_map>
 #include <utility>
 #include "constants.h"
+#include "StaticObject.h"
 
 enum class GameOverMenuItem
 {
@@ -23,7 +24,7 @@ enum class GameOverMenuItem
 class MenuGameOver
 {
     public:
-        MenuGameOver();
+        MenuGameOver(GameObject* backgroundObject);
         ~MenuGameOver();
 
         void init(SDL_Renderer* renderer, std::vector<TTF_Font*> &mainFonts);
@@ -42,5 +43,7 @@ class MenuGameOver
 
         std::unordered_map<GameOverMenuItem, CTexture> _textTextureHash;
         std::unordered_map<GameOverMenuItem, GameObject*> _textObjectHash;
+
+        GameObject* _backgroundObject;
 };
 

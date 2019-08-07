@@ -22,6 +22,7 @@
 #include "ShipObject.h"
 #include "LaserObject.h"
 #include "ExplosionObject.h"
+#include "StaticObject.h"
 
 #include "MenuMain.h"
 #include "MenuGameOver.h"

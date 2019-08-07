@@ -1,6 +1,6 @@
 #include "MenuPause.h"
 
-MenuPause::MenuPause()
+MenuPause::MenuPause(GameObject* backgroundObject) :_backgroundObject(backgroundObject)
 {}
 
 MenuPause::~MenuPause()
@@ -60,6 +60,9 @@ void MenuPause::renderItems()
 {
     SDL_SetRenderDrawColor(_prenderer, 0x00, 0x00, 0x00, 0xFF );
     SDL_RenderClear(_prenderer);
+
+    SDL_Rect backgroundRect{0,0,AsteroidConstants::SCREEN_WIDTH, AsteroidConstants::SCREEN_HEIGHT};
+    static_cast<StaticObject*>(_backgroundObject)->render(_prenderer, &backgroundRect);
 
     _textObjectHash[PauseMenuItem::TITLE]->render(_prenderer);
     _textObjectHash[PauseMenuItem::PRESS_BUTTON]->render(_prenderer);

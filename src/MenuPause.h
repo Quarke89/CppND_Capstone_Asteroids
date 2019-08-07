@@ -10,6 +10,7 @@
 #include "CTexture.h"
 #include "GameObject.h"
 #include "constants.h"
+#include "StaticObject.h"
 
 enum class PauseMenuItem
 {
@@ -21,7 +22,7 @@ enum class PauseMenuItem
 class MenuPause
 {
     public:
-        MenuPause();
+        MenuPause(GameObject* backgroundObject);
         ~MenuPause();
 
         void init(SDL_Renderer* renderer, std::vector<TTF_Font*> &mainFonts);
@@ -35,5 +36,7 @@ class MenuPause
         
         std::unordered_map<PauseMenuItem, CTexture> _textTextureHash;
         std::unordered_map<PauseMenuItem, GameObject*> _textObjectHash;
+
+        GameObject* _backgroundObject;
 };
 

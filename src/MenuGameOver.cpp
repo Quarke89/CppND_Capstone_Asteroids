@@ -1,6 +1,6 @@
 #include "MenuGameOver.h"
 
-MenuGameOver::MenuGameOver() : _state(true)
+MenuGameOver::MenuGameOver(GameObject* backgroundObject) :_backgroundObject(backgroundObject), _state(true)
 {}
 
 MenuGameOver::~MenuGameOver()
@@ -78,6 +78,9 @@ void MenuGameOver::renderItems()
 {
     SDL_SetRenderDrawColor(_prenderer, 0x00, 0x00, 0x00, 0xFF );
     SDL_RenderClear(_prenderer);
+
+    SDL_Rect backgroundRect{0,0,AsteroidConstants::SCREEN_WIDTH, AsteroidConstants::SCREEN_HEIGHT};
+    static_cast<StaticObject*>(_backgroundObject)->render(_prenderer, &backgroundRect);
 
     _textObjectHash[GameOverMenuItem::TITLE]->render(_prenderer);
     if(_state){

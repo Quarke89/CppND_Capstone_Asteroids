@@ -1,6 +1,6 @@
 #include "MenuNext.h"
 
-MenuNext::MenuNext()
+MenuNext::MenuNext(GameObject* backgroundObject) :_backgroundObject(backgroundObject)
 {}
 
 MenuNext::~MenuNext()
@@ -16,7 +16,7 @@ void MenuNext::init(SDL_Renderer* renderer, std::vector<TTF_Font*> &mainFonts)
     for(int i = 0; i < static_cast<int>(NextMenuItem::ITEM_TOTAL); i++){
         _textTextureHash.insert(std::make_pair(static_cast<NextMenuItem>(i), CTexture()) );
     }
-    _textTextureHash[NextMenuItem::TITLE].loadFromRenderedText(_prenderer, mainFonts[static_cast<int>(FontType::TITLE2)], "LEVLE COMPLETE", whiteTextColor);
+    _textTextureHash[NextMenuItem::TITLE].loadFromRenderedText(_prenderer, mainFonts[static_cast<int>(FontType::TITLE2)], "LEVEL COMPLETE", whiteTextColor);
     _textTextureHash[NextMenuItem::PRESS_BUTTON].loadFromRenderedText(_prenderer, mainFonts[static_cast<int>(FontType::MENU)], "Press Enter...", whiteTextColor);
    
     Point titlePos{ static_cast<double>((AsteroidConstants::SCREEN_WIDTH - _textTextureHash[NextMenuItem::TITLE].getWidth())/2),
@@ -60,6 +60,9 @@ void MenuNext::renderItems()
 {
     SDL_SetRenderDrawColor(_prenderer, 0x00, 0x00, 0x00, 0xFF );
     SDL_RenderClear(_prenderer);
+
+    SDL_Rect backgroundRect{0,0,AsteroidConstants::SCREEN_WIDTH, AsteroidConstants::SCREEN_HEIGHT};
+    static_cast<StaticObject*>(_backgroundObject)->render(_prenderer, &backgroundRect);
 
     _textObjectHash[NextMenuItem::TITLE]->render(_prenderer);
     _textObjectHash[NextMenuItem::PRESS_BUTTON]->render(_prenderer);

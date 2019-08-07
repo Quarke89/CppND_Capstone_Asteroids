@@ -6,6 +6,7 @@
 #include "CTexture.h"
 #include <vector>
 #include "GameObject.h"
+#include "StaticObject.h"
 #include <unordered_map>
 #include <utility>
 #include "constants.h"
@@ -23,7 +24,7 @@ enum class MainMenuItem
 class MenuMain
 {
     public:
-        MenuMain();
+        MenuMain(GameObject* backgroundObject);
         ~MenuMain();
 
         void init(SDL_Renderer* renderer, std::vector<TTF_Font*> &mainFonts);
@@ -42,5 +43,8 @@ class MenuMain
 
         std::unordered_map<MainMenuItem, CTexture> _textTextureHash;
         std::unordered_map<MainMenuItem, GameObject*> _textObjectHash;
+
+        GameObject* _backgroundObject;
+
 };
 

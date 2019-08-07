@@ -1,6 +1,6 @@
 #include "MenuMain.h"
 
-MenuMain::MenuMain() : _state(true)
+MenuMain::MenuMain(GameObject* backgroundObject) :_backgroundObject(backgroundObject),  _state(true)
 {}
 
 MenuMain::~MenuMain()
@@ -79,6 +79,9 @@ void MenuMain::renderItems()
 {
     SDL_SetRenderDrawColor(_prenderer, 0x00, 0x00, 0x00, 0xFF );
     SDL_RenderClear(_prenderer);
+
+    SDL_Rect backgroundRect{0,0,AsteroidConstants::SCREEN_WIDTH, AsteroidConstants::SCREEN_HEIGHT};
+    static_cast<StaticObject*>(_backgroundObject)->render(_prenderer, &backgroundRect);
 
     _textObjectHash[MainMenuItem::TITLE]->render(_prenderer);
     if(_state){

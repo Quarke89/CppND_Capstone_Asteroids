@@ -51,14 +51,14 @@ void AsteroidGame::checkLevelCompleted()
 
 void AsteroidGame::runMainMenu()
 {
-    MenuMain mainMenu;
+    MenuMain mainMenu(_backgroundObject);
     mainMenu.init(_prenderer, _mainFonts);
     _state = mainMenu.run();
 }
 
 void AsteroidGame::runGameOverMenu()
 {
-    MenuGameOver gameOverMenu;
+    MenuGameOver gameOverMenu(_backgroundObject);
     gameOverMenu.init(_prenderer, _mainFonts);    
     _state = gameOverMenu.run();
     if(_state == GameState::PLAY_AGAIN){
@@ -70,7 +70,7 @@ void AsteroidGame::runGameOverMenu()
 
 void AsteroidGame::runNextMenu()
 {
-    MenuNext nextMenu;
+    MenuNext nextMenu(_backgroundObject);
     nextMenu.init(_prenderer, _mainFonts);
     _state = nextMenu.run();
 }
@@ -78,7 +78,7 @@ void AsteroidGame::runNextMenu()
 
 void AsteroidGame::runPauseMenu()
 {
-    MenuPause pauseMenu;
+    MenuPause pauseMenu(_backgroundObject);
     pauseMenu.init(_prenderer, _mainFonts);
     _state = pauseMenu.run();
 }
@@ -409,6 +409,9 @@ void AsteroidGame::renderObjects()
     //Clear screen
     SDL_SetRenderDrawColor( _prenderer, 0x00, 0x00, 0x00, 0xFF );
     SDL_RenderClear( _prenderer );
+
+    SDL_Rect backgroundRect{0,0,AsteroidConstants::SCREEN_WIDTH, AsteroidConstants::SCREEN_HEIGHT};
+    static_cast<StaticObject*>(_backgroundObject)->render(_prenderer, &backgroundRect);
 
     for(auto& explosion: _explosionHash){
         explosion.second->render(_prenderer);
