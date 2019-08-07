@@ -1,50 +1,9 @@
 #include "MenuGameOver.h"
 
-MenuGameOver::MenuGameOver(StaticObject* backgroundObject) : _state(true), _backgroundObject(backgroundObject)
-{}
-
-MenuGameOver::~MenuGameOver()
-{}
-
-void MenuGameOver::init(SDL_Renderer* renderer, std::vector<TTF_Font*> &mainFonts)
+MenuGameOver::MenuGameOver(SDL_Renderer_unique_ptr &renderer, std::unique_ptr<StaticObject> &backgroundObject, std::vector<TTF_Font*> &mainFonts)
+ : Menu(renderer, backgroundObject, mainFonts), _state(true)
 {
-    SDL_Color whiteTextColor{255,255,255,255};
-    SDL_Color selectTextColor{245,227,66,255};
-
-    _prenderer = renderer;
-
-    for(int i = 0; i < static_cast<int>(GameOverMenuItem::ITEM_TOTAL); i++){
-        _textTextureHash.insert(std::make_pair(static_cast<GameOverMenuItem>(i), CTexture()) );
-    }
-    _textTextureHash[GameOverMenuItem::TITLE].loadFromRenderedText(_prenderer, mainFonts[static_cast<int>(FontType::TITLE2)], "GAME OVER", whiteTextColor);
-    _textTextureHash[GameOverMenuItem::PLAY_AGAIN].loadFromRenderedText(_prenderer, mainFonts[static_cast<int>(FontType::MENU)], "Play Again", whiteTextColor);
-    _textTextureHash[GameOverMenuItem::QUIT].loadFromRenderedText(_prenderer, mainFonts[static_cast<int>(FontType::MENU)], "Quit", whiteTextColor);
-    _textTextureHash[GameOverMenuItem::PLAY_AGAIN_SELECT].loadFromRenderedText(_prenderer, mainFonts[static_cast<int>(FontType::MENU)], "Play Again", selectTextColor);
-    _textTextureHash[GameOverMenuItem::QUIT_SELECT].loadFromRenderedText(_prenderer, mainFonts[static_cast<int>(FontType::MENU)], "Quit", selectTextColor);
-
-    
-    Point titlePos{ static_cast<double>((AsteroidConstants::SCREEN_WIDTH - _textTextureHash[GameOverMenuItem::TITLE].getWidth())/2),
-                    static_cast<double>((AsteroidConstants::SCREEN_HEIGHT - _textTextureHash[GameOverMenuItem::TITLE].getHeight())/3)};
-        
-    Point playPos{  static_cast<double>((AsteroidConstants::SCREEN_WIDTH - _textTextureHash[GameOverMenuItem::PLAY_AGAIN].getWidth())/2),
-                    static_cast<double>((AsteroidConstants::SCREEN_HEIGHT - _textTextureHash[GameOverMenuItem::PLAY_AGAIN].getHeight())/2)};
-
-    Point quitPos{  static_cast<double>((AsteroidConstants::SCREEN_WIDTH - _textTextureHash[GameOverMenuItem::QUIT].getWidth())/2),
-                    static_cast<double>((AsteroidConstants::SCREEN_HEIGHT - _textTextureHash[GameOverMenuItem::QUIT].getHeight())/1.8)};
-
-    _textObjectHash[GameOverMenuItem::TITLE] = createStaticTextObject(titlePos, &_textTextureHash[GameOverMenuItem::TITLE]); 
-    _textObjectHash[GameOverMenuItem::PLAY_AGAIN] = createStaticTextObject(playPos, &_textTextureHash[GameOverMenuItem::PLAY_AGAIN]); 
-    _textObjectHash[GameOverMenuItem::PLAY_AGAIN_SELECT] = createStaticTextObject(playPos, &_textTextureHash[GameOverMenuItem::PLAY_AGAIN_SELECT]); 
-    _textObjectHash[GameOverMenuItem::QUIT] = createStaticTextObject(quitPos, &_textTextureHash[GameOverMenuItem::QUIT]); 
-    _textObjectHash[GameOverMenuItem::QUIT_SELECT] = createStaticTextObject(quitPos, &_textTextureHash[GameOverMenuItem::QUIT_SELECT]); 
-
-}
-
-std::unique_ptr<StaticObject> MenuGameOver::createStaticTextObject(Point pos, CTexture* pTex)
-{
-    std::unique_ptr<GameObject> pGO = GameObject::Create(ObjectType::STATIC, pos, pTex); 
-    return static_unique_ptr_cast<StaticObject, GameObject>(std::move(pGO));
-
+    initMenuItems();
 }
 
 GameState MenuGameOver::run()
@@ -53,8 +12,8 @@ GameState MenuGameOver::run()
 
     while(true){
 
-        while( SDL_PollEvent( &event ) != 0 ) {            
-            if( event.type == SDL_QUIT ){
+        while(SDL_PollEvent(&event) != 0){
+            if(event.type == SDL_QUIT){
                 return GameState::QUIT;
             }
             else if(event.type == SDL_KEYUP){
@@ -75,32 +34,56 @@ GameState MenuGameOver::run()
             }
         }
 
-        renderItems();
-        
+        render();
     }
 }
 
-        
-void MenuGameOver::renderItems()
+void MenuGameOver::initMenuItems()
 {
-    SDL_SetRenderDrawColor(_prenderer, 0x00, 0x00, 0x00, 0xFF );
-    SDL_RenderClear(_prenderer);
+    SDL_Color whiteTextColor{255,255,255,255};
+    SDL_Color selectTextColor{245,227,66,255};
 
-    SDL_Rect backgroundRect{0,0,AsteroidConstants::SCREEN_WIDTH, AsteroidConstants::SCREEN_HEIGHT};
-    static_cast<StaticObject*>(_backgroundObject)->render(_prenderer, &backgroundRect);
+    const int numItems = 5;
 
-    _textObjectHash[GameOverMenuItem::TITLE]->render(_prenderer);
+    for(int i = 0; i < numItems; i++){
+        _textTextureHash.insert(std::make_pair(static_cast<MenuItem>(i), CTexture()) );
+    }
+
+    _textTextureHash[MenuItem::TITLE].loadFromRenderedText(_renderer, _mainFonts[static_cast<int>(FontType::TITLE2)], "GAME OVER", whiteTextColor);
+    _textTextureHash[MenuItem::ITEM1].loadFromRenderedText(_renderer, _mainFonts[static_cast<int>(FontType::MENU)], "Play Again", whiteTextColor);
+    _textTextureHash[MenuItem::ITEM2].loadFromRenderedText(_renderer, _mainFonts[static_cast<int>(FontType::MENU)], "Quit", whiteTextColor);
+    _textTextureHash[MenuItem::ITEM1_SELECT].loadFromRenderedText(_renderer, _mainFonts[static_cast<int>(FontType::MENU)], "Play Again", selectTextColor);
+    _textTextureHash[MenuItem::ITEM2_SELECT].loadFromRenderedText(_renderer, _mainFonts[static_cast<int>(FontType::MENU)], "Quit", selectTextColor);
+
+    Point titlePos{ static_cast<double>((AsteroidConstants::SCREEN_WIDTH -  _textTextureHash[MenuItem::TITLE].getWidth())/2),
+                    static_cast<double>((AsteroidConstants::SCREEN_HEIGHT - _textTextureHash[MenuItem::TITLE].getHeight())/3)};
+    
+    Point item1Pos{  static_cast<double>((AsteroidConstants::SCREEN_WIDTH -  _textTextureHash[MenuItem::ITEM1].getWidth())/2),
+                    static_cast<double>((AsteroidConstants::SCREEN_HEIGHT - _textTextureHash[MenuItem::ITEM1].getHeight())/2)};
+
+    Point item2Pos{  static_cast<double>((AsteroidConstants::SCREEN_WIDTH - _textTextureHash[MenuItem::ITEM2].getWidth())/2),
+                    static_cast<double>((AsteroidConstants::SCREEN_HEIGHT - _textTextureHash[MenuItem::ITEM2].getHeight())/1.8)};
+
+    _textObjectHash[MenuItem::TITLE] = createStaticTextObject(titlePos, _textTextureHash[MenuItem::TITLE]); 
+    _textObjectHash[MenuItem::ITEM1] = createStaticTextObject(item1Pos, _textTextureHash[MenuItem::ITEM1]);
+    _textObjectHash[MenuItem::ITEM2] = createStaticTextObject(item2Pos, _textTextureHash[MenuItem::ITEM2]);
+    _textObjectHash[MenuItem::ITEM1_SELECT] = createStaticTextObject(item1Pos, _textTextureHash[MenuItem::ITEM1_SELECT]);
+    _textObjectHash[MenuItem::ITEM2_SELECT] = createStaticTextObject(item2Pos, _textTextureHash[MenuItem::ITEM2_SELECT]);
+
+}
+
+void MenuGameOver::renderMenuItems()
+{
+    
+    _textObjectHash[MenuItem::TITLE]->render(_renderer);
     if(_state){
-        _textObjectHash[GameOverMenuItem::PLAY_AGAIN_SELECT]->render(_prenderer);
-        _textObjectHash[GameOverMenuItem::QUIT]->render(_prenderer);
+        _textObjectHash[MenuItem::ITEM1_SELECT]->render(_renderer);
+        _textObjectHash[MenuItem::ITEM2]->render(_renderer);
     }
     else{
-        _textObjectHash[GameOverMenuItem::PLAY_AGAIN]->render(_prenderer);
-        _textObjectHash[GameOverMenuItem::QUIT_SELECT]->render(_prenderer);
+        _textObjectHash[MenuItem::ITEM1]->render(_renderer);
+        _textObjectHash[MenuItem::ITEM2_SELECT]->render(_renderer);
     }
-    
-    SDL_RenderPresent(_prenderer);
-
 }
 
 void MenuGameOver::toggleState()
@@ -111,9 +94,10 @@ void MenuGameOver::toggleState()
 GameState MenuGameOver::select()
 {
     if(_state){
-        return GameState::PLAY_AGAIN;
+        return GameState::RUNNING;
     }
     else{
         return GameState::QUIT;
     }
 }
+

@@ -18,10 +18,10 @@ GameObject::GameObject(Point pos, CTexture* pTex, CVector velocity, double rotat
     : _pos(pos), _pTex(pTex), _velocity(velocity), _rotation(rotation), _lastUpdated(SDL_GetTicks()), _id(++_count){}
 
 
-void GameObject::render(SDL_Renderer* renderer)
+void GameObject::render(SDL_Renderer_unique_ptr &renderer)
 {
     SDL_Rect renderQuad{static_cast<int>(_pos.x), static_cast<int>(_pos.y), _pTex->getWidth(), _pTex->getHeight()};
-    SDL_RenderCopy( renderer, _pTex->getTexture(), NULL, &renderQuad );    
+    SDL_RenderCopy( renderer.get(), _pTex->getTexture(), NULL, &renderQuad );    
 
 }
 

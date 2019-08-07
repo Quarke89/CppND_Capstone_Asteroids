@@ -50,7 +50,7 @@ void ExplosionObject::update(Uint32 updateTime)
     
 }
 
-void ExplosionObject::render(SDL_Renderer* renderer)
+void ExplosionObject::render(SDL_Renderer_unique_ptr &renderer)
 {
     if(_currentClip < AsteroidConstants::EXPLOSION_SPRITE_NUM){
          
@@ -62,7 +62,7 @@ void ExplosionObject::render(SDL_Renderer* renderer)
 
         SDL_Rect dstRect{left, top, _width, _height};
 
-        SDL_RenderCopy( renderer, _pTex->getTexture(), &_spriteClips[_currentClip], &dstRect);
+        SDL_RenderCopy( renderer.get(), _pTex->getTexture(), &_spriteClips[_currentClip], &dstRect);
     }
 }
 

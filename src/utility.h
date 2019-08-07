@@ -1,5 +1,10 @@
 #pragma once
 
+#include <SDL2/SDL.h>
+
+using SDL_Window_unique_ptr = std::unique_ptr<SDL_Window, decltype(&SDL_DestroyWindow)>;
+using SDL_Renderer_unique_ptr = std::unique_ptr<SDL_Renderer, decltype(&SDL_DestroyRenderer)>;
+using TTF_Font_unique_ptr = std::unique_ptr<TTF_Font, decltype(&TTF_CloseFont)>;
 
 template<typename Derived, typename Base>
 std::unique_ptr<Derived> static_unique_ptr_cast( std::unique_ptr<Base>&& p )

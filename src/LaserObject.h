@@ -9,7 +9,7 @@ class LaserObject : public GameObject
         LaserObject(Point pos, CTexture* tex, CVector velocity, double rotation) ;
 
         virtual void update(Uint32 updateTime);
-        virtual void render(SDL_Renderer* renderer);
+        virtual void render(SDL_Renderer_unique_ptr &renderer);
 
         SDL_Rect& getBoundingBox();
 

@@ -3,18 +3,48 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
-#include "CTexture.h"
+
 #include <vector>
-#include "GameObject.h"
-#include "StaticObject.h"
 #include <unordered_map>
 #include <utility>
+
+#include "CTexture.h"
+#include "GameObject.h"
+#include "StaticObject.h"
 #include "constants.h"
+
+enum class MenuItem
+{
+    TITLE,
+    ITEM1,
+    ITEM2,
+    ITEM1_SELECT,
+    ITEM2_SELECT,
+    ITEM_TOTAL
+};
 
 class Menu
 {
     public:
-        Menu(GameObject* backgroundObject, SDL_Renderer& renderer, std::vector<TTF_Font*> &mainFonts);
+        Menu(SDL_Renderer_unique_ptr &renderer, std::unique_ptr<StaticObject> &backgroundObject, std::vector<TTF_Font*> &mainFonts);
         virtual ~Menu() = default;
 
+        virtual GameState run();
+    
+    protected:
+
+        virtual void initMenuItems(){};
+        void render();
+        virtual void renderMenuItems();
+
+        std::unique_ptr<StaticObject> createStaticTextObject(Point pos, CTexture &tex);
+
+        SDL_Renderer_unique_ptr &_renderer;
+        std::unique_ptr<StaticObject> &_backgroundObject;
+        std::vector<TTF_Font*> &_mainFonts;
+
+        std::unordered_map<MenuItem, CTexture> _textTextureHash;
+        std::unordered_map<MenuItem, std::unique_ptr<StaticObject>> _textObjectHash;
+
 };
+

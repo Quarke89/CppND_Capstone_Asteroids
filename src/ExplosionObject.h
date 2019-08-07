@@ -11,7 +11,7 @@ class ExplosionObject : public GameObject
         ExplosionObject(Point pos, CTexture* tex);
 
         virtual void update(Uint32 updateTime);
-        virtual void render(SDL_Renderer* renderer);
+        virtual void render(SDL_Renderer_unique_ptr &renderer);
 
         void setSize(AsteroidSize size);
         bool isAnimationDone();

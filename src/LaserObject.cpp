@@ -28,7 +28,7 @@ bool LaserObject::checkOffscreen()
     return false;
 }
 
-void LaserObject::render(SDL_Renderer* renderer)
+void LaserObject::render(SDL_Renderer_unique_ptr &renderer)
 {
     int xPosCenter = std::round(_pos.x);
     int yPosCenter = std::round(_pos.y);
@@ -38,7 +38,7 @@ void LaserObject::render(SDL_Renderer* renderer)
 
     SDL_Rect dstRect{left, top, _width, _height};
 
-    SDL_RenderCopyEx( renderer, _pTex->getTexture(), nullptr, &dstRect, _rotation, nullptr, SDL_FLIP_NONE);
+    SDL_RenderCopyEx( renderer.get(), _pTex->getTexture(), nullptr, &dstRect, _rotation, nullptr, SDL_FLIP_NONE);
 
     // SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);  
     // SDL_RenderDrawRect(renderer, &dstRect);

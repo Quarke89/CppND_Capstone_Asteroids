@@ -42,7 +42,7 @@ void ShipObject::update(Uint32 updateTime)
     _lastUpdated = updateTime;
 }
 
-void ShipObject::render(SDL_Renderer* renderer)
+void ShipObject::render(SDL_Renderer_unique_ptr &renderer)
 {
     int xPosCenter = std::round(_pos.x);
     int yPosCenter = std::round(_pos.y);
@@ -53,7 +53,7 @@ void ShipObject::render(SDL_Renderer* renderer)
 
     SDL_Rect dstRect{left, top, _width, _height};
 
-    SDL_RenderCopyEx( renderer, _pTex->getTexture(), nullptr, &dstRect, _rotation, nullptr, SDL_FLIP_NONE);
+    SDL_RenderCopyEx( renderer.get(), _pTex->getTexture(), nullptr, &dstRect, _rotation, nullptr, SDL_FLIP_NONE);
 
     _boundingBox = std::move(dstRect);
 

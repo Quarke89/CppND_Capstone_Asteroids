@@ -11,7 +11,8 @@
 //////////// Public functions ////////////
 
 AsteroidGame::AsteroidGame()
-    : _state(GameState::RUNNING), _currentColor(AsteroidColor::GREY), _currentLevel(1), _score(0)
+    : _window(nullptr, SDL_DestroyWindow), _renderer(nullptr, SDL_DestroyRenderer),
+      _state(GameState::RUNNING), _currentColor(AsteroidColor::GREY), _currentLevel(1), _score(0)
 {
     if(!init())
         exit(0);
@@ -57,42 +58,44 @@ void AsteroidGame::run()
 bool AsteroidGame::init()
 {
 
-    //initialize SDL
+    // initialize SDL
     if(SDL_Init(SDL_INIT_VIDEO) < 0){
         std::cout << "SDL could not initialize! SDL_Error: " << SDL_GetError() << "\n";
         return false;
     }
-    // Set texture filtering ot linear
+    // set texture filtering to linear
     if(!SDL_SetHint( SDL_HINT_RENDER_SCALE_QUALITY, "1" )){
 		std::cout << "Warning: Linear texture filtering not enabled!\n";
 	}
 
+    // initialize PNG loading
+    int imgFlags = IMG_INIT_PNG;
+    if(!(IMG_Init(imgFlags) & imgFlags)){
+        std::cout << "SDL_image could not initialize! SDL_image Error: " << IMG_GetError() << "\n";
+        return false;
+    }
+
+    // initialize SDL_ttf
+    if(TTF_Init() == -1){
+        std::cout << "SDL_ttf could not initialize! SDL_ttf Error: " <<  TTF_GetError() << "\n";
+        return false;
+    }
+
     // Create window
-    _pwindow = SDL_CreateWindow("Asteroids", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, AsteroidConstants::SCREEN_WIDTH, AsteroidConstants::SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
-    if(_pwindow == nullptr){
+    // _pwindow = SDL_CreateWindow("Asteroids", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, AsteroidConstants::SCREEN_WIDTH, AsteroidConstants::SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+    _window.reset(SDL_CreateWindow("Asteroids", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, AsteroidConstants::SCREEN_WIDTH, AsteroidConstants::SCREEN_HEIGHT, SDL_WINDOW_SHOWN));
+    if(_window == nullptr){
         std::cout << "Window could not be created! SDL_Error: " << SDL_GetError() << "\n";
         return false;
     }
 
     // Create renderer for window
-    _prenderer = SDL_CreateRenderer(_pwindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-    if(_prenderer == nullptr){
+    // _renderer = SDL_CreateRenderer(_window.get(), -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+    _renderer.reset(SDL_CreateRenderer(_window.get(), -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC));
+    if(_renderer == nullptr){
         std::cout << "Renderer could not be created! SDL Error: " << SDL_GetError() << "\n";
         return false;
-    }
-    
-    // initialize PNG loading
-    int imgFlags = IMG_INIT_PNG;
-    if( !(IMG_Init(imgFlags) & imgFlags) ){
-        std::cout << "SDL_image could not initialize! SDL_image Error: " << IMG_GetError() << "\n";
-        return false;
-    }
-
-    //Initialize SDL_ttf
-    if( TTF_Init() == -1 ){
-        std::cout << "SDL_ttf could not initialize! SDL_ttf Error: " <<  TTF_GetError() << "\n";
-        return false;
-    }
+    }        
 
     return true;
 }
@@ -138,14 +141,14 @@ bool AsteroidGame::loadTextures()
 
     for(unsigned int i = 0; i < static_cast<unsigned int>(TextureType::TEX_TOTAL); i++){
         CTexture tmp;
-        success &= tmp.loadFromFile(_prenderer, getTexturePath(static_cast<TextureType>(i)));
+        success &= tmp.loadFromFile(_renderer, getTexturePath(static_cast<TextureType>(i)));
         _mainTextures.push_back(std::move(tmp));
     }
     return success;
 }
 
 // utility function for getting file paths
-std::string AsteroidGame::getTexturePath(TextureType type)
+std::string AsteroidGame::getTexturePath(TextureType type) const
 {
     switch(type){
         case TextureType::TEX_BACKGROUND:               return "img/background.png";
@@ -227,31 +230,31 @@ void AsteroidGame::handleInput(SDL_Event &event)
 void AsteroidGame::renderObjects()
 {
     //Clear screen
-    SDL_SetRenderDrawColor( _prenderer, 0x00, 0x00, 0x00, 0xFF );
-    SDL_RenderClear( _prenderer );
+    SDL_SetRenderDrawColor( _renderer.get(), 0x00, 0x00, 0x00, 0xFF );
+    SDL_RenderClear( _renderer.get() );
 
     SDL_Rect backgroundRect{0,0,AsteroidConstants::SCREEN_WIDTH, AsteroidConstants::SCREEN_HEIGHT};
-    _backgroundObject->render(_prenderer, &backgroundRect);
+    _backgroundObject->render(_renderer, &backgroundRect);
 
     for(auto& explosion: _explosionHash){
-        explosion.second->render(_prenderer);
+        explosion.second->render(_renderer);
         if(explosion.second->isAnimationDone()){
             _explosionHash.erase(explosion.first);
         }
     }
     for(auto const& asteroid: _asteroidHash){
-        asteroid.second->render(_prenderer);
+        asteroid.second->render(_renderer);
     }
     for(auto const& laser: _laserHash){
-        laser.second->render(_prenderer);
+        laser.second->render(_renderer);
     }    
-    _pShip->render(_prenderer);
+    _pShip->render(_renderer);
 
-    _fontObjectLevel->render(_prenderer);
-    _fontObjectScore->render(_prenderer);
+    _fontObjectLevel->render(_renderer);
+    _fontObjectScore->render(_renderer);
 
     //Update screen
-    SDL_RenderPresent( _prenderer );
+    SDL_RenderPresent( _renderer.get() );
 }
 
 // update all non-static game objects based on time delta
@@ -302,7 +305,7 @@ void AsteroidGame::initLevel()
 
     std::stringstream ss("");
     ss << "Level: " << _currentLevel;
-    _fontTextureLevel.loadFromRenderedText(_prenderer, _mainFonts[static_cast<int>(FontType::MENU)], ss.str(), whiteTextColor);
+    _fontTextureLevel.loadFromRenderedText(_renderer, _mainFonts[static_cast<int>(FontType::MENU)], ss.str(), whiteTextColor);
 
     Point levelPos{AsteroidConstants::FONT_LEVEL_POS_X, AsteroidConstants::FONT_LEVEL_POS_Y};
     std::unique_ptr<GameObject> pGameObject = GameObject::Create(ObjectType::STATIC, levelPos, &_fontTextureLevel); 
@@ -310,7 +313,7 @@ void AsteroidGame::initLevel()
 
     ss.str("");
     ss << "Score: " << std::setw(5) << _score;
-    _fontTextureScore.loadFromRenderedText(_prenderer, _mainFonts[static_cast<int>(FontType::MENU)], ss.str(), whiteTextColor);
+    _fontTextureScore.loadFromRenderedText(_renderer, _mainFonts[static_cast<int>(FontType::MENU)], ss.str(), whiteTextColor);
 
     Point scorePos{AsteroidConstants::FONT_SCORE_POS_X, AsteroidConstants::FONT_SCORE_POS_Y};    
     std::unique_ptr<GameObject> pGameObject2 = GameObject::Create(ObjectType::STATIC, scorePos, &_fontTextureScore); 
@@ -423,7 +426,7 @@ void AsteroidGame::checkAsteroidCollision()
 }
 
 // check collision between 2 SDL_Rect bounding boxes
-bool AsteroidGame::checkCollision(const SDL_Rect &a, const SDL_Rect &b)
+bool AsteroidGame::checkCollision(const SDL_Rect &a, const SDL_Rect &b) const
 {
     // calculate the sides of rect A
     int leftA = a.x;
@@ -496,7 +499,6 @@ void AsteroidGame::checkLevelCompleted()
 // clean up game objects
 void AsteroidGame::cleanupLevel()
 {
- 
     _explosionHash.clear();
     _laserHash.clear();
     _asteroidHash.clear();
@@ -516,11 +518,6 @@ void AsteroidGame::cleanup()
         TTF_CloseFont(font);
     }
 
-    SDL_DestroyRenderer(_prenderer);
-    SDL_DestroyWindow(_pwindow);
-    _prenderer = nullptr;
-    _pwindow = nullptr;
-
     // Quit SDL subsystems
     TTF_Quit();
     IMG_Quit();
@@ -528,7 +525,7 @@ void AsteroidGame::cleanup()
 }
 
 // utility function for determining initial position for asteroids
-Point AsteroidGame::getRandomCorner()
+Point AsteroidGame::getRandomCorner() const
 {
     std::random_device rd;
     std::uniform_int_distribution<> rdCorner(0, 3);
@@ -552,23 +549,21 @@ void AsteroidGame::updateScore(int scoreIncrease)
     SDL_Color whiteTextColor{255,255,255,255};
     std::stringstream ss("");
     ss << "Score: " << std::setw(5) << _score;
-    _fontTextureScore.loadFromRenderedText(_prenderer, _mainFonts[static_cast<int>(FontType::MENU)], ss.str(), whiteTextColor);
+    _fontTextureScore.loadFromRenderedText(_renderer, _mainFonts[static_cast<int>(FontType::MENU)], ss.str(), whiteTextColor);
 }
 
 
 // display the main menu
 void AsteroidGame::runMainMenu()
 {
-    MenuMain mainMenu(_backgroundObject.get());
-    mainMenu.init(_prenderer, _mainFonts);
+    MenuMain mainMenu(_renderer, _backgroundObject, _mainFonts);
     _state = mainMenu.run();
 }
 
 // display the gave over menu
 void AsteroidGame::runGameOverMenu()
 {
-    MenuGameOver gameOverMenu(_backgroundObject.get());
-    gameOverMenu.init(_prenderer, _mainFonts);    
+    MenuGameOver gameOverMenu(_renderer, _backgroundObject, _mainFonts);
     _state = gameOverMenu.run();
     if(_state == GameState::PLAY_AGAIN){
         _currentLevel = 1;
@@ -580,30 +575,14 @@ void AsteroidGame::runGameOverMenu()
 // display the next level menu
 void AsteroidGame::runNextMenu()
 {
-    MenuNext nextMenu(_backgroundObject.get());
-    nextMenu.init(_prenderer, _mainFonts);
+    MenuNext nextMenu(_renderer, _backgroundObject, _mainFonts);
     _state = nextMenu.run();
 }
     
 // display the pause menu
 void AsteroidGame::runPauseMenu()
 {
-    MenuPause pauseMenu(_backgroundObject.get());
-    pauseMenu.init(_prenderer, _mainFonts);
+    MenuPause pauseMenu(_renderer, _backgroundObject, _mainFonts);
     _state = pauseMenu.run();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

@@ -9,7 +9,7 @@ CTexture::~CTexture()
 }
 
 
-bool CTexture::loadFromFile(SDL_Renderer* renderer, std::string path)
+bool CTexture::loadFromFile(SDL_Renderer_unique_ptr &renderer, std::string path)
 {
     free();
 
@@ -19,7 +19,7 @@ bool CTexture::loadFromFile(SDL_Renderer* renderer, std::string path)
         return false;
     }
     
-    _texture = SDL_CreateTextureFromSurface(renderer, loadedSurface);
+    _texture = SDL_CreateTextureFromSurface(renderer.get(), loadedSurface);
     if(_texture == nullptr){
         std::cout << "Unable to create texture from " << path << "! SDL Error: " << SDL_GetError() << "\n";
         return false;
@@ -34,7 +34,7 @@ bool CTexture::loadFromFile(SDL_Renderer* renderer, std::string path)
 
 }
 
-bool CTexture::loadFromRenderedText(SDL_Renderer* renderer, TTF_Font* font, std::string text, SDL_Color textColor)
+bool CTexture::loadFromRenderedText(SDL_Renderer_unique_ptr &renderer, TTF_Font* font, std::string text, SDL_Color textColor)
 {
     free();
 
@@ -44,7 +44,7 @@ bool CTexture::loadFromRenderedText(SDL_Renderer* renderer, TTF_Font* font, std:
         return false;
     }
 
-    _texture = SDL_CreateTextureFromSurface(renderer, textSurface);
+    _texture = SDL_CreateTextureFromSurface(renderer.get(), textSurface);
     if(_texture == nullptr){
         std::cout << "Unable to create texture from rendered text! SDL Error: " << SDL_GetError() << "\n";
         return false;

@@ -8,8 +8,8 @@ class StaticObject : public GameObject
 
         StaticObject(Point pos, CTexture* tex);
 
-        virtual void render(SDL_Renderer* renderer);
-        void render(SDL_Renderer* renderer, SDL_Rect* dest);
+        virtual void render(SDL_Renderer_unique_ptr &renderer);
+        void render(SDL_Renderer_unique_ptr &renderer, SDL_Rect* dest);
 
 
     private:

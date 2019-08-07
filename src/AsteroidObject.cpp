@@ -58,7 +58,7 @@ TextureType AsteroidObject::getAsteroidTexture(AsteroidSize size, AsteroidColor 
     return TextureType::TEX_ASTEROID_BIG_1;
 }
 
-void AsteroidObject::render(SDL_Renderer* renderer)
+void AsteroidObject::render(SDL_Renderer_unique_ptr &renderer)
 {
     int xPosCenter = std::round(_pos.x);
     int yPosCenter = std::round(_pos.y);
@@ -72,7 +72,7 @@ void AsteroidObject::render(SDL_Renderer* renderer)
     calculateRenderRectangles(xPosCenter, yPosCenter, width, height, AsteroidConstants::SCREEN_WIDTH, AsteroidConstants::SCREEN_HEIGHT, srcRect, dstRect);    
 
     for(unsigned long i = 0; i < srcRect.size(); i++){
-        SDL_RenderCopy( renderer, _pTex->getTexture(), &srcRect[i], &dstRect[i]);
+        SDL_RenderCopy( renderer.get(), _pTex->getTexture(), &srcRect[i], &dstRect[i]);
     }
 
     _boundingBoxes = std::move(dstRect);

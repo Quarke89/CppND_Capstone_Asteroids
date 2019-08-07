@@ -5,7 +5,9 @@
 #include <SDL2/SDL_ttf.h>
 #include <iostream>
 #include <string>
+#include <memory>
 #include "constants.h"
+#include "utility.h"
 
 
 class CTexture
@@ -18,9 +20,9 @@ class CTexture
         CTexture& operator=(const CTexture& ) = delete;
 
         CTexture(CTexture&& o);
-
-        bool loadFromFile(SDL_Renderer* renderer, std::string path);
-        bool loadFromRenderedText(SDL_Renderer* renderer, TTF_Font* font, std::string text, SDL_Color textColor);
+    
+        bool loadFromFile(SDL_Renderer_unique_ptr &renderer, std::string path);
+        bool loadFromRenderedText(SDL_Renderer_unique_ptr &renderer, TTF_Font* font, std::string text, SDL_Color textColor);
 
         SDL_Texture* getTexture();
         void free();        

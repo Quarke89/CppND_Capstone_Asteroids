@@ -50,10 +50,10 @@ class AsteroidGame{
 
         //////////// Private functions ///////////////
 
-        bool init();                                    // initialize SDL assets
-        bool loadFonts();                               // load fonts with SDL_ttf
-        bool loadTextures();                            // load sprites into texture objects
-        std::string getTexturePath(TextureType type);   // utility function for getting file paths
+        bool init();                                        // initialize SDL assets
+        bool loadFonts();                                   // load fonts with SDL_ttf
+        bool loadTextures();                                // load sprites into texture objects
+        std::string getTexturePath(TextureType type) const; // utility function for getting file paths
 
         void runLevel();                    // main game loop
 
@@ -69,9 +69,9 @@ class AsteroidGame{
         void createAsteroid(Point pos, CVector velocity, CTexture* pTex, AsteroidSize size, AsteroidColor color);
         void createExplosion(Point pos, AsteroidSize size);
 
-        void checkShipCollision();                                  // check ship <-> asteroid collision
-        void checkAsteroidCollision();                              // check laser <-> asteroid collision
-        bool checkCollision(const SDL_Rect &a, const SDL_Rect &b);  // check collision between 2 SDL_Rect bounding boxes
+        void checkShipCollision();                                        // check ship <-> asteroid collision
+        void checkAsteroidCollision();                                    // check laser <-> asteroid collision
+        bool checkCollision(const SDL_Rect &a, const SDL_Rect &b) const;  // check collision between 2 SDL_Rect bounding boxes
 
         void shootLaser();                              // determine velocity vector to create laser after keyboard input
         void splitAsteroid(AsteroidObject* asteroid);   // split current asteroid into 2 smaller asteroid
@@ -81,7 +81,7 @@ class AsteroidGame{
         void cleanupLevel();                    // clean up game objects
         void cleanup();                         // clean up textures and SDL assets
 
-        Point getRandomCorner();                    // utility function for determining initial position for asteroids
+        Point getRandomCorner() const;              // utility function for determining initial position for asteroids
         void updateScore(int scoreIncrease);        // update score and regenerate score texture
 
         void runMainMenu();                         // display the main menu
@@ -91,22 +91,26 @@ class AsteroidGame{
 
         ////////// Private variables //////////////
 
-        SDL_Window* _pwindow{nullptr};          // pointer to the main game window
-        SDL_Renderer* _prenderer{nullptr};      // pointer to the GPU renderer
+        // SDL_Window* _pwindow{nullptr};          // pointer to the main game window        
+        // SDL_Renderer* _prenderer{nullptr};      // pointer to the GPU renderer
+        SDL_Window_unique_ptr _window;         // pointer to the main game window
+        SDL_Renderer_unique_ptr _renderer;    // pointer to the GPU renderer
 
         std::vector<CTexture> _mainTextures;    // vector holding the main loaded textures
         std::vector<TTF_Font*> _mainFonts;      // vector holding the fonts converted by SDL_TTF
         
-        // GameObject* _pShip{nullptr};                            // Game object for the ship
-        std::unique_ptr<ShipObject> _pShip;
-        // std::unordered_map<int, GameObject*> _laserHash;        // Hashmap for active laser objects with a unique ID as the key
-        // std::unordered_map<int, GameObject*> _asteroidHash;     // Hashmap for active asteroid objects with a unique ID as the key
-        // std::unordered_map<int, GameObject*> _explosionHash;    // Hashmap for active explosion objects with a unique ID as the key
-        std::unordered_map<int, std::unique_ptr<LaserObject>> _laserHash;        // Hashmap for active laser objects with a unique ID as the key
+        
+        std::unique_ptr<ShipObject> _pShip;                                         // Game object for the ship
+        std::unordered_map<int, std::unique_ptr<LaserObject>> _laserHash;           // Hashmap for active laser objects with a unique ID as the key
         std::unordered_map<int, std::unique_ptr<AsteroidObject>> _asteroidHash;     // Hashmap for active asteroid objects with a unique ID as the key
-        std::unordered_map<int, std::unique_ptr<ExplosionObject>> _explosionHash;    // Hashmap for active explosion objects with a unique ID as the key
-        // GameObject* _backgroundObject;                          // Game object for the background image
-        std::unique_ptr<StaticObject> _backgroundObject;          // Game object for the background image
+        std::unordered_map<int, std::unique_ptr<ExplosionObject>> _explosionHash;   // Hashmap for active explosion objects with a unique ID as the key        
+        std::unique_ptr<StaticObject> _backgroundObject;                            // Game object for the background image
+
+        CTexture _fontTextureLevel;         // loaded font to display level        
+        std::unique_ptr<StaticObject> _fontObjectLevel;     // loaded texture/object to display level
+
+        CTexture _fontTextureScore;         // loaded font to display score        
+        std::unique_ptr<StaticObject> _fontObjectScore;      // loaded texture/object to display score
 
         GameState _state;                   // Game state enum 
         AsteroidColor _currentColor;        // Asteroid color enum, determines color for current level
@@ -114,12 +118,6 @@ class AsteroidGame{
         int _currentLevel;
         int _score;
 
-        CTexture _fontTextureLevel;         // loaded font to display level
-        // GameObject* _fontObjectLevel;       // loaded texture/object to display level
-        std::unique_ptr<StaticObject> _fontObjectLevel;
-
-        CTexture _fontTextureScore;         // loaded font to display score
-        // GameObject* _fontObjectScore;       // loaded texture/object to display score
-        std::unique_ptr<StaticObject> _fontObjectScore;
+        
 
 };

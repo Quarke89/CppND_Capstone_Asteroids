@@ -10,7 +10,7 @@ class AsteroidObject : public GameObject
         AsteroidObject(Point pos, CTexture* tex, CVector velocity);
 
         virtual void update(Uint32 updateTime);
-        virtual void render(SDL_Renderer* renderer);
+        virtual void render(SDL_Renderer_unique_ptr &renderer);
         
         std::vector<SDL_Rect>& getBoundingBoxes();
 

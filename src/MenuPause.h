@@ -1,44 +1,16 @@
 #pragma once
 
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-#include <SDL2/SDL_ttf.h>
+#include "Menu.h"
 
-#include <unordered_map>
-#include <utility>
 
-#include "CTexture.h"
-#include "GameObject.h"
-#include "constants.h"
-#include "StaticObject.h"
-
-enum class PauseMenuItem
-{
-    TITLE,
-    PRESS_BUTTON,
-    ITEM_TOTAL
-};
-
-class MenuPause
+class MenuPause : public Menu
 {
     public:
-        MenuPause(StaticObject* backgroundObject);
-        ~MenuPause();
 
-        void init(SDL_Renderer* renderer, std::vector<TTF_Font*> &mainFonts);
-        GameState run();     
-
-        void renderItems();
-
+        MenuPause(SDL_Renderer_unique_ptr &renderer, std::unique_ptr<StaticObject> &backgroundObject, std::vector<TTF_Font*> &mainFonts);
+    
     private:
 
-        std::unique_ptr<StaticObject> createStaticTextObject(Point pos, CTexture* pTex);
-
-        SDL_Renderer* _prenderer;
-        
-        std::unordered_map<PauseMenuItem, CTexture> _textTextureHash;
-        std::unordered_map<PauseMenuItem, std::unique_ptr<StaticObject>> _textObjectHash;
-
-        StaticObject* _backgroundObject;
+        virtual void initMenuItems();
 };
 

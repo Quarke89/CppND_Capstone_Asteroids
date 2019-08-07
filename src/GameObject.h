@@ -16,7 +16,7 @@ class GameObject{
         GameObject(Point pos, CTexture* pTex, CVector velocity, double rotation);
         virtual ~GameObject() = default;
 
-        virtual void render(SDL_Renderer* renderer);
+        virtual void render(SDL_Renderer_unique_ptr &renderer);
         virtual void update(Uint32 updateTime);
         
         static std::unique_ptr<GameObject> Create(ObjectType type, Point pos, CTexture* tex, CVector velocity=CVector(), double rotation=0);
