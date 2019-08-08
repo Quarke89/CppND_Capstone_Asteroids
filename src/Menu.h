@@ -10,7 +10,7 @@
 
 #include "CTexture.h"
 #include "GameObject.h"
-#include "StaticObject.h"
+#include "GameObjectStatic.h"
 #include "constants.h"
 
 enum class MenuItem
@@ -26,7 +26,7 @@ enum class MenuItem
 class Menu
 {
     public:
-        Menu(SDL_Renderer& renderer, StaticObject& backgroundObject, std::vector<TTF_Font*>& mainFonts);
+        Menu(SDL_Renderer& renderer, GameObjectStatic& backgroundObject, std::vector<TTF_Font*>& mainFonts);
         virtual ~Menu() = default;
 
         virtual GameState run();
@@ -37,14 +37,14 @@ class Menu
         void render();
         virtual void renderMenuItems();
 
-        std::unique_ptr<StaticObject> createStaticTextObject(Point pos, CTexture &tex);
+        std::unique_ptr<GameObjectStatic> createStaticTextObject(Point pos, CTexture &tex);
 
         SDL_Renderer& _renderer;
-        StaticObject& _backgroundObject;
+        GameObjectStatic& _backgroundObject;
         std::vector<TTF_Font*> &_mainFonts;
 
         std::unordered_map<MenuItem, CTexture> _textTextureHash;
-        std::unordered_map<MenuItem, std::unique_ptr<StaticObject>> _textObjectHash;
+        std::unordered_map<MenuItem, std::unique_ptr<GameObjectStatic>> _textObjectHash;
 
 };
 

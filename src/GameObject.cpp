@@ -5,11 +5,11 @@
  */
 
 #include "GameObject.h"
-#include "AsteroidObject.h"
-#include "ShipObject.h"
-#include "LaserObject.h"
-#include "StaticObject.h"
-#include "ExplosionObject.h"
+#include "GameObjectAsteroid.h"
+#include "GameObjectShip.h"
+#include "GameObjectLaser.h"
+#include "GameObjectStatic.h"
+#include "GameObjectExplosion.h"
 
 int GameObject::_count = 0;     // initialize static counter
 
@@ -44,11 +44,11 @@ void GameObject::update(const Uint32 updateTime)
 std::unique_ptr<GameObject> GameObject::Create(ObjectType type, Point pos, CTexture& tex, CVector velocity, double rotation)
 {
     switch(type){
-        case ObjectType::STATIC:    return std::unique_ptr<GameObject>(new StaticObject(pos, tex));
-        case ObjectType::ASTEROID:  return std::unique_ptr<GameObject>(new AsteroidObject(pos, tex, velocity));
-        case ObjectType::SHIP:      return std::unique_ptr<GameObject>(new ShipObject(pos, tex, velocity));
-        case ObjectType::LASER:     return std::unique_ptr<GameObject>(new LaserObject(pos, tex, velocity, rotation));
-        case ObjectType::EXPLOSION: return std::unique_ptr<GameObject>(new ExplosionObject(pos, tex));
+        case ObjectType::STATIC:    return std::unique_ptr<GameObject>(new GameObjectStatic(pos, tex));
+        case ObjectType::ASTEROID:  return std::unique_ptr<GameObject>(new GameObjectAsteroid(pos, tex, velocity));
+        case ObjectType::SHIP:      return std::unique_ptr<GameObject>(new GameObjectShip(pos, tex, velocity));
+        case ObjectType::LASER:     return std::unique_ptr<GameObject>(new GameObjectLaser(pos, tex, velocity, rotation));
+        case ObjectType::EXPLOSION: return std::unique_ptr<GameObject>(new GameObjectExplosion(pos, tex));
         default: 
             return nullptr;
     }

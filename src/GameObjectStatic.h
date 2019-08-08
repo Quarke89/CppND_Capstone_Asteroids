@@ -8,11 +8,11 @@
 
 #include "GameObject.h"
 
-class StaticObject : public GameObject
+class GameObjectStatic : public GameObject
 {
     public:
 
-        StaticObject(const Point& pos, const CTexture& tex);        // basic constructor that accepts position and texture of the object
+        GameObjectStatic(const Point& pos, const CTexture& tex);        // basic constructor that accepts position and texture of the object
 
         void render(SDL_Renderer& renderer) override;         // render object to screen, destination rectangle is size of texture
         void render(SDL_Renderer& renderer, SDL_Rect& dest) const;  // render object to screen, destination is given by dest

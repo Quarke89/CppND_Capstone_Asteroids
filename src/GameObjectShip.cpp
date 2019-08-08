@@ -1,14 +1,14 @@
-#include "ShipObject.h"
+#include "GameObjectShip.h"
 #include "constants.h"
 
-ShipObject::ShipObject(const Point& pos, const CTexture& tex, CVector velocity)
+GameObjectShip::GameObjectShip(const Point& pos, const CTexture& tex, CVector velocity)
     : GameObject(pos, tex, velocity), _rotateLeft(false), _rotateRight(false), _moveForward(false), _moveBackward(false)
 {
     _width = _tex.getWidth()/AsteroidConstants::SCALE_SHIP_W;
     _height = _tex.getHeight()/AsteroidConstants::SCALE_SHIP_H;
 }
 
-void ShipObject::update(Uint32 updateTime)
+void GameObjectShip::update(Uint32 updateTime)
 {
 
     if(_moveForward || _moveBackward){
@@ -42,7 +42,7 @@ void ShipObject::update(Uint32 updateTime)
     _lastUpdated = updateTime;
 }
 
-void ShipObject::render(SDL_Renderer& renderer)
+void GameObjectShip::render(SDL_Renderer& renderer)
 {
     int xPosCenter = std::round(_pos.x);
     int yPosCenter = std::round(_pos.y);
@@ -59,27 +59,27 @@ void ShipObject::render(SDL_Renderer& renderer)
 
 }
 
-void ShipObject::setRotateLeft(bool val)
+void GameObjectShip::setRotateLeft(bool val)
 {
     _rotateLeft = val;
 }
 
-void ShipObject::setRotateRight(bool val)
+void GameObjectShip::setRotateRight(bool val)
 {
     _rotateRight = val;
 }
 
-void ShipObject::setMoveForward(bool val)
+void GameObjectShip::setMoveForward(bool val)
 {
     _moveForward = val;
 }
 
-void ShipObject::setMoveBackward(bool val)
+void GameObjectShip::setMoveBackward(bool val)
 {
     _moveBackward = val;
 }
 
-SDL_Rect& ShipObject::getBoundingBox() 
+SDL_Rect& GameObjectShip::getBoundingBox() 
 {
     return _boundingBox;
 }

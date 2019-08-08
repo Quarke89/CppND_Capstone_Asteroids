@@ -11,11 +11,11 @@ enum class ShipMovement
     ROTATE_RIGHT
 };
 
-class ShipObject : public GameObject
+class GameObjectShip : public GameObject
 {
     public:
 
-        ShipObject(const Point& pos, const CTexture& tex, CVector velocity);
+        GameObjectShip(const Point& pos, const CTexture& tex, CVector velocity);
 
         void update(const Uint32 updateTime) override;
         void render(SDL_Renderer& renderer) override;

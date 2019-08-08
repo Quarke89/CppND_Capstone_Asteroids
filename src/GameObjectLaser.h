@@ -2,11 +2,11 @@
 
 #include "GameObject.h"
 
-class LaserObject : public GameObject
+class GameObjectLaser : public GameObject
 {
     public:
 
-        LaserObject(const Point& pos, const CTexture& tex, CVector velocity, double rotation) ;
+        GameObjectLaser(const Point& pos, const CTexture& tex, CVector velocity, double rotation) ;
 
         void render(SDL_Renderer &renderer) override;
         void update(const Uint32 updateTime) override;

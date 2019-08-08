@@ -1,6 +1,6 @@
 #include "Menu.h"
 
-Menu::Menu(SDL_Renderer& renderer, StaticObject& backgroundObject, std::vector<TTF_Font*> &mainFonts)
+Menu::Menu(SDL_Renderer& renderer, GameObjectStatic& backgroundObject, std::vector<TTF_Font*> &mainFonts)
     : _renderer(renderer), _backgroundObject(backgroundObject), _mainFonts(mainFonts)
 {
     initMenuItems();
@@ -49,10 +49,10 @@ void Menu::renderMenuItems()
     }
 }
 
-std::unique_ptr<StaticObject> Menu::createStaticTextObject(Point pos, CTexture& tex)
+std::unique_ptr<GameObjectStatic> Menu::createStaticTextObject(Point pos, CTexture& tex)
 {
     std::unique_ptr<GameObject> pGO = GameObject::Create(ObjectType::STATIC, pos, tex); 
-    return static_unique_ptr_cast<StaticObject, GameObject>(std::move(pGO));
+    return static_unique_ptr_cast<GameObjectStatic, GameObject>(std::move(pGO));
 }
 
 

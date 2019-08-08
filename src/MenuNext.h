@@ -7,7 +7,7 @@ class MenuNext : public Menu
 {
     public:
 
-        MenuNext(SDL_Renderer& renderer, StaticObject& backgroundObject, std::vector<TTF_Font*>& mainFonts);        
+        MenuNext(SDL_Renderer& renderer, GameObjectStatic& backgroundObject, std::vector<TTF_Font*>& mainFonts);        
     
     private:
 

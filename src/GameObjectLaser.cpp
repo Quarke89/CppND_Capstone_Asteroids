@@ -1,14 +1,14 @@
-#include "LaserObject.h"
+#include "GameObjectLaser.h"
 #include "constants.h"
 
-LaserObject::LaserObject(const Point& pos, const CTexture& tex, CVector velocity, double rotation)
+GameObjectLaser::GameObjectLaser(const Point& pos, const CTexture& tex, CVector velocity, double rotation)
     : GameObject(pos, tex, velocity, rotation)
 {
     _width = _tex.getWidth()/AsteroidConstants::SCALE_LASER_W;
     _height = _tex.getHeight()/AsteroidConstants::SCALE_LASER_H;
 }
 
-void LaserObject::update(const Uint32 updateTime) 
+void GameObjectLaser::update(const Uint32 updateTime) 
 {
     double timeDelta = static_cast<double>(updateTime - _lastUpdated)/1000;
 
@@ -20,7 +20,7 @@ void LaserObject::update(const Uint32 updateTime)
 }
 
 
-void LaserObject::render(SDL_Renderer& renderer)
+void GameObjectLaser::render(SDL_Renderer& renderer)
 {
     int xPosCenter = std::round(_pos.x);
     int yPosCenter = std::round(_pos.y);
@@ -35,12 +35,12 @@ void LaserObject::render(SDL_Renderer& renderer)
     _boundingBox = std::move(dstRect);
 }
 
-SDL_Rect& LaserObject::getBoundingBox() 
+SDL_Rect& GameObjectLaser::getBoundingBox() 
 {
     return _boundingBox;
 }
 
-bool LaserObject::checkOffscreen() const
+bool GameObjectLaser::checkOffscreen() const
 {
     if(_pos.x < -AsteroidConstants::OFFSCREEN_BOUNDARY || _pos.x > AsteroidConstants::SCREEN_WIDTH + AsteroidConstants::OFFSCREEN_BOUNDARY)
         return true;

@@ -23,7 +23,7 @@ AsteroidGame::AsteroidGame()
 
     Point backgroundPos{0,0};
     std::unique_ptr<GameObject> pGameObject = GameObject::Create(ObjectType::STATIC, backgroundPos, _mainTextures[static_cast<int>(TextureType::TEX_BACKGROUND)]);
-    _backgroundObject = static_unique_ptr_cast<StaticObject, GameObject>(std::move(pGameObject));    
+    _backgroundObject = static_unique_ptr_cast<GameObjectStatic, GameObject>(std::move(pGameObject));    
 
 }
 
@@ -288,7 +288,7 @@ void AsteroidGame::initLevel()
     Point pos = getRandomCorner();
 
     AsteroidSize size = AsteroidSize::BIG;
-    CTexture& tex = _mainTextures[static_cast<int>(AsteroidObject::getAsteroidTexture(size, _currentColor))];    
+    CTexture& tex = _mainTextures[static_cast<int>(GameObjectAsteroid::getAsteroidTexture(size, _currentColor))];    
 
     std::random_device rd;
     std::uniform_int_distribution<> randomAngle(0, 360);                
@@ -309,7 +309,7 @@ void AsteroidGame::initLevel()
 
     Point levelPos{AsteroidConstants::FONT_LEVEL_POS_X, AsteroidConstants::FONT_LEVEL_POS_Y};
     std::unique_ptr<GameObject> pGameObject = GameObject::Create(ObjectType::STATIC, levelPos, _fontTextureLevel); 
-    _fontObjectLevel = static_unique_ptr_cast<StaticObject, GameObject>(std::move(pGameObject));    
+    _fontObjectLevel = static_unique_ptr_cast<GameObjectStatic, GameObject>(std::move(pGameObject));    
 
     ss.str("");
     ss << "Score: " << std::setw(5) << _score;
@@ -317,7 +317,7 @@ void AsteroidGame::initLevel()
 
     Point scorePos{AsteroidConstants::FONT_SCORE_POS_X, AsteroidConstants::FONT_SCORE_POS_Y};    
     std::unique_ptr<GameObject> pGameObject2 = GameObject::Create(ObjectType::STATIC, scorePos, _fontTextureScore); 
-    _fontObjectScore = static_unique_ptr_cast<StaticObject, GameObject>(std::move(pGameObject2));
+    _fontObjectScore = static_unique_ptr_cast<GameObjectStatic, GameObject>(std::move(pGameObject2));
 
 }
 
@@ -330,7 +330,7 @@ void AsteroidGame::createShip()
     CTexture& tex = _mainTextures[static_cast<int>(TextureType::TEX_SHIP)];
 
     std::unique_ptr<GameObject> pGameObject = GameObject::Create(ObjectType::SHIP, pos, tex, velocity);
-    _pShip = static_unique_ptr_cast<ShipObject, GameObject>(std::move(pGameObject));
+    _pShip = static_unique_ptr_cast<GameObjectShip, GameObject>(std::move(pGameObject));
 
 }
 
@@ -340,7 +340,7 @@ void AsteroidGame::createLaser(Point pos, CVector velocity)
     CTexture& tex = _mainTextures[static_cast<int>(TextureType::TEX_LASER)];
 
     std::unique_ptr<GameObject> pLaserGO = GameObject::Create(ObjectType::LASER, pos, tex, velocity, velocity.getAngle() + 90);         
-    std::unique_ptr<LaserObject> pLaser = static_unique_ptr_cast<LaserObject, GameObject>(std::move(pLaserGO));
+    std::unique_ptr<GameObjectLaser> pLaser = static_unique_ptr_cast<GameObjectLaser, GameObject>(std::move(pLaserGO));
 
     _laserHash.insert(std::make_pair( pLaser->getID(), std::move(pLaser)) );
 }
@@ -349,7 +349,7 @@ void AsteroidGame::createLaser(Point pos, CVector velocity)
 void AsteroidGame::createAsteroid(Point pos, CVector velocity, CTexture& tex, AsteroidSize size, AsteroidColor color)
 {
     std::unique_ptr<GameObject> pAsteroidGO = GameObject::Create(ObjectType::ASTEROID, pos, tex, velocity);
-    std::unique_ptr<AsteroidObject> pAsteroid = static_unique_ptr_cast<AsteroidObject, GameObject>(std::move(pAsteroidGO));
+    std::unique_ptr<GameObjectAsteroid> pAsteroid = static_unique_ptr_cast<GameObjectAsteroid, GameObject>(std::move(pAsteroidGO));
 
     pAsteroid->setAsteroidAttr(size, color);
 
@@ -362,7 +362,7 @@ void AsteroidGame::createExplosion(Point pos, AsteroidSize size)
     CTexture& tex = _mainTextures[static_cast<int>(TextureType::TEX_EXPLOSION_SPRITE_SHEET)];
     
     std::unique_ptr<GameObject> pExplosionGO = GameObject::Create(ObjectType::EXPLOSION, pos, tex);
-    std::unique_ptr<ExplosionObject> pExplosion = static_unique_ptr_cast<ExplosionObject, GameObject>(std::move(pExplosionGO));
+    std::unique_ptr<GameObjectExplosion> pExplosion = static_unique_ptr_cast<GameObjectExplosion, GameObject>(std::move(pExplosionGO));
 
     pExplosion->setSize(size);
 
@@ -460,7 +460,7 @@ void AsteroidGame::shootLaser()
 }
 
 // split current asteroid into 2 smaller asteroid
-void AsteroidGame::splitAsteroid(AsteroidObject* asteroid)
+void AsteroidGame::splitAsteroid(GameObjectAsteroid* asteroid)
 {
     AsteroidSize currentSize = asteroid->getSize();
     Point pos = asteroid->getPos();
@@ -472,7 +472,7 @@ void AsteroidGame::splitAsteroid(AsteroidObject* asteroid)
 
     AsteroidSize nextSize = asteroid->getNextSize();
 
-    int nextTexIdx = static_cast<int>(AsteroidObject::getAsteroidTexture(nextSize, _currentColor));
+    int nextTexIdx = static_cast<int>(GameObjectAsteroid::getAsteroidTexture(nextSize, _currentColor));
     CTexture& tex = _mainTextures[nextTexIdx];
     
     CVector currentVelocity = asteroid->getVelocity();
@@ -491,7 +491,7 @@ void AsteroidGame::checkLevelCompleted()
     if(_asteroidHash.size() == 0){
         _state = GameState::LEVEL_COMPLETE;
         _currentLevel++;
-        _currentColor = AsteroidObject::getNextColor(_currentColor);
+        _currentColor = GameObjectAsteroid::getNextColor(_currentColor);
     }
 }
 

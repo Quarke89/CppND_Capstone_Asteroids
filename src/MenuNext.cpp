@@ -1,6 +1,6 @@
 #include "MenuNext.h"
 
-MenuNext::MenuNext(SDL_Renderer& renderer, StaticObject& backgroundObject, std::vector<TTF_Font*>& mainFonts)
+MenuNext::MenuNext(SDL_Renderer& renderer, GameObjectStatic& backgroundObject, std::vector<TTF_Font*>& mainFonts)
  :Menu(renderer, backgroundObject, mainFonts)
 {
     initMenuItems();

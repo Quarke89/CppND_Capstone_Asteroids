@@ -1,13 +1,13 @@
-#include "AsteroidObject.h"
+#include "GameObjectAsteroid.h"
 #include "constants.h"
 #include <cmath>
 
-AsteroidObject::AsteroidObject(const Point& pos, const CTexture& tex, CVector velocity)
+GameObjectAsteroid::GameObjectAsteroid(const Point& pos, const CTexture& tex, CVector velocity)
     : GameObject(pos, tex, velocity)
 {}
 
 
-void AsteroidObject::render(SDL_Renderer& renderer)
+void GameObjectAsteroid::render(SDL_Renderer& renderer)
 {
     int xPosCenter = std::round(_pos.x);
     int yPosCenter = std::round(_pos.y);
@@ -28,7 +28,7 @@ void AsteroidObject::render(SDL_Renderer& renderer)
 }
 
 
-void AsteroidObject::update(Uint32 updateTime)
+void GameObjectAsteroid::update(Uint32 updateTime)
 {
 
     double timeDelta = static_cast<double>(updateTime - _lastUpdated)/1000;
@@ -54,29 +54,29 @@ void AsteroidObject::update(Uint32 updateTime)
 
 }
 
-std::vector<SDL_Rect>& AsteroidObject::getBoundingBoxes()
+std::vector<SDL_Rect>& GameObjectAsteroid::getBoundingBoxes()
 {
     return _boundingBoxes;
 }
 
-void AsteroidObject::setAsteroidAttr(AsteroidSize size, AsteroidColor color)
+void GameObjectAsteroid::setAsteroidAttr(AsteroidSize size, AsteroidColor color)
 {
     _asteroidSize = size;
     _asteroidColor = color;
 }
 
 
-AsteroidSize AsteroidObject::getSize() const
+AsteroidSize GameObjectAsteroid::getSize() const
 {
     return _asteroidSize;
 }
-AsteroidSize AsteroidObject::getNextSize() const
+AsteroidSize GameObjectAsteroid::getNextSize() const
 {
     if(_asteroidSize == AsteroidSize::BIG) return AsteroidSize::MED;
     return AsteroidSize::SMALL;
 }
 
-AsteroidColor AsteroidObject::getNextColor(AsteroidColor color)
+AsteroidColor GameObjectAsteroid::getNextColor(AsteroidColor color)
 {
     switch(color){
         case AsteroidColor::GREY:   return AsteroidColor::RED;
@@ -86,7 +86,7 @@ AsteroidColor AsteroidObject::getNextColor(AsteroidColor color)
     return AsteroidColor::GREY;
 }
 
-TextureType AsteroidObject::getAsteroidTexture(AsteroidSize size, AsteroidColor color)
+TextureType GameObjectAsteroid::getAsteroidTexture(AsteroidSize size, AsteroidColor color)
 {
     switch(size){
         case AsteroidSize::BIG:
@@ -118,7 +118,7 @@ TextureType AsteroidObject::getAsteroidTexture(AsteroidSize size, AsteroidColor 
 // calculate offscreen wrap arounds for textures
 // srcRect contains the rectangles defining the texture area 
 // destRect contains the recatangles defining the destination area
-void AsteroidObject::calculateRenderRectangles(int objPosX, int objPosY, int objWidth, int objHeight, int screenWidth, int screenHeight, 
+void GameObjectAsteroid::calculateRenderRectangles(int objPosX, int objPosY, int objWidth, int objHeight, int screenWidth, int screenHeight, 
                                         std::vector<SDL_Rect> &srcRect, std::vector<SDL_Rect> &dstRect)
 {
     

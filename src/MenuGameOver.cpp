@@ -1,6 +1,6 @@
 #include "MenuGameOver.h"
 
-MenuGameOver::MenuGameOver(SDL_Renderer& renderer, StaticObject& backgroundObject, std::vector<TTF_Font*>& mainFonts)
+MenuGameOver::MenuGameOver(SDL_Renderer& renderer, GameObjectStatic& backgroundObject, std::vector<TTF_Font*>& mainFonts)
  : Menu(renderer, backgroundObject, mainFonts), _state(true)
 {
     initMenuItems();

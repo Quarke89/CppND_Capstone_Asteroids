@@ -3,11 +3,11 @@
 #include "GameObject.h"
 #include <vector>
 
-class AsteroidObject : public GameObject
+class GameObjectAsteroid : public GameObject
 {
 
     public:
-        AsteroidObject(const Point& pos, const CTexture& tex, CVector velocity);
+        GameObjectAsteroid(const Point& pos, const CTexture& tex, CVector velocity);
         
         void render(SDL_Renderer& renderer) override;
         void update(const Uint32 updateTime) override;

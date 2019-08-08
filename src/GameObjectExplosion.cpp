@@ -5,11 +5,11 @@
  */
 
 
-#include "ExplosionObject.h"
+#include "GameObjectExplosion.h"
 
-std::vector<SDL_Rect> ExplosionObject::_spriteClips = std::vector<SDL_Rect>();
+std::vector<SDL_Rect> GameObjectExplosion::_spriteClips = std::vector<SDL_Rect>();
 
-ExplosionObject::ExplosionObject(const Point &pos, const CTexture& tex)
+GameObjectExplosion::GameObjectExplosion(const Point &pos, const CTexture& tex)
     : GameObject(pos, tex), _width(AsteroidConstants::EXPLOSION_SPRITE_WIDTH), _height(AsteroidConstants::EXPLOSION_SPRITE_HEIGHT), _currentClip(0)
 {
     if(_spriteClips.size() == 0){
@@ -24,7 +24,7 @@ ExplosionObject::ExplosionObject(const Point &pos, const CTexture& tex)
     }
 }
 
-void ExplosionObject::render(SDL_Renderer& renderer)
+void GameObjectExplosion::render(SDL_Renderer& renderer)
 {
     if(_currentClip < AsteroidConstants::EXPLOSION_SPRITE_NUM){
          
@@ -40,7 +40,7 @@ void ExplosionObject::render(SDL_Renderer& renderer)
     }
 }
 
-void ExplosionObject::update(const Uint32 updateTime)
+void GameObjectExplosion::update(const Uint32 updateTime)
 {
 
     if(_currentClip < AsteroidConstants::EXPLOSION_SPRITE_NUM){
@@ -53,7 +53,7 @@ void ExplosionObject::update(const Uint32 updateTime)
     
 }
 
-void ExplosionObject::setSize(AsteroidSize size)
+void GameObjectExplosion::setSize(AsteroidSize size)
 {
     switch(size)
     {
@@ -73,7 +73,7 @@ void ExplosionObject::setSize(AsteroidSize size)
     
 }
 
-bool ExplosionObject::isAnimationDone() const
+bool GameObjectExplosion::isAnimationDone() const
 {
     return _currentClip >= AsteroidConstants::EXPLOSION_SPRITE_NUM;
 }

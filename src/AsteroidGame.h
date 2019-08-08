@@ -26,11 +26,11 @@
 #include "utility.h"
 #include "CTexture.h"
 #include "GameObject.h"
-#include "AsteroidObject.h"
-#include "ShipObject.h"
-#include "LaserObject.h"
-#include "ExplosionObject.h"
-#include "StaticObject.h"
+#include "GameObjectAsteroid.h"
+#include "GameObjectShip.h"
+#include "GameObjectLaser.h"
+#include "GameObjectExplosion.h"
+#include "GameObjectStatic.h"
 
 #include "MenuMain.h"
 #include "MenuGameOver.h"
@@ -74,7 +74,7 @@ class AsteroidGame{
         bool checkCollision(const SDL_Rect &a, const SDL_Rect &b) const;  // check collision between 2 SDL_Rect bounding boxes
 
         void shootLaser();                              // determine velocity vector to create laser after keyboard input
-        void splitAsteroid(AsteroidObject* asteroid);   // split current asteroid into 2 smaller asteroid
+        void splitAsteroid(GameObjectAsteroid* asteroid);   // split current asteroid into 2 smaller asteroid
 
         void checkLevelCompleted();         // check if any asteroids are remaining in the level
 
@@ -98,17 +98,17 @@ class AsteroidGame{
         std::vector<TTF_Font*> _mainFonts;      // vector holding the fonts converted by SDL_TTF
         
         
-        std::unique_ptr<ShipObject> _pShip;                                         // Game object for the ship
-        std::unordered_map<int, std::unique_ptr<LaserObject>> _laserHash;           // Hashmap for active laser objects with a unique ID as the key
-        std::unordered_map<int, std::unique_ptr<AsteroidObject>> _asteroidHash;     // Hashmap for active asteroid objects with a unique ID as the key
-        std::unordered_map<int, std::unique_ptr<ExplosionObject>> _explosionHash;   // Hashmap for active explosion objects with a unique ID as the key        
-        std::unique_ptr<StaticObject> _backgroundObject;                            // Game object for the background image
+        std::unique_ptr<GameObjectShip> _pShip;                                         // Game object for the ship
+        std::unordered_map<int, std::unique_ptr<GameObjectLaser>> _laserHash;           // Hashmap for active laser objects with a unique ID as the key
+        std::unordered_map<int, std::unique_ptr<GameObjectAsteroid>> _asteroidHash;     // Hashmap for active asteroid objects with a unique ID as the key
+        std::unordered_map<int, std::unique_ptr<GameObjectExplosion>> _explosionHash;   // Hashmap for active explosion objects with a unique ID as the key        
+        std::unique_ptr<GameObjectStatic> _backgroundObject;                            // Game object for the background image
 
         CTexture _fontTextureLevel;         // loaded font to display level        
-        std::unique_ptr<StaticObject> _fontObjectLevel;     // loaded texture/object to display level
+        std::unique_ptr<GameObjectStatic> _fontObjectLevel;     // loaded texture/object to display level
 
         CTexture _fontTextureScore;         // loaded font to display score        
-        std::unique_ptr<StaticObject> _fontObjectScore;      // loaded texture/object to display score
+        std::unique_ptr<GameObjectStatic> _fontObjectScore;      // loaded texture/object to display score
 
         GameState _state;                   // Game state enum 
         AsteroidColor _currentColor;        // Asteroid color enum, determines color for current level

@@ -25,7 +25,7 @@ namespace AsteroidConstants
 
     constexpr int FONT_LEVEL_POS_X{10};
     constexpr int FONT_LEVEL_POS_Y{10};
-    constexpr int FONT_SCORE_POS_X{SCREEN_WIDTH-200};
+    constexpr int FONT_SCORE_POS_X{SCREEN_WIDTH-210};
     constexpr int FONT_SCORE_POS_Y{10};
 
     constexpr int EXPLOSION_SPRITE_WIDTH{64};
