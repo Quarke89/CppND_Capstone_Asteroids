@@ -569,10 +569,6 @@ void AsteroidGame::cleanup()
 {
     cleanupLevel();
 
-    for(auto& tex: _mainTextures){
-        tex.free();
-    }
-
     for(auto& font: _mainFonts){
         TTF_CloseFont(font);
     }
@@ -584,6 +580,7 @@ void AsteroidGame::cleanup()
 }
 
 // utility function for determining initial position for asteroids
+// randomly give one of the four corners
 Point AsteroidGame::getRandomCorner() const
 {
     std::random_device rd;

@@ -94,7 +94,7 @@ void MenuGameOver::toggleState()
 GameState MenuGameOver::select()
 {
     if(_state){
-        return GameState::RUNNING;
+        return GameState::PLAY_AGAIN;
     }
     else{
         return GameState::QUIT;
