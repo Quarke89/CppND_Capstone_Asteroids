@@ -415,7 +415,7 @@ void AsteroidGame::checkAsteroidCollision()
     }
 
     for(int idx: asteroidCollideIdx){
-        splitAsteroid(_asteroidHash[idx].get());
+        splitAsteroid(*_asteroidHash[idx].get());
         _asteroidHash.erase(idx);
         updateScore(10);
     }
@@ -460,22 +460,22 @@ void AsteroidGame::shootLaser()
 }
 
 // split current asteroid into 2 smaller asteroid
-void AsteroidGame::splitAsteroid(GameObjectAsteroid* asteroid)
+void AsteroidGame::splitAsteroid(GameObjectAsteroid& asteroid)
 {
-    AsteroidSize currentSize = asteroid->getSize();
-    Point pos = asteroid->getPos();
+    AsteroidSize currentSize = asteroid.getSize();
+    Point pos = asteroid.getPos();
 
     if(currentSize == AsteroidSize::SMALL){
         createExplosion(pos, currentSize);
         return;
     }
 
-    AsteroidSize nextSize = asteroid->getNextSize();
+    AsteroidSize nextSize = asteroid.getNextSize();
 
     int nextTexIdx = static_cast<int>(GameObjectAsteroid::getAsteroidTexture(nextSize, _currentColor));
     CTexture& tex = _mainTextures[nextTexIdx];
     
-    CVector currentVelocity = asteroid->getVelocity();
+    CVector currentVelocity = asteroid.getVelocity();
     CVector velocity1(currentVelocity.getMag(), currentVelocity.getAngle() - 45, VectorType::POLAR);
     CVector velocity2(currentVelocity.getMag(), currentVelocity.getAngle() + 45, VectorType::POLAR);
 

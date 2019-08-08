@@ -24,15 +24,14 @@ class CTexture
         bool loadFromFile(SDL_Renderer& renderer, std::string path);
         bool loadFromRenderedText(SDL_Renderer& renderer, TTF_Font* font, std::string text, SDL_Color textColor);
 
-        SDL_Texture& getTexture() const;
-        void free();        
-
+        SDL_Texture& getTexture() const;        
         int getWidth() const;
         int getHeight() const;
 
-    private:
+        void free();        
 
-        SDL_Texture* _ptexture{nullptr};
+    private:
+        
         SDL_Texture_unique_ptr _texture;
 
         int _width{0};

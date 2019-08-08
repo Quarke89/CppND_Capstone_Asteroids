@@ -74,7 +74,7 @@ class AsteroidGame{
         bool checkCollision(const SDL_Rect &a, const SDL_Rect &b) const;  // check collision between 2 SDL_Rect bounding boxes
 
         void shootLaser();                              // determine velocity vector to create laser after keyboard input
-        void splitAsteroid(GameObjectAsteroid* asteroid);   // split current asteroid into 2 smaller asteroid
+        void splitAsteroid(GameObjectAsteroid& asteroid);   // split current asteroid into 2 smaller asteroid
 
         void checkLevelCompleted();         // check if any asteroids are remaining in the level
 

@@ -12,16 +12,7 @@
 #include "GameObject.h"
 #include "GameObjectStatic.h"
 #include "constants.h"
-
-enum class MenuItem
-{
-    TITLE,
-    ITEM1,
-    ITEM2,
-    ITEM1_SELECT,
-    ITEM2_SELECT,
-    ITEM_TOTAL
-};
+#include "utility.h"
 
 class Menu
 {
