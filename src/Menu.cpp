@@ -1,6 +1,6 @@
 #include "Menu.h"
 
-Menu::Menu(SDL_Renderer_unique_ptr &renderer, std::unique_ptr<StaticObject> &backgroundObject, std::vector<TTF_Font*> &mainFonts)
+Menu::Menu(SDL_Renderer& renderer, StaticObject& backgroundObject, std::vector<TTF_Font*> &mainFonts)
     : _renderer(renderer), _backgroundObject(backgroundObject), _mainFonts(mainFonts)
 {
     initMenuItems();
@@ -31,15 +31,15 @@ GameState Menu::run()
 
 void Menu::render()
 {
-    SDL_SetRenderDrawColor(_renderer.get(), 0x00, 0x00, 0x00, 0xFF );
-    SDL_RenderClear(_renderer.get());
+    SDL_SetRenderDrawColor(&_renderer, 0x00, 0x00, 0x00, 0xFF );
+    SDL_RenderClear(&_renderer);
 
     SDL_Rect backgroundRect{0,0,AsteroidConstants::SCREEN_WIDTH, AsteroidConstants::SCREEN_HEIGHT};
-    _backgroundObject->render(_renderer, &backgroundRect);
+    _backgroundObject.render(_renderer, backgroundRect);
 
     renderMenuItems();
     
-    SDL_RenderPresent(_renderer.get());
+    SDL_RenderPresent(&_renderer);
 }
 
 void Menu::renderMenuItems()
@@ -49,9 +49,9 @@ void Menu::renderMenuItems()
     }
 }
 
-std::unique_ptr<StaticObject> Menu::createStaticTextObject(Point pos, CTexture &tex)
+std::unique_ptr<StaticObject> Menu::createStaticTextObject(Point pos, CTexture& tex)
 {
-    std::unique_ptr<GameObject> pGO = GameObject::Create(ObjectType::STATIC, pos, &tex); 
+    std::unique_ptr<GameObject> pGO = GameObject::Create(ObjectType::STATIC, pos, tex); 
     return static_unique_ptr_cast<StaticObject, GameObject>(std::move(pGO));
 }
 

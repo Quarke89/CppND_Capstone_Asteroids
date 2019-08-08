@@ -7,7 +7,7 @@ class MenuMain : public Menu
 {
     public:
 
-        MenuMain(SDL_Renderer_unique_ptr &renderer, std::unique_ptr<StaticObject> &backgroundObject, std::vector<TTF_Font*> &mainFonts);
+        MenuMain(SDL_Renderer& renderer, StaticObject& backgroundObject, std::vector<TTF_Font*>& mainFonts);
 
         virtual GameState run();
     

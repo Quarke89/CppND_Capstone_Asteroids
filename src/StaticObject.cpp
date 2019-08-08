@@ -1,16 +1,25 @@
+/* File:            StaticObject.cpp
+ * Author:          Vish Potnis
+ * Description:     - Derived class for static objects (text and background)
+ *                  - Only render function is overriden
+ */
+
 #include "StaticObject.h"
 
-StaticObject::StaticObject(Point pos, CTexture* tex)
+// basic constructor that accepts position and texture of the object
+StaticObject::StaticObject(const Point& pos, const CTexture& tex)
     : GameObject(pos, tex)
 {}
 
-void StaticObject::render(SDL_Renderer_unique_ptr &renderer)
+// render object to screen, destination rectangle is size of texture
+void StaticObject::render(SDL_Renderer& renderer) 
 {
-    SDL_Rect renderQuad{static_cast<int>(_pos.x), static_cast<int>(_pos.y), _pTex->getWidth(), _pTex->getHeight()};
-    SDL_RenderCopy( renderer.get(), _pTex->getTexture(), nullptr, &renderQuad);    
+    SDL_Rect renderQuad{static_cast<int>(_pos.x), static_cast<int>(_pos.y), _tex.getWidth(), _tex.getHeight()};
+    SDL_RenderCopy( &renderer, &_tex.getTexture(), nullptr, &renderQuad);    
 }
 
-void StaticObject::render(SDL_Renderer_unique_ptr &renderer, SDL_Rect* dest)
+// render object to screen, destination is given by dest
+void StaticObject::render(SDL_Renderer& renderer, SDL_Rect& dest) const
 {
-    SDL_RenderCopy( renderer.get(), _pTex->getTexture(), nullptr, dest);    
+    SDL_RenderCopy( &renderer, &_tex.getTexture(), nullptr, &dest);    
 }

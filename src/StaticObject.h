@@ -1,3 +1,9 @@
+/* File:            StaticObject.h
+ * Author:          Vish Potnis
+ * Description:     - Derived class for static objects (text and background)
+ *                  - Only render function is overriden
+ */
+
 #pragma once
 
 #include "GameObject.h"
@@ -6,10 +12,10 @@ class StaticObject : public GameObject
 {
     public:
 
-        StaticObject(Point pos, CTexture* tex);
+        StaticObject(const Point& pos, const CTexture& tex);        // basic constructor that accepts position and texture of the object
 
-        virtual void render(SDL_Renderer_unique_ptr &renderer);
-        void render(SDL_Renderer_unique_ptr &renderer, SDL_Rect* dest);
+        void render(SDL_Renderer& renderer) override;         // render object to screen, destination rectangle is size of texture
+        void render(SDL_Renderer& renderer, SDL_Rect& dest) const;  // render object to screen, destination is given by dest
 
 
     private:

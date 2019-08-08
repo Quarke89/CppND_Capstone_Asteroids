@@ -7,22 +7,26 @@ class AsteroidObject : public GameObject
 {
 
     public:
-        AsteroidObject(Point pos, CTexture* tex, CVector velocity);
-
-        virtual void update(Uint32 updateTime);
-        virtual void render(SDL_Renderer_unique_ptr &renderer);
+        AsteroidObject(const Point& pos, const CTexture& tex, CVector velocity);
+        
+        void render(SDL_Renderer& renderer) override;
+        void update(const Uint32 updateTime) override;
         
         std::vector<SDL_Rect>& getBoundingBoxes();
 
-        AsteroidSize getSize();
-        AsteroidSize getNextSize();
+        AsteroidSize getSize() const;
+        AsteroidSize getNextSize() const;
+
         void setAsteroidAttr(AsteroidSize size, AsteroidColor color);
+        
         static AsteroidColor getNextColor(AsteroidColor color);
         static TextureType getAsteroidTexture(AsteroidSize size, AsteroidColor color);
 
     private:
         
-        void renderBoxes(SDL_Renderer* renderer);
+        // calculate offscreen wrap arounds for textures
+        void calculateRenderRectangles(int objPosX, int objPosY, int objWidth, int objHeight, int screenWidth, int screenHeight, 
+                                        std::vector<SDL_Rect> &srcRect, std::vector<SDL_Rect> &dstRect);
 
         AsteroidSize _asteroidSize;
         AsteroidColor _asteroidColor;

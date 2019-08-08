@@ -15,10 +15,10 @@ class ShipObject : public GameObject
 {
     public:
 
-        ShipObject(Point pos, CTexture* tex, CVector velocity);
+        ShipObject(const Point& pos, const CTexture& tex, CVector velocity);
 
-        virtual void update(Uint32 updateTime);
-        virtual void render(SDL_Renderer_unique_ptr &renderer);
+        void update(const Uint32 updateTime) override;
+        void render(SDL_Renderer& renderer) override;
 
         void setRotateLeft(bool val);
         void setRotateRight(bool val);

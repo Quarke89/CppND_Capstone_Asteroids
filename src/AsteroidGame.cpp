@@ -1,6 +1,6 @@
 /* File:            AsteroidGame.cpp
  * Author:          Vish Potnis
- * Description:     - Parent class for the game
+ * Description:     - Main class for the game
  *                  - Contains main game loop
  *                  - Handle input events
  *                  - Create and manage game onjects
@@ -22,7 +22,7 @@ AsteroidGame::AsteroidGame()
         exit(0);
 
     Point backgroundPos{0,0};
-    std::unique_ptr<GameObject> pGameObject = GameObject::Create(ObjectType::STATIC, backgroundPos, &_mainTextures[static_cast<int>(TextureType::TEX_BACKGROUND)]);
+    std::unique_ptr<GameObject> pGameObject = GameObject::Create(ObjectType::STATIC, backgroundPos, _mainTextures[static_cast<int>(TextureType::TEX_BACKGROUND)]);
     _backgroundObject = static_unique_ptr_cast<StaticObject, GameObject>(std::move(pGameObject));    
 
 }
@@ -141,7 +141,7 @@ bool AsteroidGame::loadTextures()
 
     for(unsigned int i = 0; i < static_cast<unsigned int>(TextureType::TEX_TOTAL); i++){
         CTexture tmp;
-        success &= tmp.loadFromFile(_renderer, getTexturePath(static_cast<TextureType>(i)));
+        success &= tmp.loadFromFile(*_renderer, getTexturePath(static_cast<TextureType>(i)));
         _mainTextures.push_back(std::move(tmp));
     }
     return success;
@@ -234,24 +234,24 @@ void AsteroidGame::renderObjects()
     SDL_RenderClear( _renderer.get() );
 
     SDL_Rect backgroundRect{0,0,AsteroidConstants::SCREEN_WIDTH, AsteroidConstants::SCREEN_HEIGHT};
-    _backgroundObject->render(_renderer, &backgroundRect);
+    _backgroundObject->render(*_renderer, backgroundRect);
 
     for(auto& explosion: _explosionHash){
-        explosion.second->render(_renderer);
+        explosion.second->render(*_renderer);
         if(explosion.second->isAnimationDone()){
             _explosionHash.erase(explosion.first);
         }
     }
     for(auto const& asteroid: _asteroidHash){
-        asteroid.second->render(_renderer);
+        asteroid.second->render(*_renderer);
     }
     for(auto const& laser: _laserHash){
-        laser.second->render(_renderer);
+        laser.second->render(*_renderer);
     }    
-    _pShip->render(_renderer);
+    _pShip->render(*_renderer);
 
-    _fontObjectLevel->render(_renderer);
-    _fontObjectScore->render(_renderer);
+    _fontObjectLevel->render(*_renderer);
+    _fontObjectScore->render(*_renderer);
 
     //Update screen
     SDL_RenderPresent( _renderer.get() );
@@ -288,7 +288,7 @@ void AsteroidGame::initLevel()
     Point pos = getRandomCorner();
 
     AsteroidSize size = AsteroidSize::BIG;
-    CTexture* pTex = &_mainTextures[static_cast<int>(AsteroidObject::getAsteroidTexture(size, _currentColor))];    
+    CTexture& tex = _mainTextures[static_cast<int>(AsteroidObject::getAsteroidTexture(size, _currentColor))];    
 
     std::random_device rd;
     std::uniform_int_distribution<> randomAngle(0, 360);                
@@ -297,7 +297,7 @@ void AsteroidGame::initLevel()
         double angle = static_cast<double>(randomAngle(rd));
         CVector velocity{asteroidVelocity, angle, VectorType::POLAR};
 
-        createAsteroid(pos, velocity, pTex, size, _currentColor);
+        createAsteroid(pos, velocity, tex, size, _currentColor);
     }
     createShip();
 
@@ -305,18 +305,18 @@ void AsteroidGame::initLevel()
 
     std::stringstream ss("");
     ss << "Level: " << _currentLevel;
-    _fontTextureLevel.loadFromRenderedText(_renderer, _mainFonts[static_cast<int>(FontType::MENU)], ss.str(), whiteTextColor);
+    _fontTextureLevel.loadFromRenderedText(*_renderer, _mainFonts[static_cast<int>(FontType::MENU)], ss.str(), whiteTextColor);
 
     Point levelPos{AsteroidConstants::FONT_LEVEL_POS_X, AsteroidConstants::FONT_LEVEL_POS_Y};
-    std::unique_ptr<GameObject> pGameObject = GameObject::Create(ObjectType::STATIC, levelPos, &_fontTextureLevel); 
+    std::unique_ptr<GameObject> pGameObject = GameObject::Create(ObjectType::STATIC, levelPos, _fontTextureLevel); 
     _fontObjectLevel = static_unique_ptr_cast<StaticObject, GameObject>(std::move(pGameObject));    
 
     ss.str("");
     ss << "Score: " << std::setw(5) << _score;
-    _fontTextureScore.loadFromRenderedText(_renderer, _mainFonts[static_cast<int>(FontType::MENU)], ss.str(), whiteTextColor);
+    _fontTextureScore.loadFromRenderedText(*_renderer, _mainFonts[static_cast<int>(FontType::MENU)], ss.str(), whiteTextColor);
 
     Point scorePos{AsteroidConstants::FONT_SCORE_POS_X, AsteroidConstants::FONT_SCORE_POS_Y};    
-    std::unique_ptr<GameObject> pGameObject2 = GameObject::Create(ObjectType::STATIC, scorePos, &_fontTextureScore); 
+    std::unique_ptr<GameObject> pGameObject2 = GameObject::Create(ObjectType::STATIC, scorePos, _fontTextureScore); 
     _fontObjectScore = static_unique_ptr_cast<StaticObject, GameObject>(std::move(pGameObject2));
 
 }
@@ -327,9 +327,9 @@ void AsteroidGame::createShip()
     Point pos{AsteroidConstants::SCREEN_WIDTH/2, AsteroidConstants::SCREEN_HEIGHT/2};
     CVector velocity{0,0,VectorType::POLAR};
 
-    CTexture* pTex = &_mainTextures[static_cast<int>(TextureType::TEX_SHIP)];
+    CTexture& tex = _mainTextures[static_cast<int>(TextureType::TEX_SHIP)];
 
-    std::unique_ptr<GameObject> pGameObject = GameObject::Create(ObjectType::SHIP, pos, pTex, velocity);
+    std::unique_ptr<GameObject> pGameObject = GameObject::Create(ObjectType::SHIP, pos, tex, velocity);
     _pShip = static_unique_ptr_cast<ShipObject, GameObject>(std::move(pGameObject));
 
 }
@@ -337,18 +337,18 @@ void AsteroidGame::createShip()
 // wrapper for factory method for creating laser objects
 void AsteroidGame::createLaser(Point pos, CVector velocity)
 {
-    CTexture *pTex = &_mainTextures[static_cast<int>(TextureType::TEX_LASER)];
+    CTexture& tex = _mainTextures[static_cast<int>(TextureType::TEX_LASER)];
 
-    std::unique_ptr<GameObject> pLaserGO = GameObject::Create(ObjectType::LASER, pos, pTex, velocity, velocity.getAngle() + 90);         
+    std::unique_ptr<GameObject> pLaserGO = GameObject::Create(ObjectType::LASER, pos, tex, velocity, velocity.getAngle() + 90);         
     std::unique_ptr<LaserObject> pLaser = static_unique_ptr_cast<LaserObject, GameObject>(std::move(pLaserGO));
 
     _laserHash.insert(std::make_pair( pLaser->getID(), std::move(pLaser)) );
 }
 
 // wrapper for factory method for creating asteroid objects
-void AsteroidGame::createAsteroid(Point pos, CVector velocity, CTexture* pTex, AsteroidSize size, AsteroidColor color)
+void AsteroidGame::createAsteroid(Point pos, CVector velocity, CTexture& tex, AsteroidSize size, AsteroidColor color)
 {
-    std::unique_ptr<GameObject> pAsteroidGO = GameObject::Create(ObjectType::ASTEROID, pos, pTex, velocity);
+    std::unique_ptr<GameObject> pAsteroidGO = GameObject::Create(ObjectType::ASTEROID, pos, tex, velocity);
     std::unique_ptr<AsteroidObject> pAsteroid = static_unique_ptr_cast<AsteroidObject, GameObject>(std::move(pAsteroidGO));
 
     pAsteroid->setAsteroidAttr(size, color);
@@ -359,9 +359,9 @@ void AsteroidGame::createAsteroid(Point pos, CVector velocity, CTexture* pTex, A
 // wrapper for factory method for creating explosion objects
 void AsteroidGame::createExplosion(Point pos, AsteroidSize size)
 {   
-    CTexture *pTex = &_mainTextures[static_cast<int>(TextureType::TEX_EXPLOSION_SPRITE_SHEET)];
+    CTexture& tex = _mainTextures[static_cast<int>(TextureType::TEX_EXPLOSION_SPRITE_SHEET)];
     
-    std::unique_ptr<GameObject> pExplosionGO = GameObject::Create(ObjectType::EXPLOSION, pos, pTex);
+    std::unique_ptr<GameObject> pExplosionGO = GameObject::Create(ObjectType::EXPLOSION, pos, tex);
     std::unique_ptr<ExplosionObject> pExplosion = static_unique_ptr_cast<ExplosionObject, GameObject>(std::move(pExplosionGO));
 
     pExplosion->setSize(size);
@@ -473,15 +473,15 @@ void AsteroidGame::splitAsteroid(AsteroidObject* asteroid)
     AsteroidSize nextSize = asteroid->getNextSize();
 
     int nextTexIdx = static_cast<int>(AsteroidObject::getAsteroidTexture(nextSize, _currentColor));
-    CTexture* pTex = &_mainTextures[nextTexIdx];
+    CTexture& tex = _mainTextures[nextTexIdx];
     
     CVector currentVelocity = asteroid->getVelocity();
     CVector velocity1(currentVelocity.getMag(), currentVelocity.getAngle() - 45, VectorType::POLAR);
     CVector velocity2(currentVelocity.getMag(), currentVelocity.getAngle() + 45, VectorType::POLAR);
 
     createExplosion(pos, currentSize);
-    createAsteroid(pos, velocity1, pTex, nextSize, _currentColor);
-    createAsteroid(pos, velocity2, pTex, nextSize, _currentColor);
+    createAsteroid(pos, velocity1, tex, nextSize, _currentColor);
+    createAsteroid(pos, velocity2, tex, nextSize, _currentColor);
 
 }
 
@@ -549,21 +549,21 @@ void AsteroidGame::updateScore(int scoreIncrease)
     SDL_Color whiteTextColor{255,255,255,255};
     std::stringstream ss("");
     ss << "Score: " << std::setw(5) << _score;
-    _fontTextureScore.loadFromRenderedText(_renderer, _mainFonts[static_cast<int>(FontType::MENU)], ss.str(), whiteTextColor);
+    _fontTextureScore.loadFromRenderedText(*_renderer, _mainFonts[static_cast<int>(FontType::MENU)], ss.str(), whiteTextColor);
 }
 
 
 // display the main menu
 void AsteroidGame::runMainMenu()
 {
-    MenuMain mainMenu(_renderer, _backgroundObject, _mainFonts);
+    MenuMain mainMenu(*_renderer, *_backgroundObject, _mainFonts);
     _state = mainMenu.run();
 }
 
 // display the gave over menu
 void AsteroidGame::runGameOverMenu()
 {
-    MenuGameOver gameOverMenu(_renderer, _backgroundObject, _mainFonts);
+    MenuGameOver gameOverMenu(*_renderer, *_backgroundObject, _mainFonts);
     _state = gameOverMenu.run();
     if(_state == GameState::PLAY_AGAIN){
         _currentLevel = 1;
@@ -575,14 +575,14 @@ void AsteroidGame::runGameOverMenu()
 // display the next level menu
 void AsteroidGame::runNextMenu()
 {
-    MenuNext nextMenu(_renderer, _backgroundObject, _mainFonts);
+    MenuNext nextMenu(*_renderer, *_backgroundObject, _mainFonts);
     _state = nextMenu.run();
 }
     
 // display the pause menu
 void AsteroidGame::runPauseMenu()
 {
-    MenuPause pauseMenu(_renderer, _backgroundObject, _mainFonts);
+    MenuPause pauseMenu(*_renderer, *_backgroundObject, _mainFonts);
     _state = pauseMenu.run();
 }
 

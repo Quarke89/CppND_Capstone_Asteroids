@@ -1,3 +1,9 @@
+/* File:            ExplosionObject.h
+ * Author:          Vish Potnis
+ * Description:     - Derived class for explosion objects 
+ *                  - Render animation sprites over time
+ */
+
 #pragma once
 
 #include "GameObject.h"
@@ -8,13 +14,14 @@ class ExplosionObject : public GameObject
 {
     public:
 
-        ExplosionObject(Point pos, CTexture* tex);
+        ExplosionObject(const Point& pos, const CTexture& tex);     // constructor that accepts position and texture of the object
 
-        virtual void update(Uint32 updateTime);
-        virtual void render(SDL_Renderer_unique_ptr &renderer);
+        void render(SDL_Renderer& renderer) override;         // render object to screen
+        void update(const Uint32 updateTime) override;              // update animation frame based on timer
+        
 
         void setSize(AsteroidSize size);
-        bool isAnimationDone();
+        bool isAnimationDone() const;
 
     private:
 

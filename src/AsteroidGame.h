@@ -1,6 +1,6 @@
 /* File:            AsteroidGame.h
  * Author:          Vish Potnis
- * Description:     - Parent class for the game
+ * Description:     - Main class for the game
  *                  - Contains main game loop
  *                  - Handle input events
  *                  - Create and manage game onjects
@@ -66,7 +66,7 @@ class AsteroidGame{
         // wrappers for static factory method for creating game objects
         void createShip();
         void createLaser(Point pos, CVector velocity);
-        void createAsteroid(Point pos, CVector velocity, CTexture* pTex, AsteroidSize size, AsteroidColor color);
+        void createAsteroid(Point pos, CVector velocity, CTexture& tex, AsteroidSize size, AsteroidColor color);
         void createExplosion(Point pos, AsteroidSize size);
 
         void checkShipCollision();                                        // check ship <-> asteroid collision

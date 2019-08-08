@@ -1,6 +1,6 @@
 #include "MenuMain.h"
 
-MenuMain::MenuMain(SDL_Renderer_unique_ptr &renderer, std::unique_ptr<StaticObject> &backgroundObject, std::vector<TTF_Font*> &mainFonts)
+MenuMain::MenuMain(SDL_Renderer& renderer, StaticObject& backgroundObject, std::vector<TTF_Font*>& mainFonts)
  : Menu(renderer, backgroundObject, mainFonts), _state(true)
 {
     initMenuItems();

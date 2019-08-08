@@ -1,3 +1,9 @@
+/* File:            GameObject.h
+ * Author:          Vish Potnis
+ * Description:     - Parent class game objects
+ *                  - Manages the position, movement, and rendering of game objects
+ */
+
 #pragma once
 
 #include <vector>
@@ -11,15 +17,17 @@ class GameObject{
 
     public:
 
-        GameObject(Point pos, CTexture* pTex);
-        GameObject(Point pos, CTexture* pTex, CVector velocity);
-        GameObject(Point pos, CTexture* pTex, CVector velocity, double rotation);
+        
+        GameObject(const Point& pos, const CTexture& tex);                                       // basic constructor that accepts position and texture of the object
+        GameObject(const Point& pos, const CTexture& tex, CVector velocity);                     // additional parameter for initial velocity vector
+        GameObject(const Point& pos, const CTexture& tex, CVector velocity, double rotation);    // additional parameter for rotation of the object texture
         virtual ~GameObject() = default;
 
-        virtual void render(SDL_Renderer_unique_ptr &renderer);
-        virtual void update(Uint32 updateTime);
+        virtual void render(SDL_Renderer& renderer);      // render object to screen, overridden based on derived object type
+        virtual void update(const Uint32 updateTime);           // update the object position and texture based on time passed, overridden based on derived object type
         
-        static std::unique_ptr<GameObject> Create(ObjectType type, Point pos, CTexture* tex, CVector velocity=CVector(), double rotation=0);
+        // factory method for creating GameObjects based on ObjectType
+        static std::unique_ptr<GameObject> Create(ObjectType type, Point pos, CTexture& tex, CVector velocity=CVector(), double rotation=0);
 
         // getter functions
         Point getPos() const;
@@ -27,20 +35,16 @@ class GameObject{
         double getRotation() const;
         int getID() const;
         
-    protected:
+    protected:        
 
-         void calculateRenderRectangles(int objPosX, int objPosY, int objWidth, int objHeight, int screenWidth, int screenHeight, 
-                                        std::vector<SDL_Rect> &srcRect, std::vector<SDL_Rect> &dstRect);
+        Point _pos;             // position of center of object on screen
+        const CTexture& _tex;   // reference to the texture for the object
+        CVector _velocity;      // current velocity of the object
+        double _rotation;       // rotation of the texture
 
-        Point _pos;
-        CTexture* _pTex;
-
-        CVector _velocity;
-        double _rotation;
-
-        Uint32 _lastUpdated;
+        Uint32 _lastUpdated;    // time stamp denoting last update of object
                         
-        int _id;
-        static int _count;
+        int _id;            // unique ID for the object
+        static int _count;  // static counter for assigning IDs
 };
 

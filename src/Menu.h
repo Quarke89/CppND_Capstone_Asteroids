@@ -26,7 +26,7 @@ enum class MenuItem
 class Menu
 {
     public:
-        Menu(SDL_Renderer_unique_ptr &renderer, std::unique_ptr<StaticObject> &backgroundObject, std::vector<TTF_Font*> &mainFonts);
+        Menu(SDL_Renderer& renderer, StaticObject& backgroundObject, std::vector<TTF_Font*>& mainFonts);
         virtual ~Menu() = default;
 
         virtual GameState run();
@@ -39,8 +39,8 @@ class Menu
 
         std::unique_ptr<StaticObject> createStaticTextObject(Point pos, CTexture &tex);
 
-        SDL_Renderer_unique_ptr &_renderer;
-        std::unique_ptr<StaticObject> &_backgroundObject;
+        SDL_Renderer& _renderer;
+        StaticObject& _backgroundObject;
         std::vector<TTF_Font*> &_mainFonts;
 
         std::unordered_map<MenuItem, CTexture> _textTextureHash;

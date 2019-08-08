@@ -2,63 +2,12 @@
 #include "constants.h"
 #include <cmath>
 
-AsteroidObject::AsteroidObject(Point pos, CTexture* tex, CVector velocity)
+AsteroidObject::AsteroidObject(const Point& pos, const CTexture& tex, CVector velocity)
     : GameObject(pos, tex, velocity)
 {}
 
-void AsteroidObject::setAsteroidAttr(AsteroidSize size, AsteroidColor color)
-{
-    _asteroidSize = size;
-    _asteroidColor = color;
-}
 
-
-AsteroidSize AsteroidObject::getSize()
-{
-    return _asteroidSize;
-}
-AsteroidSize AsteroidObject::getNextSize()
-{
-    if(_asteroidSize == AsteroidSize::BIG) return AsteroidSize::MED;
-    return AsteroidSize::SMALL;
-}
-
-AsteroidColor AsteroidObject::getNextColor(AsteroidColor color)
-{
-    switch(color){
-        case AsteroidColor::GREY:   return AsteroidColor::RED;
-        case AsteroidColor::RED:   return AsteroidColor::BROWN;
-        case AsteroidColor::BROWN:   return AsteroidColor::GREY;
-    }
-    return AsteroidColor::GREY;
-}
-
-TextureType AsteroidObject::getAsteroidTexture(AsteroidSize size, AsteroidColor color)
-{
-    switch(size){
-        case AsteroidSize::BIG:
-            switch(color){
-                case AsteroidColor::GREY:   return TextureType::TEX_ASTEROID_BIG_1;
-                case AsteroidColor::RED:    return TextureType::TEX_ASTEROID_BIG_2;
-                case AsteroidColor::BROWN:  return TextureType::TEX_ASTEROID_BIG_3;
-            }
-        case AsteroidSize::MED:
-            switch(color){
-                case AsteroidColor::GREY:   return TextureType::TEX_ASTEROID_MED_1;
-                case AsteroidColor::RED:    return TextureType::TEX_ASTEROID_MED_2;
-                case AsteroidColor::BROWN:  return TextureType::TEX_ASTEROID_MED_3;
-            }
-        case AsteroidSize::SMALL:
-            switch(color){
-                case AsteroidColor::GREY:   return TextureType::TEX_ASTEROID_SMALL_1;
-                case AsteroidColor::RED:    return TextureType::TEX_ASTEROID_SMALL_2;
-                case AsteroidColor::BROWN:  return TextureType::TEX_ASTEROID_SMALL_3;
-            }
-    }
-    return TextureType::TEX_ASTEROID_BIG_1;
-}
-
-void AsteroidObject::render(SDL_Renderer_unique_ptr &renderer)
+void AsteroidObject::render(SDL_Renderer& renderer)
 {
     int xPosCenter = std::round(_pos.x);
     int yPosCenter = std::round(_pos.y);
@@ -66,26 +15,16 @@ void AsteroidObject::render(SDL_Renderer_unique_ptr &renderer)
     std::vector<SDL_Rect> srcRect;
     std::vector<SDL_Rect> dstRect;
 
-    int width = _pTex->getWidth();
-    int height = _pTex->getHeight();
+    int width = _tex.getWidth();
+    int height = _tex.getHeight();
 
     calculateRenderRectangles(xPosCenter, yPosCenter, width, height, AsteroidConstants::SCREEN_WIDTH, AsteroidConstants::SCREEN_HEIGHT, srcRect, dstRect);    
 
     for(unsigned long i = 0; i < srcRect.size(); i++){
-        SDL_RenderCopy( renderer.get(), _pTex->getTexture(), &srcRect[i], &dstRect[i]);
+        SDL_RenderCopy( &renderer, &_tex.getTexture(), &srcRect[i], &dstRect[i]);
     }
 
-    _boundingBoxes = std::move(dstRect);
-    // renderBoxes(renderer);
-
-}
-
-void AsteroidObject::renderBoxes(SDL_Renderer* renderer)
-{
-    SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);  
-    for(const SDL_Rect& box: _boundingBoxes){
-        SDL_RenderDrawRect(renderer, &box);
-    }
+    _boundingBoxes = std::move(dstRect);    
 }
 
 
@@ -118,4 +57,174 @@ void AsteroidObject::update(Uint32 updateTime)
 std::vector<SDL_Rect>& AsteroidObject::getBoundingBoxes()
 {
     return _boundingBoxes;
+}
+
+void AsteroidObject::setAsteroidAttr(AsteroidSize size, AsteroidColor color)
+{
+    _asteroidSize = size;
+    _asteroidColor = color;
+}
+
+
+AsteroidSize AsteroidObject::getSize() const
+{
+    return _asteroidSize;
+}
+AsteroidSize AsteroidObject::getNextSize() const
+{
+    if(_asteroidSize == AsteroidSize::BIG) return AsteroidSize::MED;
+    return AsteroidSize::SMALL;
+}
+
+AsteroidColor AsteroidObject::getNextColor(AsteroidColor color)
+{
+    switch(color){
+        case AsteroidColor::GREY:   return AsteroidColor::RED;
+        case AsteroidColor::RED:   return AsteroidColor::BROWN;
+        case AsteroidColor::BROWN:   return AsteroidColor::GREY;
+    }
+    return AsteroidColor::GREY;
+}
+
+TextureType AsteroidObject::getAsteroidTexture(AsteroidSize size, AsteroidColor color)
+{
+    switch(size){
+        case AsteroidSize::BIG:
+            switch(color){
+                case AsteroidColor::GREY:   return TextureType::TEX_ASTEROID_BIG_1;
+                case AsteroidColor::RED:    return TextureType::TEX_ASTEROID_BIG_2;
+                case AsteroidColor::BROWN:  return TextureType::TEX_ASTEROID_BIG_3;
+            }
+            break;
+        case AsteroidSize::MED:
+            switch(color){
+                case AsteroidColor::GREY:   return TextureType::TEX_ASTEROID_MED_1;
+                case AsteroidColor::RED:    return TextureType::TEX_ASTEROID_MED_2;
+                case AsteroidColor::BROWN:  return TextureType::TEX_ASTEROID_MED_3;
+            }
+            break;
+        case AsteroidSize::SMALL:
+            switch(color){
+                case AsteroidColor::GREY:   return TextureType::TEX_ASTEROID_SMALL_1;
+                case AsteroidColor::RED:    return TextureType::TEX_ASTEROID_SMALL_2;
+                case AsteroidColor::BROWN:  return TextureType::TEX_ASTEROID_SMALL_3;
+            }
+            break;
+    }
+    return TextureType::TEX_ASTEROID_BIG_1;
+}
+
+
+// calculate offscreen wrap arounds for textures
+// srcRect contains the rectangles defining the texture area 
+// destRect contains the recatangles defining the destination area
+void AsteroidObject::calculateRenderRectangles(int objPosX, int objPosY, int objWidth, int objHeight, int screenWidth, int screenHeight, 
+                                        std::vector<SDL_Rect> &srcRect, std::vector<SDL_Rect> &dstRect)
+{
+    
+    int left = objPosX - objWidth/2;
+    int top = objPosY - objHeight/2;
+    int right = left + objWidth - 1;
+    int bottom = top + objHeight - 1;
+    
+    // entire object fits on screen without wrapping
+    if(left >= 0 && right < screenWidth && top >= 0 && bottom < screenHeight){
+        srcRect.push_back(SDL_Rect{0, 0, objWidth, objHeight});
+        dstRect.push_back(SDL_Rect{left, top, objWidth, objHeight});        
+        return;
+    }
+    // object height is within the screen
+    if(top >= 0 && bottom < screenHeight){
+        // object wraps on the left side
+        if(left < 0){
+            srcRect.push_back(SDL_Rect{0, 0, 0-left, objHeight});
+            srcRect.push_back(SDL_Rect{0-left, 0, right+1, objHeight});
+
+            dstRect.push_back(SDL_Rect{left+screenWidth, top, 0-left, objHeight});
+            dstRect.push_back(SDL_Rect{0, top, right+1, objHeight});
+            return;
+        }
+        // object wraps on the right side
+        else{
+            srcRect.push_back(SDL_Rect{0, 0, screenWidth-left, objHeight});
+            srcRect.push_back(SDL_Rect{screenWidth-left, 0, right-screenWidth+1, objHeight});
+
+            dstRect.push_back(SDL_Rect{left, top, screenWidth-left, objHeight});
+            dstRect.push_back(SDL_Rect{0, top, right-screenWidth+1, objHeight});
+            return;
+        }
+    }
+    // object width is within the screen
+    if(left >= 0 && right < screenWidth){
+        // object wraps on the top
+        if(top < 0){
+            srcRect.push_back(SDL_Rect{0, 0, objWidth, 0-top});
+            srcRect.push_back(SDL_Rect{0, 0-top, objWidth, bottom+1});
+
+            dstRect.push_back(SDL_Rect{left, top+screenHeight, objWidth, 0-top});
+            dstRect.push_back(SDL_Rect{left, 0, objWidth, bottom+1});
+            return;
+        }
+        // object wraps on the bottom
+        else{
+            srcRect.push_back(SDL_Rect{0, 0, objWidth, screenHeight-top});
+            srcRect.push_back(SDL_Rect{0, screenHeight-top, objWidth, bottom-screenHeight+1});
+
+            dstRect.push_back(SDL_Rect{left, top, objWidth, screenHeight-top});
+            dstRect.push_back(SDL_Rect{left, 0, objWidth, bottom-screenHeight+1});
+            return;
+        }
+    }
+    // object wraps top left corner
+    if(left < 0 && top < 0){
+        srcRect.push_back(SDL_Rect{0, 0, 0-left, 0-top});
+        srcRect.push_back(SDL_Rect{0, 0-top, 0-left, bottom+1});
+        srcRect.push_back(SDL_Rect{0-left, 0, right+1, 0-top});
+        srcRect.push_back(SDL_Rect{0-left, 0-top, right+1, bottom+1});
+
+        dstRect.push_back(SDL_Rect{left+screenWidth, top+screenHeight, 0-left, 0-top});
+        dstRect.push_back(SDL_Rect{left+screenWidth, 0, 0-left, bottom+1});
+        dstRect.push_back(SDL_Rect{0, top+screenHeight, right+1, 0-top});
+        dstRect.push_back(SDL_Rect{0, 0, right+1, bottom+1});
+        return;
+    }
+    // object wraps bottom left corner
+    if(left < 0 && bottom >= screenHeight){
+        srcRect.push_back(SDL_Rect{0, 0, 0-left, screenHeight-top});
+        srcRect.push_back(SDL_Rect{0, screenHeight-top, 0-left, bottom-screenHeight+1});
+        srcRect.push_back(SDL_Rect{0-left, 0, right+1, screenHeight-top});
+        srcRect.push_back(SDL_Rect{0-left, screenHeight-top, right+1, bottom-screenHeight+1});
+
+        dstRect.push_back(SDL_Rect{left+screenWidth, top, 0-left, screenHeight-top});
+        dstRect.push_back(SDL_Rect{left+screenWidth, 0, 0-left, bottom-screenHeight+1});
+        dstRect.push_back(SDL_Rect{0, top, right+1, screenHeight-top});
+        dstRect.push_back(SDL_Rect{0, 0, right+1, bottom-screenHeight+1});
+        return;
+    }
+    // object wraps top right corner
+    if(top < 0 && right >= screenWidth){
+        srcRect.push_back(SDL_Rect{0, 0, screenWidth-left, 0-top});
+        srcRect.push_back(SDL_Rect{0, 0-top, screenWidth-left, bottom+1});
+        srcRect.push_back(SDL_Rect{screenWidth-left, 0, right-screenWidth+1, 0-top});
+        srcRect.push_back(SDL_Rect{screenWidth-left, 0-top, right-screenWidth+1, bottom+1});
+
+        dstRect.push_back(SDL_Rect{left, top+screenHeight, screenWidth-left, 0-top});
+        dstRect.push_back(SDL_Rect{left, 0, screenWidth-left, bottom+1});
+        dstRect.push_back(SDL_Rect{0, top+screenHeight, right-screenWidth+1, 0-top});
+        dstRect.push_back(SDL_Rect{0, 0, right-screenWidth+1, bottom+1});
+        return;
+    }
+    // object wraps bottom right corner
+    if(right >= screenWidth && bottom >= screenHeight){
+        srcRect.push_back(SDL_Rect{0, 0, screenWidth-left, screenHeight-top});
+        srcRect.push_back(SDL_Rect{0, screenHeight-top, screenWidth-left, bottom-screenHeight+1});
+        srcRect.push_back(SDL_Rect{screenWidth-left, 0, right-screenWidth+1, screenHeight-top});
+        srcRect.push_back(SDL_Rect{screenWidth-left, screenHeight-top, right-screenWidth+1, bottom-screenHeight+1});
+
+        dstRect.push_back(SDL_Rect{left, top, screenWidth-left, screenHeight-top});
+        dstRect.push_back(SDL_Rect{left, 0, screenWidth-left, bottom-screenHeight+1});
+        dstRect.push_back(SDL_Rect{0, top, right-screenWidth+1, screenHeight-top});
+        dstRect.push_back(SDL_Rect{0, 0, right-screenWidth+1, bottom-screenHeight+1});
+        return;
+    }            
 }

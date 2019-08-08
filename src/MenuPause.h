@@ -7,7 +7,7 @@ class MenuPause : public Menu
 {
     public:
 
-        MenuPause(SDL_Renderer_unique_ptr &renderer, std::unique_ptr<StaticObject> &backgroundObject, std::vector<TTF_Font*> &mainFonts);
+        MenuPause(SDL_Renderer& renderer, StaticObject& backgroundObject, std::vector<TTF_Font*>& mainFonts);
     
     private:
 

@@ -1,6 +1,6 @@
 #include "CTexture.h"
 
-CTexture::CTexture()
+CTexture::CTexture() : _texture(nullptr, SDL_DestroyTexture)
 {}
 
 CTexture::~CTexture()
@@ -9,7 +9,7 @@ CTexture::~CTexture()
 }
 
 
-bool CTexture::loadFromFile(SDL_Renderer_unique_ptr &renderer, std::string path)
+bool CTexture::loadFromFile(SDL_Renderer& renderer, std::string path)
 {
     free();
 
@@ -19,7 +19,7 @@ bool CTexture::loadFromFile(SDL_Renderer_unique_ptr &renderer, std::string path)
         return false;
     }
     
-    _texture = SDL_CreateTextureFromSurface(renderer.get(), loadedSurface);
+    _texture.reset(SDL_CreateTextureFromSurface(&renderer, loadedSurface));
     if(_texture == nullptr){
         std::cout << "Unable to create texture from " << path << "! SDL Error: " << SDL_GetError() << "\n";
         return false;
@@ -34,7 +34,7 @@ bool CTexture::loadFromFile(SDL_Renderer_unique_ptr &renderer, std::string path)
 
 }
 
-bool CTexture::loadFromRenderedText(SDL_Renderer_unique_ptr &renderer, TTF_Font* font, std::string text, SDL_Color textColor)
+bool CTexture::loadFromRenderedText(SDL_Renderer& renderer, TTF_Font* font, std::string text, SDL_Color textColor)
 {
     free();
 
@@ -44,7 +44,7 @@ bool CTexture::loadFromRenderedText(SDL_Renderer_unique_ptr &renderer, TTF_Font*
         return false;
     }
 
-    _texture = SDL_CreateTextureFromSurface(renderer.get(), textSurface);
+    _texture.reset(SDL_CreateTextureFromSurface(&renderer, textSurface));
     if(_texture == nullptr){
         std::cout << "Unable to create texture from rendered text! SDL Error: " << SDL_GetError() << "\n";
         return false;
@@ -58,38 +58,26 @@ bool CTexture::loadFromRenderedText(SDL_Renderer_unique_ptr &renderer, TTF_Font*
     return true;
 }
 
-CTexture::CTexture(CTexture&& o)
+CTexture::CTexture(CTexture&& o) : _texture(std::move(o._texture))
 {
-    _texture = o._texture;
     _width = o._width;
     _height = o._height;
 
-    o._texture = nullptr;
     o._width = 0;
     o._height = 0;    
 }
 
-SDL_Texture* CTexture::getTexture()
+SDL_Texture& CTexture::getTexture() const
 {
-    return _texture;
+    return *_texture;
 }
 
 void CTexture::free()
 {
-    if(_texture != nullptr){
-        SDL_DestroyTexture(_texture);
-        _texture = nullptr;
-        _width = 0;
-        _height = 0;
-    }
+    _texture = nullptr;
+    _width = 0;
+    _height = 0;
 }
 
-int CTexture::getWidth()
-{
-    return _width;
-}
-
-int CTexture::getHeight()
-{
-    return _height;
-}
+int CTexture::getWidth() const { return _width;}
+int CTexture::getHeight() const { return _height;}

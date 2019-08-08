@@ -6,14 +6,15 @@ class LaserObject : public GameObject
 {
     public:
 
-        LaserObject(Point pos, CTexture* tex, CVector velocity, double rotation) ;
+        LaserObject(const Point& pos, const CTexture& tex, CVector velocity, double rotation) ;
 
-        virtual void update(Uint32 updateTime);
-        virtual void render(SDL_Renderer_unique_ptr &renderer);
+        void render(SDL_Renderer &renderer) override;
+        void update(const Uint32 updateTime) override;
+        
 
         SDL_Rect& getBoundingBox();
 
-        bool checkOffscreen();
+        bool checkOffscreen() const;
 
     private:
 

@@ -6,7 +6,7 @@ class MenuGameOver : public Menu
 {
     public:
 
-        MenuGameOver(SDL_Renderer_unique_ptr &renderer, std::unique_ptr<StaticObject> &backgroundObject, std::vector<TTF_Font*> &mainFonts);
+        MenuGameOver(SDL_Renderer& renderer, StaticObject& backgroundObject, std::vector<TTF_Font*>& mainFonts);
 
         virtual GameState run();
     

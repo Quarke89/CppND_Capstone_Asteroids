@@ -21,18 +21,19 @@ class CTexture
 
         CTexture(CTexture&& o);
     
-        bool loadFromFile(SDL_Renderer_unique_ptr &renderer, std::string path);
-        bool loadFromRenderedText(SDL_Renderer_unique_ptr &renderer, TTF_Font* font, std::string text, SDL_Color textColor);
+        bool loadFromFile(SDL_Renderer& renderer, std::string path);
+        bool loadFromRenderedText(SDL_Renderer& renderer, TTF_Font* font, std::string text, SDL_Color textColor);
 
-        SDL_Texture* getTexture();
+        SDL_Texture& getTexture() const;
         void free();        
 
-        int getWidth();
-        int getHeight();
+        int getWidth() const;
+        int getHeight() const;
 
     private:
 
-        SDL_Texture* _texture{nullptr};
+        SDL_Texture* _ptexture{nullptr};
+        SDL_Texture_unique_ptr _texture;
 
         int _width{0};
         int _height{0};
