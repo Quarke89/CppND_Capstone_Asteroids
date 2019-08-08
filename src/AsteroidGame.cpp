@@ -10,6 +10,7 @@
 
 //////////// Public functions ////////////
 
+// initalize SDL assets, load textures, load fonts, create background image object
 AsteroidGame::AsteroidGame()
     : _window(nullptr, SDL_DestroyWindow), _renderer(nullptr, SDL_DestroyRenderer),
       _state(GameState::RUNNING), _currentColor(AsteroidColor::GREY), _currentLevel(1), _score(0)
@@ -36,8 +37,11 @@ AsteroidGame::~AsteroidGame()
 // top level call to run the game
 void AsteroidGame::run()
 {
+    // initialize the game with a main menu
     runMainMenu();
     
+    // run level, if level is complete show next level menu
+    // if game over during the level then show game over menu
     while(_state == GameState::RUNNING){
         initLevel();        
         runLevel();
@@ -82,7 +86,6 @@ bool AsteroidGame::init()
     }
 
     // Create window
-    // _pwindow = SDL_CreateWindow("Asteroids", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, AsteroidConstants::SCREEN_WIDTH, AsteroidConstants::SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
     _window.reset(SDL_CreateWindow("Asteroids", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, AsteroidConstants::SCREEN_WIDTH, AsteroidConstants::SCREEN_HEIGHT, SDL_WINDOW_SHOWN));
     if(_window == nullptr){
         std::cout << "Window could not be created! SDL_Error: " << SDL_GetError() << "\n";
@@ -90,7 +93,6 @@ bool AsteroidGame::init()
     }
 
     // Create renderer for window
-    // _renderer = SDL_CreateRenderer(_window.get(), -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     _renderer.reset(SDL_CreateRenderer(_window.get(), -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC));
     if(_renderer == nullptr){
         std::cout << "Renderer could not be created! SDL Error: " << SDL_GetError() << "\n";
@@ -174,19 +176,26 @@ void AsteroidGame::runLevel()
     SDL_Event event;
 
     while(_state == GameState::RUNNING){
+
+        Uint32 startTick = SDL_GetTicks();
             
         handleInput(event);
 
         updateObjects();
         renderObjects();
-        // deleteExpiredObjects();
+        deleteExpiredObjects();
 
         checkShipCollision();            
         checkAsteroidCollision();      
 
         checkLevelCompleted(); 
 
-        //TODO: add frame rate limitation
+        // limit FPS
+        Uint32 endTick = SDL_GetTicks();
+        Uint32 frameTicks = endTick - startTick;        
+        if(frameTicks < AsteroidConstants::TICKS_PER_FRAME){
+            SDL_Delay(AsteroidConstants::TICKS_PER_FRAME - frameTicks);
+        }
     }
     cleanupLevel();
 }
@@ -230,29 +239,36 @@ void AsteroidGame::handleInput(SDL_Event &event)
 // render all active game objects
 void AsteroidGame::renderObjects()
 {
-    //Clear screen
+    // clear screen
     SDL_SetRenderDrawColor( _renderer.get(), 0x00, 0x00, 0x00, 0xFF );
     SDL_RenderClear( _renderer.get() );
 
+    // render background image
     SDL_Rect backgroundRect{0,0,AsteroidConstants::SCREEN_WIDTH, AsteroidConstants::SCREEN_HEIGHT};
     _backgroundObject->render(*_renderer, backgroundRect);
 
+    // render explosions
     for(auto& explosion: _explosionHash){
         explosion.second->render(*_renderer);        
     }
 
+    // render asteroids
     for(auto const& asteroid: _asteroidHash){
         asteroid.second->render(*_renderer);
     }
+
+    // render lasers
     for(auto const& laser: _laserHash){
         laser.second->render(*_renderer);
     }    
+    // render ship
     _pShip->render(*_renderer);
 
+    // render level and score text
     _fontObjectLevel->render(*_renderer);
     _fontObjectScore->render(*_renderer);
 
-    //Update screen
+    // update screen
     SDL_RenderPresent( _renderer.get() );
 }
 
@@ -260,22 +276,28 @@ void AsteroidGame::renderObjects()
 void AsteroidGame::updateObjects()
 {
     Uint32 time = SDL_GetTicks();
+
+    // update asteroid position
     for(auto& asteroid: _asteroidHash){
         asteroid.second->update(time);
     }
+    // update laser position
     for(auto& laser: _laserHash){
         laser.second->update(time);
     }
-    
+    // update explosion animation
     for(auto& explosion: _explosionHash){
         explosion.second->update(time);
     }
+    // update ship position based on current movement booleans
     _pShip->update(time);
 
 }
 
+// delete offscreen lasers or expired explosion animation objects
 void AsteroidGame::deleteExpiredObjects()
 {
+    // check for expired explosion animations and delete the game object
     std::vector<int> expiredExplosionID;
     for(auto& explosion: _explosionHash){
         if(explosion.second->isAnimationDone()){
@@ -286,6 +308,7 @@ void AsteroidGame::deleteExpiredObjects()
         _explosionHash.erase(id);
     }
 
+    // check for offscreen lasers and delete the game object
     std::vector<int> expiredLaserID;
     for(auto& laser: _laserHash){
         if(laser.second->checkOffscreen()){
@@ -301,16 +324,23 @@ void AsteroidGame::deleteExpiredObjects()
 void AsteroidGame::initLevel()
 {
 
+    // set number of asteroids equal to current level 
     int numAsteroid = _currentLevel;
+
+    // velocity is based on current level multiplier
     double asteroidVelocity = AsteroidConstants::INIT_ASTEROID_VELOCITY * std::pow(AsteroidConstants::ASTEROID_VELOCITY_MULTIPLIER, _currentLevel-1);
+
+    // random starting position
     Point pos = getRandomCorner();
 
+    // random angle for the velocity vector
+    std::random_device rd;
+    std::uniform_int_distribution<> randomAngle(0, 360);                
+
+    // create the asteroids and ship
     AsteroidSize size = AsteroidSize::BIG;
     CTexture& tex = _mainTextures[static_cast<int>(GameObjectAsteroid::getAsteroidTexture(size, _currentColor))];    
 
-    std::random_device rd;
-    std::uniform_int_distribution<> randomAngle(0, 360);                
-    
     for(int i = 0; i < numAsteroid; i++){
         double angle = static_cast<double>(randomAngle(rd));
         CVector velocity{asteroidVelocity, angle, VectorType::POLAR};
@@ -321,6 +351,7 @@ void AsteroidGame::initLevel()
 
     SDL_Color whiteTextColor{255,255,255,255};
 
+    // create font object for level text
     std::stringstream ss("");
     ss << "Level: " << _currentLevel;
     _fontTextureLevel.loadFromRenderedText(*_renderer, _mainFonts[static_cast<int>(FontType::MENU)], ss.str(), whiteTextColor);
@@ -329,6 +360,7 @@ void AsteroidGame::initLevel()
     std::unique_ptr<GameObject> pGameObject = GameObject::Create(ObjectType::STATIC, levelPos, _fontTextureLevel); 
     _fontObjectLevel = static_unique_ptr_cast<GameObjectStatic, GameObject>(std::move(pGameObject));    
 
+    // create font object for score text
     ss.str("");
     ss << "Score: " << std::setw(5) << _score;
     _fontTextureScore.loadFromRenderedText(*_renderer, _mainFonts[static_cast<int>(FontType::MENU)], ss.str(), whiteTextColor);
@@ -391,6 +423,7 @@ void AsteroidGame::createExplosion(Point pos, AsteroidSize size)
 // check ship <-> asteroid collision
 void AsteroidGame::checkShipCollision()
 {
+    // check if the bounding box for the ship overlaps with any of the asteroid bounding boxes
     const SDL_Rect &shipRect = _pShip->getBoundingBox();
     
     for(auto const &asteroid: _asteroidHash){
@@ -411,10 +444,13 @@ void AsteroidGame::checkAsteroidCollision()
     std::vector<int> asteroidCollideIdx;
     std::vector<int> laserCollideIdx;
 
+    // iterate through all the onscreen active lasers
     for(const auto &laser: _laserHash){
         const SDL_Rect &laserRect = laser.second->getBoundingBox();
         bool collide = false;
 
+        // check if current laser collides with an asteroid
+        // if there is a collision store the asteroid and laser IDs
         for(const auto &asteroid: _asteroidHash){
             const std::vector<SDL_Rect> &boxes = asteroid.second->getBoundingBoxes();
             for(const SDL_Rect &box: boxes){
@@ -432,11 +468,13 @@ void AsteroidGame::checkAsteroidCollision()
         }
     }
 
+    // for every destroyed asteroid split it into smaller ones and update score
     for(int idx: asteroidCollideIdx){
         splitAsteroid(*_asteroidHash[idx].get());
         _asteroidHash.erase(idx);
         updateScore(10);
     }
+    // delete colided lasers
     for(int idx: laserCollideIdx){
         _laserHash.erase(idx);
     }
@@ -477,16 +515,19 @@ void AsteroidGame::shootLaser()
     createLaser(laserPos, velocity);
 }
 
-// split current asteroid into 2 smaller asteroid
+// split current asteroid into 2 smaller asteroids
 void AsteroidGame::splitAsteroid(GameObjectAsteroid& asteroid)
 {
     AsteroidSize currentSize = asteroid.getSize();
     Point pos = asteroid.getPos();
 
+    // if current asteroid is the smallest size then only create an explosion
     if(currentSize == AsteroidSize::SMALL){
         createExplosion(pos, currentSize);
         return;
     }
+
+    // otherwise create 2 asteroids that split off at 45 degree angles and create an explosion
 
     AsteroidSize nextSize = asteroid.getNextSize();
 
@@ -503,7 +544,7 @@ void AsteroidGame::splitAsteroid(GameObjectAsteroid& asteroid)
 
 }
 
-// check if any asteroids are remaining in the level
+// level is completed if no asteroids are remaining in the level
 void AsteroidGame::checkLevelCompleted()
 {
     if(_asteroidHash.size() == 0){
