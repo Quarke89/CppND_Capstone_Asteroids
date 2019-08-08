@@ -4,6 +4,7 @@
 
 using SDL_Window_unique_ptr = std::unique_ptr<SDL_Window, decltype(&SDL_DestroyWindow)>;
 using SDL_Renderer_unique_ptr = std::unique_ptr<SDL_Renderer, decltype(&SDL_DestroyRenderer)>;
+using SDL_Texture_unique_ptr = std::unique_ptr<SDL_Texture, decltype(&SDL_DestroyTexture)>;
 using TTF_Font_unique_ptr = std::unique_ptr<TTF_Font, decltype(&TTF_CloseFont)>;
 
 template<typename Derived, typename Base>

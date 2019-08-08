@@ -91,10 +91,8 @@ class AsteroidGame{
 
         ////////// Private variables //////////////
 
-        // SDL_Window* _pwindow{nullptr};          // pointer to the main game window        
-        // SDL_Renderer* _prenderer{nullptr};      // pointer to the GPU renderer
-        SDL_Window_unique_ptr _window;         // pointer to the main game window
-        SDL_Renderer_unique_ptr _renderer;    // pointer to the GPU renderer
+        SDL_Window_unique_ptr _window;          // pointer to the main game window
+        SDL_Renderer_unique_ptr _renderer;      // pointer to the GPU renderer
 
         std::vector<CTexture> _mainTextures;    // vector holding the main loaded textures
         std::vector<TTF_Font*> _mainFonts;      // vector holding the fonts converted by SDL_TTF
