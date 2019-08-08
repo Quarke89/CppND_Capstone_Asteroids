@@ -34,8 +34,8 @@ class Menu
         GameObjectStatic& _backgroundObject;
         std::vector<TTF_Font*> &_mainFonts;
 
-        std::unordered_map<MenuItem, CTexture> _textTextureHash;
-        std::unordered_map<MenuItem, std::unique_ptr<GameObjectStatic>> _textObjectHash;
+        std::unordered_map<MenuItem, CTexture, EnumClassHash> _textTextureHash;
+        std::unordered_map<MenuItem, std::unique_ptr<GameObjectStatic>, EnumClassHash> _textObjectHash;
 
 };
 

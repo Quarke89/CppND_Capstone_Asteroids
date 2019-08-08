@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SDL2/SDL.h>
+#include <memory>
 
 using SDL_Window_unique_ptr = std::unique_ptr<SDL_Window, decltype(&SDL_DestroyWindow)>;
 using SDL_Renderer_unique_ptr = std::unique_ptr<SDL_Renderer, decltype(&SDL_DestroyRenderer)>;
@@ -21,6 +22,15 @@ enum class MenuItem
     ITEM1_SELECT,
     ITEM2_SELECT,
     ITEM_TOTAL
+};
+
+struct EnumClassHash
+{
+    template <typename T>
+    std::size_t operator()(T t) const
+    {
+        return static_cast<std::size_t>(t);
+    }
 };
 
 struct Point{

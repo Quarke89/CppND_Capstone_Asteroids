@@ -60,6 +60,7 @@ class AsteroidGame{
         void handleInput(SDL_Event &e);     // handle keyboard input             
         void renderObjects();               // render all active game objects
         void updateObjects();               // update all non-static game objects based on time delta
+        void deleteExpiredObjects();
 
         void initLevel();                   // initialize level with asteroids and ship based on current level
 

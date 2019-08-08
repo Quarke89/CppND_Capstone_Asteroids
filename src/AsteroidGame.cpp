@@ -174,11 +174,12 @@ void AsteroidGame::runLevel()
     SDL_Event event;
 
     while(_state == GameState::RUNNING){
-
+            
         handleInput(event);
 
         updateObjects();
         renderObjects();
+        // deleteExpiredObjects();
 
         checkShipCollision();            
         checkAsteroidCollision();      
@@ -237,11 +238,9 @@ void AsteroidGame::renderObjects()
     _backgroundObject->render(*_renderer, backgroundRect);
 
     for(auto& explosion: _explosionHash){
-        explosion.second->render(*_renderer);
-        if(explosion.second->isAnimationDone()){
-            _explosionHash.erase(explosion.first);
-        }
+        explosion.second->render(*_renderer);        
     }
+
     for(auto const& asteroid: _asteroidHash){
         asteroid.second->render(*_renderer);
     }
@@ -267,16 +266,35 @@ void AsteroidGame::updateObjects()
     for(auto& laser: _laserHash){
         laser.second->update(time);
     }
-    for(auto& laser: _laserHash){
-        if(laser.second->checkOffscreen()){
-            _laserHash.erase(laser.first);
-        }
-    }
+    
     for(auto& explosion: _explosionHash){
         explosion.second->update(time);
     }
     _pShip->update(time);
 
+}
+
+void AsteroidGame::deleteExpiredObjects()
+{
+    std::vector<int> expiredExplosionID;
+    for(auto& explosion: _explosionHash){
+        if(explosion.second->isAnimationDone()){
+            expiredExplosionID.push_back(explosion.first);
+        }
+    }
+    for(int id: expiredExplosionID){
+        _explosionHash.erase(id);
+    }
+
+    std::vector<int> expiredLaserID;
+    for(auto& laser: _laserHash){
+        if(laser.second->checkOffscreen()){
+            expiredLaserID.push_back(laser.first);
+        }
+    }
+    for(int id: expiredLaserID){
+        _laserHash.erase(id);
+    }
 }
 
 // initialize level with asteroids and ship based on current level
