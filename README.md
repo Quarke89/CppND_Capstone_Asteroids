@@ -44,6 +44,8 @@ Asteroids game using SDL2 library
 
 ## Code structure
 
+![UML diagram](img/asteroids_uml.png)
+
 ### AsteroidGame class
 
 Main class that contains the game loop
