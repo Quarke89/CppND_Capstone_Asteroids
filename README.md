@@ -2,6 +2,14 @@
 
 Asteroids game using SDL2 library
 
+## Dependencies
+- g++
+- cmake
+- make
+- SDL2
+- SDL2_image
+- SDL2_ttf
+
 ## Controls
 
 1. Use `w`, `a`, `s`, `d` to move the ship
