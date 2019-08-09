@@ -3,21 +3,29 @@
 Asteroids game using SDL2 library
 
 ## Dependencies
-- g++
-- cmake
-- make
-- SDL2
-  - `sudo apt-get -y install libsdl2-dev`
-- SDL2_image
-  - `sudo apt-get -y install libsdl2-image-dev`
-- SDL2_ttf
-  - `sudo apt-get -y install libsdl2-ttf-dev`
+* gcc/g++ >= 5.4
+  * Linux: gcc / g++ is installed by default on most Linux distros
+  * Mac: same deal as make - [install Xcode command line tools](https://developer.apple.com/xcode/features/)
+  * Windows: recommend using [MinGW](http://www.mingw.org/)
+* cmake >= 3.7
+  * All OSes: [click here for installation instructions](https://cmake.org/install/)
+* make >= 4.1 (Linux, Mac), 3.81 (Windows)
+  * Linux: make is installed by default on most Linux distros
+  * Mac: [install Xcode command line tools to get make](https://developer.apple.com/xcode/features/)
+  * Windows: [click here for installation instructions](http://gnuwin32.sourceforge.net/packages/make.htm)
+* SDL2
+  * Linux: `sudo apt-get -y install libsdl2-dev`
+  * Mac: `brew install sdl2`
+  * Windows: [click here for installation insturctions](https://www.libsdl.org/download-2.0.php)
+* SDL2_image
+  * Linux: `sudo apt-get -y install libsdl2-image-dev`
+  * Mac: `brew install sdl2_image`
+  * Windows: [click here for installation insturctions](https://www.libsdl.org/projects/SDL_image/)
+* SDL2_ttf
+  * Linux: `sudo apt-get -y install libsdl2-ttf-dev`
+  * Mac: `brew install sdl2_ttf`
+  * Windows: [click here for installation insturctions](https://www.libsdl.org/projects/SDL_ttf/index.html)
 
-## Controls
-
-1. Use `w`, `a`, `s`, `d` to move the ship
-2. Press `space` to shoot laser
-3. Press `esc` for pause
 
 ## Build instructions
 
@@ -26,6 +34,12 @@ Asteroids game using SDL2 library
 3. Compile: `cmake .. && make`
 4. Move compiled output one level up: `mv Asteroids ../ && cd ..`
 5. Run it: `./Asteroids`.
+
+## Controls
+
+1. Use `w`, `a`, `s`, `d` to move the ship
+2. Press `space` to shoot laser
+3. Press `esc` for pause
 
 ## Code structure
 
