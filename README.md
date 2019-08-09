@@ -2,6 +2,8 @@
 
 Asteroids game using SDL2 library
 
+<img src="img/asteroids_game.gif"/>
+
 ## Dependencies
 * gcc/g++ >= 5.4
 * cmake >= 3.7
