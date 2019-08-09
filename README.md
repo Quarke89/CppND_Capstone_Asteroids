@@ -2,7 +2,7 @@
 
 Asteroids game using SDL2 library
 
-<img src="img/asteroids_game.gif"/>
+![Gameplay gif](img/asteroids_game.gif)
 
 ## Dependencies
 * gcc/g++ >= 5.4
@@ -45,6 +45,8 @@ Asteroids game using SDL2 library
 ## Code structure
 
 ![UML diagram](img/asteroids_uml.png)
+
+**Figure: UML diagram**
 
 ### AsteroidGame class
 
