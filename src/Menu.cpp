@@ -1,17 +1,27 @@
+/* File:            Menu.cpp
+ * Author:          Vish Potnis
+ * Description:     - Parent class for menus
+ *                  - Initialize menu object
+ *                  - render items and handle keyboard input
+ */
+
 #include "Menu.h"
 
-Menu::Menu(SDL_Renderer& renderer, GameObjectStatic& backgroundObject, std::vector<TTF_Font*> &mainFonts)
+// constructor accepts initilized renderer, background image object, and all the loaded fonts
+Menu::Menu(SDL_Renderer& renderer, const GameObjectStatic& backgroundObject, const std::vector<TTF_Font*> &mainFonts)
     : _renderer(renderer), _backgroundObject(backgroundObject), _mainFonts(mainFonts)
 {
     initMenuItems();
 }
 
+// run menu loop
 GameState Menu::run()
 {
     SDL_Event event;
 
     while(true){
 
+        // handle keyboard input
         while(SDL_PollEvent(&event) != 0){
             if(event.type == SDL_QUIT){
                 return GameState::QUIT;
@@ -25,15 +35,18 @@ GameState Menu::run()
             }
         }
 
+        // render items
         render();
     }
 }
 
+ // initialize renderer and render objects
 void Menu::render()
 {
     SDL_SetRenderDrawColor(&_renderer, 0x00, 0x00, 0x00, 0xFF );
     SDL_RenderClear(&_renderer);
 
+    // render background image
     SDL_Rect backgroundRect{0,0,AsteroidConstants::SCREEN_WIDTH, AsteroidConstants::SCREEN_HEIGHT};
     _backgroundObject.render(_renderer, backgroundRect);
 
@@ -42,6 +55,7 @@ void Menu::render()
     SDL_RenderPresent(&_renderer);
 }
 
+// render text objects
 void Menu::renderMenuItems()
 {
     for(auto &textObject: _textObjectHash){
@@ -49,6 +63,7 @@ void Menu::renderMenuItems()
     }
 }
 
+// wrapper for factory method for creating static game objects
 std::unique_ptr<GameObjectStatic> Menu::createStaticTextObject(Point pos, CTexture& tex)
 {
     std::unique_ptr<GameObject> pGO = GameObject::Create(ObjectType::STATIC, pos, tex); 

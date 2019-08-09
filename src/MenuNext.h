@@ -1,3 +1,8 @@
+/* File:            MenuNext.h
+ * Author:          Vish Potnis
+ * Description:     - Derived class for next level menu
+ */
+
 #pragma once
 
 #include "Menu.h"
@@ -6,10 +11,11 @@
 class MenuNext : public Menu
 {
     public:
-
-        MenuNext(SDL_Renderer& renderer, GameObjectStatic& backgroundObject, std::vector<TTF_Font*>& mainFonts);        
+        // constructor accepts initilized renderer, background image object, and all the loaded fonts
+        MenuNext(SDL_Renderer& renderer, const GameObjectStatic& backgroundObject, const std::vector<TTF_Font*>& mainFonts);        
     
     private:
 
-        virtual void initMenuItems();
+        void initMenuItems() override;  // initialize static objects to be rendered
+
 };

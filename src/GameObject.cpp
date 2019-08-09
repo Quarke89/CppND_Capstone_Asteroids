@@ -1,6 +1,6 @@
 /* File:            GameObject.cpp
  * Author:          Vish Potnis
- * Description:     - Parent class game objects
+ * Description:     - Parent class for game objects
  *                  - Manages the position, movement, and rendering of game objects
  */
 

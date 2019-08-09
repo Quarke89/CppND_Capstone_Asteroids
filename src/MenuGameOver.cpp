@@ -1,17 +1,26 @@
+/* File:            MenuGameOver.cpp
+ * Author:          Vish Potnis
+ * Description:     - Derived class for game over menu
+ */
+
+
 #include "MenuGameOver.h"
 
-MenuGameOver::MenuGameOver(SDL_Renderer& renderer, GameObjectStatic& backgroundObject, std::vector<TTF_Font*>& mainFonts)
+// constructor accepts initilized renderer, background image object, and all the loaded fonts
+MenuGameOver::MenuGameOver(SDL_Renderer& renderer, const GameObjectStatic& backgroundObject, const std::vector<TTF_Font*>& mainFonts)
  : Menu(renderer, backgroundObject, mainFonts), _state(true)
 {
     initMenuItems();
 }
 
+// run menu loop
 GameState MenuGameOver::run()
 {
     SDL_Event event;
 
     while(true){
 
+        // handle keyboard input
         while(SDL_PollEvent(&event) != 0){
             if(event.type == SDL_QUIT){
                 return GameState::QUIT;
@@ -33,11 +42,12 @@ GameState MenuGameOver::run()
                 }
             }
         }
-
+        // render items
         render();
     }
 }
 
+ // initialize static objects to be rendered
 void MenuGameOver::initMenuItems()
 {
     SDL_Color whiteTextColor{255,255,255,255};
@@ -45,16 +55,19 @@ void MenuGameOver::initMenuItems()
 
     const int numItems = 5;
 
+    // initilize CTexture objects
     for(int i = 0; i < numItems; i++){
         _textTextureHash.insert(std::make_pair(static_cast<MenuItem>(i), CTexture()) );
     }
 
+    // generate texture from loaded font using given string and color
     _textTextureHash[MenuItem::TITLE].loadFromRenderedText(_renderer, _mainFonts[static_cast<int>(FontType::TITLE2)], "GAME OVER", whiteTextColor);
     _textTextureHash[MenuItem::ITEM1].loadFromRenderedText(_renderer, _mainFonts[static_cast<int>(FontType::MENU)], "Play Again", whiteTextColor);
     _textTextureHash[MenuItem::ITEM2].loadFromRenderedText(_renderer, _mainFonts[static_cast<int>(FontType::MENU)], "Quit", whiteTextColor);
     _textTextureHash[MenuItem::ITEM1_SELECT].loadFromRenderedText(_renderer, _mainFonts[static_cast<int>(FontType::MENU)], "Play Again", selectTextColor);
     _textTextureHash[MenuItem::ITEM2_SELECT].loadFromRenderedText(_renderer, _mainFonts[static_cast<int>(FontType::MENU)], "Quit", selectTextColor);
 
+    // position of text objects
     Point titlePos{ static_cast<double>((AsteroidConstants::SCREEN_WIDTH -  _textTextureHash[MenuItem::TITLE].getWidth())/2),
                     static_cast<double>((AsteroidConstants::SCREEN_HEIGHT - _textTextureHash[MenuItem::TITLE].getHeight())/3)};
     
@@ -64,6 +77,7 @@ void MenuGameOver::initMenuItems()
     Point item2Pos{  static_cast<double>((AsteroidConstants::SCREEN_WIDTH - _textTextureHash[MenuItem::ITEM2].getWidth())/2),
                     static_cast<double>((AsteroidConstants::SCREEN_HEIGHT - _textTextureHash[MenuItem::ITEM2].getHeight())/1.8)};
 
+    // generate static text objects from textures
     _textObjectHash[MenuItem::TITLE] = createStaticTextObject(titlePos, _textTextureHash[MenuItem::TITLE]); 
     _textObjectHash[MenuItem::ITEM1] = createStaticTextObject(item1Pos, _textTextureHash[MenuItem::ITEM1]);
     _textObjectHash[MenuItem::ITEM2] = createStaticTextObject(item2Pos, _textTextureHash[MenuItem::ITEM2]);
@@ -72,6 +86,7 @@ void MenuGameOver::initMenuItems()
 
 }
 
+// render text objects based on selection state
 void MenuGameOver::renderMenuItems()
 {
     
@@ -86,12 +101,14 @@ void MenuGameOver::renderMenuItems()
     }
 }
 
+// toggle menu selection
 void MenuGameOver::toggleState()
 {
     _state = !_state;
 }
 
-GameState MenuGameOver::select()
+// return menu selection
+GameState MenuGameOver::select() const
 {
     if(_state){
         return GameState::PLAY_AGAIN;

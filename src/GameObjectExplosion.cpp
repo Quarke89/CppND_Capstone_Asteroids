@@ -1,4 +1,4 @@
-/* File:            ExplosionObject.cpp
+/* File:            GameObjectExplosion.cpp
  * Author:          Vish Potnis
  * Description:     - Derived class for explosion objects 
  *                  - Render animation sprites over time
@@ -7,11 +7,13 @@
 
 #include "GameObjectExplosion.h"
 
+// initialize static variable
 std::vector<SDL_Rect> GameObjectExplosion::_spriteClips = std::vector<SDL_Rect>();
 
 GameObjectExplosion::GameObjectExplosion(const Point &pos, const CTexture& tex)
     : GameObject(pos, tex), _width(AsteroidConstants::EXPLOSION_SPRITE_WIDTH), _height(AsteroidConstants::EXPLOSION_SPRITE_HEIGHT), _currentClip(0)
 {
+    // if _spriteClips has not been set then determine the sprite clip rectangles based on sprite sheet dimensions
     if(_spriteClips.size() == 0){
 
         for(int y = 0; y < tex.getHeight(); y += AsteroidConstants::EXPLOSION_SPRITE_HEIGHT){
@@ -24,6 +26,7 @@ GameObjectExplosion::GameObjectExplosion(const Point &pos, const CTexture& tex)
     }
 }
 
+// render explosion to screen based on current current clip
 void GameObjectExplosion::render(SDL_Renderer& renderer)
 {
     if(_currentClip < AsteroidConstants::EXPLOSION_SPRITE_NUM){
@@ -40,6 +43,7 @@ void GameObjectExplosion::render(SDL_Renderer& renderer)
     }
 }
 
+// update explosion animation frame based on timer (50ms)
 void GameObjectExplosion::update(const Uint32 updateTime)
 {
 
@@ -53,6 +57,7 @@ void GameObjectExplosion::update(const Uint32 updateTime)
     
 }
 
+// set the size of the animation sprite based on asteroid size
 void GameObjectExplosion::setSize(AsteroidSize size)
 {
     switch(size)
@@ -73,6 +78,7 @@ void GameObjectExplosion::setSize(AsteroidSize size)
     
 }
 
+ // check if animation has cycled through all the sprites
 bool GameObjectExplosion::isAnimationDone() const
 {
     return _currentClip >= AsteroidConstants::EXPLOSION_SPRITE_NUM;

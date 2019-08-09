@@ -1,3 +1,9 @@
+/* File:            GameObjectAsteroid.cpp
+ * Author:          Vish Potnis
+ * Description:     - Derived class for asteroid objects
+ */
+
+
 #include "GameObjectAsteroid.h"
 #include "constants.h"
 #include <cmath>
@@ -6,36 +12,42 @@ GameObjectAsteroid::GameObjectAsteroid(const Point& pos, const CTexture& tex, CV
     : GameObject(pos, tex, velocity)
 {}
 
-
+// render asteroid to screen
 void GameObjectAsteroid::render(SDL_Renderer& renderer)
 {
     int xPosCenter = std::round(_pos.x);
     int yPosCenter = std::round(_pos.y);
 
-    std::vector<SDL_Rect> srcRect;
-    std::vector<SDL_Rect> dstRect;
+    std::vector<SDL_Rect> srcRect;  // source rectangles defining texture boundary for wrap around the screen
+    std::vector<SDL_Rect> dstRect;  // destination rectangles for the screen for source rectangles
 
     int width = _tex.getWidth();
     int height = _tex.getHeight();
 
+    // calculate screen wrap around based on position and texture dimensions
     calculateRenderRectangles(xPosCenter, yPosCenter, width, height, AsteroidConstants::SCREEN_WIDTH, AsteroidConstants::SCREEN_HEIGHT, srcRect, dstRect);    
 
+    // render texture in potential parts
     for(unsigned long i = 0; i < srcRect.size(); i++){
         SDL_RenderCopy( &renderer, &_tex.getTexture(), &srcRect[i], &dstRect[i]);
     }
 
+    // desRect (on screen rectangles) define the bounding box for the asteroid
     _boundingBoxes = std::move(dstRect);    
 }
 
 
+// update asteroid position based on velocity and time delta
 void GameObjectAsteroid::update(Uint32 updateTime)
 {
 
     double timeDelta = static_cast<double>(updateTime - _lastUpdated)/1000;
 
+    // update position    
     _pos.x += _velocity.getXProjection() * timeDelta;
     _pos.y += _velocity.getYProjection() * timeDelta;
 
+    // wrap around the screen
     if(_pos.x >= AsteroidConstants::SCREEN_WIDTH){
         _pos.x = 0;
     }
@@ -54,28 +66,24 @@ void GameObjectAsteroid::update(Uint32 updateTime)
 
 }
 
-std::vector<SDL_Rect>& GameObjectAsteroid::getBoundingBoxes()
-{
-    return _boundingBoxes;
-}
-
 void GameObjectAsteroid::setAsteroidAttr(AsteroidSize size, AsteroidColor color)
 {
     _asteroidSize = size;
     _asteroidColor = color;
 }
 
-
-AsteroidSize GameObjectAsteroid::getSize() const
-{
-    return _asteroidSize;
-}
+// getters
+const std::vector<SDL_Rect>& GameObjectAsteroid::getBoundingBoxes() { return _boundingBoxes;}
+AsteroidSize GameObjectAsteroid::getSize() const { return _asteroidSize;}
 AsteroidSize GameObjectAsteroid::getNextSize() const
 {
     if(_asteroidSize == AsteroidSize::BIG) return AsteroidSize::MED;
     return AsteroidSize::SMALL;
 }
 
+///// static helpers /////
+
+// static function to determine next color based on input color (cycle through colors)
 AsteroidColor GameObjectAsteroid::getNextColor(AsteroidColor color)
 {
     switch(color){
@@ -86,6 +94,7 @@ AsteroidColor GameObjectAsteroid::getNextColor(AsteroidColor color)
     return AsteroidColor::GREY;
 }
 
+// static function to get asteroid texture enum based on size and clor
 TextureType GameObjectAsteroid::getAsteroidTexture(AsteroidSize size, AsteroidColor color)
 {
     switch(size){

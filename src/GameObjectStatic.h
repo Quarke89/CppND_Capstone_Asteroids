@@ -1,4 +1,4 @@
-/* File:            StaticObject.h
+/* File:            GameObjectStatic.h
  * Author:          Vish Potnis
  * Description:     - Derived class for static objects (text and background)
  *                  - Only render function is overriden

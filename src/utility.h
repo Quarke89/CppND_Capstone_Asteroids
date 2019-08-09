@@ -1,12 +1,19 @@
+/* File:            utility.h
+ * Author:          Vish Potnis
+ * Description:     - Helper functions and enums
+ */
+
 #pragma once
 
 #include <SDL2/SDL.h>
 #include <memory>
 
+// smart pointer typedefs with approriate deleter functions for SDL
 using SDL_Window_unique_ptr = std::unique_ptr<SDL_Window, decltype(&SDL_DestroyWindow)>;
 using SDL_Renderer_unique_ptr = std::unique_ptr<SDL_Renderer, decltype(&SDL_DestroyRenderer)>;
 using SDL_Texture_unique_ptr = std::unique_ptr<SDL_Texture, decltype(&SDL_DestroyTexture)>;
 
+// helper function for casting a smart pointer from a Base class to a Derived class
 template<typename Derived, typename Base>
 std::unique_ptr<Derived> static_unique_ptr_cast( std::unique_ptr<Base>&& p )
 {
@@ -14,6 +21,18 @@ std::unique_ptr<Derived> static_unique_ptr_cast( std::unique_ptr<Base>&& p )
     return std::unique_ptr<Derived>(d);
 }
 
+// used for defining hash function for an enum
+// used in unordered map
+struct EnumClassHash
+{
+    template <typename T>
+    std::size_t operator()(T t) const
+    {
+        return static_cast<std::size_t>(t);
+    }
+};
+
+// menu items for main, pause, next, and game over menus
 enum class MenuItem
 {
     TITLE,
@@ -24,20 +43,13 @@ enum class MenuItem
     ITEM_TOTAL
 };
 
-struct EnumClassHash
-{
-    template <typename T>
-    std::size_t operator()(T t) const
-    {
-        return static_cast<std::size_t>(t);
-    }
-};
-
+// defined position of object
 struct Point{
     double x;
     double y;
 };
 
+// game state used for determining menu interaction and level progression
 enum class GameState
 {
     QUIT,
@@ -47,6 +59,7 @@ enum class GameState
     PLAY_AGAIN
 };
 
+// used in the factory method for generating game objects
 enum class ObjectType
 {
     STATIC,
@@ -56,12 +69,15 @@ enum class ObjectType
     EXPLOSION
 };
 
+// asteroid attribute
 enum class AsteroidSize
 {
     BIG,
     MED,
     SMALL
 };
+
+// asteroid attribute
 enum class AsteroidColor
 {
     GREY,
@@ -69,6 +85,7 @@ enum class AsteroidColor
     BROWN
 };
 
+// loaded fonts
 enum class FontType
 {
     TITLE1,
@@ -78,6 +95,7 @@ enum class FontType
     FONT_TOTAL
 };
 
+// loaded textures
 enum class TextureType
 {    
     TEX_ASTEROID_BIG_1,
