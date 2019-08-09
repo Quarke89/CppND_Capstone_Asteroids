@@ -7,11 +7,11 @@ Asteroids game using SDL2 library
 - cmake
 - make
 - SDL2
-  - sudo apt-get -y install libsdl2-dev
+  - `sudo apt-get -y install libsdl2-dev`
 - SDL2_image
-  - sudo apt-get -y install libsdl2-image-dev
+  - `sudo apt-get -y install libsdl2-image-dev`
 - SDL2_ttf
-  - sudo apt-get -y install libsdl2-ttf-dev
+  - `sudo apt-get -y install libsdl2-ttf-dev`
 
 ## Controls
 
