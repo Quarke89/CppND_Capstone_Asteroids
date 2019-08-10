@@ -1,6 +1,5 @@
-#Copyright Notice:
-#The files within this zip file are copyrighted by Lazy Foo' Productions (2004-2014)
-#and may not be redistributed without written permission.
+# Make file for windows. Modify SDL include and library paths approriately
+# for Mac/Linux use: g++ -std=c++17 src/*.cpp -o Asteroids -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer -Wall -Wextra -pedantic 
 
 #OBJS specifies which files to compile as part of the project
 OBJS = src/main.cpp src/AsteroidGame.cpp src/GameObject.cpp src/GameObjectAsteroid.cpp src/GameObjectShip.cpp src/GameObjectLaser.cpp src/GameObjectStatic.cpp src/GameObjectExplosion.cpp src/CTexture.cpp src/CVector.cpp src/Menu.cpp src/MenuMain.cpp src/MenuGameOver.cpp src/MenuNext.cpp src/MenuPause.cpp
