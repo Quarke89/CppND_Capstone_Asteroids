@@ -11,6 +11,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_mixer.h>
 
 #include <iostream>
 #include <iomanip>
@@ -52,9 +53,11 @@ class AsteroidGame{
 
         bool init();                                        // initialize SDL assets
         bool loadFonts();                                   // load fonts with SDL_ttf
+        bool loadSounds();                                  // load sounds with SDL_mixer
+        std::string getSoundPath(SoundType type) const;     // utility function for getting file paths
         bool loadTextures();                                // load sprites into texture objects
         std::string getTexturePath(TextureType type) const; // utility function for getting file paths
-
+        
         void runLevel();                    // main game loop
 
         void handleInput(SDL_Event &e);     // handle keyboard input             
@@ -80,7 +83,7 @@ class AsteroidGame{
         void checkLevelCompleted();         // check if any asteroids are remaining in the level
 
         void cleanupLevel();                    // clean up game objects
-        void cleanup();                         // clean up textures and SDL assets
+        void cleanup();                         // clean up fonts/sounds and SDL assets
 
         Point getRandomCorner() const;              // utility function for determining initial position for asteroids
         void updateScore(int scoreIncrease);        // update score and regenerate score texture
@@ -90,6 +93,9 @@ class AsteroidGame{
         void runNextMenu();                         // display the next level menu
         void runPauseMenu();                        // display the pause menu
 
+        void playLaserSound();                      // play laser sound
+        void playExplosionSound();                  // play explosion sound
+
         ////////// Private variables //////////////
 
         SDL_Window_unique_ptr _window;          // pointer to the main game window
@@ -97,6 +103,7 @@ class AsteroidGame{
 
         std::vector<CTexture> _mainTextures;    // vector holding the main loaded textures
         std::vector<TTF_Font*> _mainFonts;      // vector holding the fonts converted by SDL_TTF
+        std::vector<Mix_Chunk*> _mainSounds;    // vector holding the loaded sounds
         
         
         std::unique_ptr<GameObjectShip> _pShip;                                         // Game object for the ship

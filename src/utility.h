@@ -85,6 +85,14 @@ enum class AsteroidColor
     BROWN
 };
 
+// loaded sounds
+enum class SoundType
+{
+    LASER,
+    EXPLOSION,
+    SOUND_TOTAL
+};
+
 // loaded fonts
 enum class FontType
 {

@@ -19,6 +19,8 @@ AsteroidGame::AsteroidGame()
         exit(0);
     if(!loadTextures())
         exit(0);
+    if(!loadSounds())
+        exit(0);
     if(!loadFonts())
         exit(0);
 
@@ -63,7 +65,7 @@ bool AsteroidGame::init()
 {
 
     // initialize SDL
-    if(SDL_Init(SDL_INIT_VIDEO) < 0){
+    if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0){
         std::cout << "SDL could not initialize! SDL_Error: " << SDL_GetError() << "\n";
         return false;
     }
@@ -76,6 +78,12 @@ bool AsteroidGame::init()
     int imgFlags = IMG_INIT_PNG;
     if(!(IMG_Init(imgFlags) & imgFlags)){
         std::cout << "SDL_image could not initialize! SDL_image Error: " << IMG_GetError() << "\n";
+        return false;
+    }
+
+    // initialize SDL_mixer
+    if( Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0){
+        std::cout << "SDL_mixer could not initialize! SDL_mixer Error: " << Mix_GetError() << "\n";
         return false;
     }
 
@@ -125,7 +133,7 @@ bool AsteroidGame::loadFonts()
             default: break;
         }
         if(pFont == nullptr){
-            std::cout << "Failed to load lazy font! SDL_ttf Error: " << TTF_GetError() << "\n";		
+            std::cout << "Failed to load font! SDL_ttf Error: " << TTF_GetError() << "\n";		
 		    success &= false;
 	    }
         else{
@@ -135,6 +143,35 @@ bool AsteroidGame::loadFonts()
 
     return success;
 }
+
+// load sounds with SDL_mixer
+bool AsteroidGame::loadSounds()
+{
+    bool success = true;
+
+    for(unsigned int i = 0; i < static_cast<unsigned int>(SoundType::SOUND_TOTAL); i++){
+        Mix_Chunk *pSound = Mix_LoadWAV(getSoundPath(static_cast<SoundType>(i)).c_str());
+
+        if(pSound == nullptr){
+            std::cout << "Failed to load sound effect! SDL_mixer Error: " << Mix_GetError() << "\n";    
+            success &= false;
+        }
+        else{
+            _mainSounds.push_back(pSound);
+        }
+    }    
+    return success;
+}
+
+// utility function for getting file paths
+std::string AsteroidGame::getSoundPath(SoundType type) const
+{
+    switch(type){
+        case SoundType::LASER:      return "sounds/laser.wav";
+        case SoundType::EXPLOSION:  return "sounds/explosion.wav";
+        default:                    return "";
+    }
+}   
 
 // load sprites into texture objects
 bool AsteroidGame::loadTextures()
@@ -513,11 +550,13 @@ void AsteroidGame::shootLaser()
     CVector velocity{AsteroidConstants::LASER_VELOCITY, velocityAngle, VectorType::POLAR};
 
     createLaser(laserPos, velocity);
+    playLaserSound();    
 }
 
 // split current asteroid into 2 smaller asteroids
 void AsteroidGame::splitAsteroid(GameObjectAsteroid& asteroid)
 {
+    playExplosionSound();
     AsteroidSize currentSize = asteroid.getSize();
     Point pos = asteroid.getPos();
 
@@ -564,17 +603,22 @@ void AsteroidGame::cleanupLevel()
 }
 
 
-// clean up textures and SDL assets
+// clean up fonts/sounds and SDL assets
 void AsteroidGame::cleanup()
 {
     cleanupLevel();
+
+    for(auto& sound: _mainSounds){
+        Mix_FreeChunk(sound);
+    }
 
     for(auto& font: _mainFonts){
         TTF_CloseFont(font);
     }
 
-    // Quit SDL subsystems
+    // Quit SDL subsystems    
     TTF_Quit();
+    Mix_Quit();
     IMG_Quit();
     SDL_Quit();
 }
@@ -642,3 +686,14 @@ void AsteroidGame::runPauseMenu()
     _state = pauseMenu.run();
 }
 
+// play laser sound
+void AsteroidGame::playLaserSound()
+{
+    Mix_PlayChannel(-1, _mainSounds[static_cast<int>(SoundType::LASER)], 0);
+}                      
+    
+// play explosion sound
+void AsteroidGame::playExplosionSound()
+{
+    Mix_PlayChannel(-1, _mainSounds[static_cast<int>(SoundType::EXPLOSION)], 0);
+}
