@@ -18,15 +18,18 @@ Asteroids game using SDL2 library
   * Linux: `sudo apt-get -y install libsdl2-dev`
   * Mac: `brew install sdl2`
   * Windows: [click here for installation insturctions](https://www.libsdl.org/download-2.0.php)
-* SDL2_image
+* SDL2_image (loading PNG into textures)
   * Linux: `sudo apt-get -y install libsdl2-image-dev`
   * Mac: `brew install sdl2_image`
   * Windows: [click here for installation insturctions](https://www.libsdl.org/projects/SDL_image/)
-* SDL2_ttf
+* SDL2_ttf (loading fonts into textures)
   * Linux: `sudo apt-get -y install libsdl2-ttf-dev`
   * Mac: `brew install sdl2_ttf`
   * Windows: [click here for installation insturctions](https://www.libsdl.org/projects/SDL_ttf/index.html)
-
+* SDL2_mixer (sounds)
+  * Linux: `sudo apt-get -y install libsdl2-mixer-dev`
+  * Mac: `brew install sdl2_mixer`
+  * Windows: [click here for installation insturctions](https://www.libsdl.org/projects/SDL_mixer/)
 
 ## Build instructions
 
